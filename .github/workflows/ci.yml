@@ -44,7 +44,7 @@ jobs:
       # branch that has not reached that layer has no browser tests to run. Only presence is
       # guarded: if Playwright is declared and the install then fails, the job fails.
       - name: Install Playwright chromium
-        working-directory: src/TheBuilder.Translations/Client
+        working-directory: src/TheBuilder.AppTranslations/Client
         run: |
           if pnpm exec playwright --version >/dev/null 2>&1; then
             pnpm exec playwright install --with-deps chromium
@@ -69,11 +69,11 @@ jobs:
       # code from the linter rather than from sed.
       - name: Lint
         if: '!cancelled()'
-        working-directory: src/TheBuilder.Translations/Client
+        working-directory: src/TheBuilder.AppTranslations/Client
         run: |
           set -o pipefail
           pnpm exec ultracite check --reporter=github \
-            | sed 's|file=|file=src/TheBuilder.Translations/Client/|'
+            | sed 's|file=|file=src/TheBuilder.AppTranslations/Client/|'
 
       # Analysed once and rendered twice: `report --from` is a pure renderer, so the
       # annotations and the job summary cannot disagree about what was found. It always
@@ -117,12 +117,12 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
           restore-keys: nuget-${{ runner.os }}-
 
-      - run: dotnet restore TheBuilder.Translations.slnx
+      - run: dotnet restore TheBuilder.AppTranslations.slnx
 
       # TreatWarningsAsErrors is on for every project, so this is the warning gate too.
-      - run: dotnet build TheBuilder.Translations.slnx -c Release --no-restore
+      - run: dotnet build TheBuilder.AppTranslations.slnx -c Release --no-restore
 
-      - run: dotnet test TheBuilder.Translations.slnx -c Release --no-build
+      - run: dotnet test TheBuilder.AppTranslations.slnx -c Release --no-build
 
   package:
     name: Package
@@ -158,7 +158,23 @@ jobs:
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Pack
-        run: dotnet pack src/TheBuilder.Translations/TheBuilder.Translations.csproj -c Release -o artifacts
+        run: dotnet pack src/TheBuilder.AppTranslations/TheBuilder.AppTranslations.csproj -c Release -o artifacts
+
+      # Packing succeeds even when the nuspec names a dependency nuget.org does not have, which is
+      # how the Core project once became an unpublished package reference. Restoring the package
+      # into a fresh project, with nuget.org as the only other source, is what an installer does.
+      - name: Install into a fresh project
+        run: |
+          version=$(ls artifacts/TheBuilder.AppTranslations.*.nupkg | sed -E 's|.*/TheBuilder\.AppTranslations\.(.*)\.nupkg|\1|')
+          mkdir -p "$RUNNER_TEMP/consumer"
+          cat > "$RUNNER_TEMP/consumer/Consumer.csproj" <<EOF
+          <Project Sdk="Microsoft.NET.Sdk.Web">
+            <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+            <ItemGroup><PackageReference Include="TheBuilder.AppTranslations" Version="$version" /></ItemGroup>
+          </Project>
+          EOF
+          dotnet restore "$RUNNER_TEMP/consumer/Consumer.csproj" \
+            --source "$GITHUB_WORKSPACE/artifacts" --source https://api.nuget.org/v3/index.json
 
       - uses: actions/upload-artifact@v4
         with:

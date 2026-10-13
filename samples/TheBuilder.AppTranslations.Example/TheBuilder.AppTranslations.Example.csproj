@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <UserSecretsId>TheBuilder.AppTranslations.Example</UserSecretsId>
+    <BuildInParallel>false</BuildInParallel>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" />
+    <ProjectReference Include="../../src/TheBuilder.AppTranslations/TheBuilder.AppTranslations.csproj" />
+    <!-- Direct, because the package keeps Core private to ship it inside itself. -->
+    <ProjectReference Include="../../src/TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" />
+  </ItemGroup>
+</Project>

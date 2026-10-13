@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/TheBuilder.AppTranslations/TheBuilder.AppTranslations.csproj" />
+    <!-- Direct, because the package keeps Core private to ship it inside itself. -->
+    <ProjectReference Include="../../src/TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" />
+  </ItemGroup>
+</Project>

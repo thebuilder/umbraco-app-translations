@@ -1,5 +1,5 @@
 packages:
-  - src/TheBuilder.Translations/Client
+  - src/TheBuilder.AppTranslations/Client
 
 onlyBuiltDependencies:
   - esbuild

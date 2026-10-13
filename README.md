@@ -1,4 +1,4 @@
-# TheBuilder.Translations
+# TheBuilder.AppTranslations
 
 Let editors change the text in your application from the Umbraco backoffice, without a code change
 or a deploy.
@@ -24,13 +24,13 @@ The package requires Umbraco 17.
 1. Install the package in your Umbraco site:
 
    ```sh
-   dotnet add package TheBuilder.Translations
+   dotnet add package TheBuilder.AppTranslations
    ```
 
 2. Make your application's translation files reachable over HTTP, one file per language. The
    package reads nested JSON, as next-intl and i18next write it, and next-intl's gettext PO files.
 
-3. In Umbraco, go to **Settings > Translations** and add a source. A source holds the URL of the
+3. In Umbraco, go to **Settings > App translations** and add a source. A source holds the URL of the
    files, the languages to read, and the message syntax your application uses. **Test source** fetches it
    without saving anything; **Sync now** reads it in.
 
@@ -85,7 +85,7 @@ value the whole header, for example `Bearer your-token`.
 
 By default, sources connect only to public addresses, do not follow redirects and do not use the
 host's proxy. That stops anyone from using a source URL to reach internal services. To read from a private
-network or `localhost`, turn on `TheBuilder:Translations:SourceSecurity:AllowPrivateNetworkEndpoints`.
+network or `localhost`, turn on `TheBuilder:AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints`.
 Only do that in development or a network you trust.
 
 ## Editing translations
@@ -121,7 +121,7 @@ the field, or fix its spelling.
    installs Umbraco.AI itself.
 2. In the **AI** section, add a connection and a chat profile. Put brand voice and tone on the
    profile as contexts. They apply to every suggestion.
-3. In **Settings > Translations**, turn on **Offer in the editor** in the AI assistant card and
+3. In **Settings > App translations**, turn on **Offer in the editor** in the AI assistant card and
    choose the profile. You can also change the instructions sent with every request there.
 
 The assistant is off until an administrator turns it on, because it sends the site's text to an AI
@@ -137,18 +137,18 @@ To use the custom text, fetch it for a language and namespace, then merge it ove
 application already bundles.
 
 ```http
-GET /umbraco/delivery/api/v1/translations/overrides?locale=da-DK&namespace=website&format=next-intl
+GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl
 ```
 
 If your application does not bundle its own text, fetch the complete dictionary instead. It has the
 custom text in place of the application's text wherever an editor wrote some.
 
 ```http
-GET /umbraco/delivery/api/v1/translations/all?locale=da-DK&namespace=website&format=next-intl
+GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website&format=next-intl
 ```
 
 Both endpoints answer with an ETag, so a client that sends `If-None-Match` gets `304 Not Modified`
-until something changes. **Settings > Translations** lists the exact URL for each language and
+until something changes. **Settings > App translations** lists the exact URL for each language and
 namespace.
 
 For i18next, use `format=i18next-v4` and set the source's message syntax to **i18next JSON v4**.
@@ -161,7 +161,7 @@ split it.
 
 ### Syncing a source
 
-Umbraco reads a source when someone presses **Sync now** in **Settings > Translations**, which also
+Umbraco reads a source when someone presses **Sync now** in **Settings > App translations**, which also
 keeps the history of every sync. To sync as part of a deployment, use the endpoint below.
 
 ### Syncing from a deployment
@@ -170,7 +170,7 @@ A deployment can sync a source by its identifier, without a backoffice login. Th
 until you configure a secret. Use a long random value; anyone who has it can start a sync.
 
 ```sh
-TheBuilder__Translations__DeploymentSync__ApiKey=replace-with-a-long-random-value
+TheBuilder__AppTranslations__DeploymentSync__ApiKey=replace-with-a-long-random-value
 ```
 
 Give your deployment pipeline the same secret, and have it call the endpoint once the new translation
@@ -180,7 +180,7 @@ files are live.
 curl --fail-with-body \
   --request POST \
   --header "Authorization: Bearer $UMBRACO_TRANSLATIONS_SYNC_KEY" \
-  "$UMBRACO_URL/umbraco/translations/api/v1/sources/website/sync"
+  "$UMBRACO_URL/umbraco/app-translations/api/v1/sources/website/sync"
 ```
 
 Replace `website` with the source identifier from the source's **Advanced** settings. The request
@@ -200,7 +200,7 @@ Use HTTPS, and keep the secret in the secret stores on both sides.
 ### Telling your application something changed
 
 To drop a cached dictionary the moment it changes, add a webhook in **Settings > Webhooks** for the
-**Translations updated** event (under **Other**). Umbraco handles the URL, headers, retries and the
+**App translations updated** event (under **Other**). Umbraco handles the URL, headers, retries and the
 request log as it does for any webhook.
 
 The event fires once for every change that reaches the delivery endpoints.
@@ -234,8 +234,8 @@ load-balanced setup, Umbraco sends webhooks only from the Single or SchedulingPu
 
 | Setting                                                         | Default | Purpose                                                  |
 | --------------------------------------------------------------- | ------- | -------------------------------------------------------- |
-| `TheBuilder:Translations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`.  |
-| `TheBuilder:Translations:DeploymentSync:ApiKey`                 | none    | Turns on deployment-triggered sync. A long random value, without spaces. |
+| `TheBuilder:AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`.  |
+| `TheBuilder:AppTranslations:DeploymentSync:ApiKey`                 | none    | Turns on deployment-triggered sync. A long random value, without spaces. |
 
 Source headers read their values from the setting names you give them.
 
@@ -246,11 +246,11 @@ The repository includes a sample site with English and Danish messages to sync a
 ```sh
 pnpm install
 pnpm build
-dotnet run --project samples/TheBuilder.Translations.Example
+dotnet run --project samples/TheBuilder.AppTranslations.Example
 ```
 
 The sample runs at `https://localhost:44389` and installs itself. Its backoffice login is in
-`samples/TheBuilder.Translations.Example/appsettings.json`. Add a source with
+`samples/TheBuilder.AppTranslations.Example/appsettings.json`. Add a source with
 `https://localhost:44389/sample/messages/{locale}.json` for ICU messages, or
 `https://localhost:44389/sample/i18next/{locale}.json` for i18next JSON v4. The sample already
 allows private-network sources.
@@ -258,20 +258,20 @@ allows private-network sources.
 Run these before opening a pull request.
 
 ```sh
-dotnet test TheBuilder.Translations.slnx
+dotnet test TheBuilder.AppTranslations.slnx
 pnpm check   # type check, lint and dead-code check
 pnpm test
 pnpm build
 ```
 
-`pnpm fix` applies formatting and the safe lint fixes. `src/TheBuilder.Translations/Client/CLAUDE.md`
+`pnpm fix` applies formatting and the safe lint fixes. `src/TheBuilder.AppTranslations/Client/CLAUDE.md`
 describes the client's conventions.
 
 Generate the backoffice API client from a running sample.
 
 ```sh
-pnpm --dir src/TheBuilder.Translations/Client generate-client -- https://localhost:44389/umbraco/swagger/thebuildertranslations/swagger.json
+pnpm --dir src/TheBuilder.AppTranslations/Client generate-client -- https://localhost:44389/umbraco/swagger/thebuilder-app-translations/swagger.json
 ```
 
 The sample documents the deployment sync API at
-`/umbraco/swagger/thebuildertranslationsautomation/swagger.json`.
+`/umbraco/swagger/thebuilder-app-translations-automation/swagger.json`.
