@@ -1,0 +1,233 @@
+name: Verify package
+
+# Everything a change has to pass, and everything a release has to pass before it is published.
+# CI runs it on every push and pull request with the local version; the publish workflow runs it
+# with the version from the release tag, and publishes the package it uploads.
+on:
+  workflow_call:
+    inputs:
+      package-version:
+        description: The version for the NuGet package and the Umbraco manifest.
+        type: string
+        default: 0.1.0
+      release-tag:
+        description: The GitHub Release tag the NuGet release notes link to.
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  client:
+    name: Client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Reads the pnpm version from the root package.json's packageManager field, so CI
+      # and the csproj's `corepack pnpm` cannot end up on different majors.
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # The DOM suite runs in a real browser rather than jsdom, so the browser has to exist.
+      # --with-deps pulls the shared libraries the runner image does not ship.
+      #
+      # Conditional on the client actually depending on Playwright, because this workflow runs
+      # on every branch of a deep stack and the browser suite is introduced partway up it. A
+      # branch that has not reached that layer has no browser tests to run. Only presence is
+      # guarded: if Playwright is declared and the install then fails, the job fails.
+      - name: Install Playwright chromium
+        working-directory: src/TheBuilder.AppTranslations/Client
+        run: |
+          if pnpm exec playwright --version >/dev/null 2>&1; then
+            pnpm exec playwright install --with-deps chromium
+          else
+            echo "::notice::Playwright is not a dependency on this branch; skipping browser install."
+          fi
+
+      # Three steps rather than one `pnpm check`, because chaining them with && means the
+      # first failure hides the rest: a stray type error would leave the lint and dead-code
+      # results unknown until it was fixed and the run repeated. `!cancelled()` lets each
+      # report on its own, so one run says everything that is wrong.
+      - name: Typecheck
+        if: '!cancelled()'
+        run: pnpm typecheck
+
+      # `pnpm exec ultracite` rather than the `lint` script, because --reporter is a pnpm
+      # flag too and pnpm swallows it before the script ever sees it.
+      #
+      # Biome reports paths relative to its own directory, and GitHub resolves annotation
+      # paths from the repository root, so without the rewrite every annotation points at a
+      # file that does not exist and none of them land on the diff. pipefail keeps the exit
+      # code from the linter rather than from sed.
+      - name: Lint
+        if: '!cancelled()'
+        working-directory: src/TheBuilder.AppTranslations/Client
+        run: |
+          set -o pipefail
+          pnpm exec ultracite check --reporter=github \
+            | sed 's|file=|file=src/TheBuilder.AppTranslations/Client/|'
+
+      # Analysed once and rendered twice: `report --from` is a pure renderer, so the
+      # annotations and the job summary cannot disagree about what was found. It always
+      # exits 0, which is why the verdict is taken from the analysis run.
+      - name: Dead code
+        if: '!cancelled()'
+        run: |
+          status=0
+          pnpm exec fallow dead-code --format json --quiet > fallow.json || status=$?
+          pnpm exec fallow report --from fallow.json --format github-annotations
+          pnpm exec fallow report --from fallow.json --format github-summary >> "$GITHUB_STEP_SUMMARY"
+          rm -f fallow.json
+          exit "$status"
+
+      # Also unconditional: whether the suite passes is information worth having even when a
+      # check above failed. Build is not, because it reruns tsc and would only restate a
+      # typecheck failure.
+      - name: Test
+        if: '!cancelled()'
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      # Reads the source maps the build just wrote, so it checks the notices against what the
+      # package will actually contain.
+      - name: Third-party notices
+        run: pnpm notices --check
+
+  dotnet:
+    name: .NET
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Central package management, so there is no lock file to key on: the versions all
+      # live in Directory.Packages.props and the projects decide which to reference.
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - run: dotnet restore TheBuilder.AppTranslations.slnx
+
+      # TreatWarningsAsErrors is on for every project, so this is the warning gate too.
+      - run: dotnet build TheBuilder.AppTranslations.slnx -c Release --no-restore
+
+      - run: dotnet test TheBuilder.AppTranslations.slnx -c Release --no-build
+
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    # Last, because it repeats both toolchains: no point paying for it while either half
+    # is still failing on its own.
+    needs: [client, dotnet]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # The backoffice bundle is not committed. `dotnet pack` builds it by shelling out to
+      # `corepack pnpm build`, then refuses to pack if the manifest or entry point is
+      # missing -- which is the part worth testing, since a package without them installs
+      # into Umbraco and silently does nothing.
+      - name: Enable corepack
+        run: corepack enable
+
+      - run: corepack pnpm install --frozen-lockfile
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      # The version reaches the nuspec and, through the client build, the Umbraco manifest.
+      - name: Pack
+        env:
+          PACKAGE_VERSION: ${{ inputs.package-version }}
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: |
+          arguments=(
+            src/TheBuilder.AppTranslations/TheBuilder.AppTranslations.csproj
+            -c Release
+            -o artifacts
+            "-p:Version=$PACKAGE_VERSION"
+            -p:ContinuousIntegrationBuild=true
+          )
+          if [[ -n "$RELEASE_TAG" ]]; then
+            arguments+=("-p:PackageReleaseNotes=https://github.com/thebuilder/umbraco-app-translations/releases/tag/$RELEASE_TAG")
+          fi
+          dotnet pack "${arguments[@]}"
+
+      # What a site needs from the package, checked in the archive itself: the files that ship
+      # beside the code, both assemblies, the backoffice entry, and one version everywhere.
+      - name: Validate package
+        env:
+          PACKAGE_VERSION: ${{ inputs.package-version }}
+          RELEASE_TAG: ${{ inputs.release-tag }}
+        run: |
+          package="artifacts/TheBuilder.AppTranslations.$PACKAGE_VERSION.nupkg"
+          unzip -t "$package"
+          entries="$(unzip -Z1 "$package")"
+          nuspec="$(unzip -p "$package" TheBuilder.AppTranslations.nuspec)"
+          manifest="staticwebassets/App_Plugins/TheBuilder.AppTranslations/umbraco-package.json"
+
+          for entry in README.md LICENSE THIRD-PARTY-NOTICES.md \
+            lib/net10.0/TheBuilder.AppTranslations.dll lib/net10.0/TheBuilder.AppTranslations.Core.dll \
+            "$manifest" staticwebassets/App_Plugins/TheBuilder.AppTranslations/translations.js; do
+            grep -Fqx "$entry" <<< "$entries" || { echo "The package is missing $entry." >&2; exit 1; }
+          done
+          test "$(unzip -p "$package" "$manifest" | jq -r '.version')" = "$PACKAGE_VERSION"
+          grep -Fq "<version>$PACKAGE_VERSION</version>" <<< "$nuspec"
+          if [[ -n "$RELEASE_TAG" ]]; then
+            grep -Fq "<releaseNotes>https://github.com/thebuilder/umbraco-app-translations/releases/tag/$RELEASE_TAG</releaseNotes>" <<< "$nuspec"
+          fi
+
+      # Packing succeeds even when the nuspec names a dependency nuget.org does not have, which is
+      # how the Core project once became an unpublished package reference. Restoring the package
+      # into a fresh project, with nuget.org as the only other source, is what an installer does.
+      - name: Install into a fresh project
+        env:
+          PACKAGE_VERSION: ${{ inputs.package-version }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/consumer"
+          cat > "$RUNNER_TEMP/consumer/Consumer.csproj" <<EOF
+          <Project Sdk="Microsoft.NET.Sdk.Web">
+            <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+            <ItemGroup><PackageReference Include="TheBuilder.AppTranslations" Version="$PACKAGE_VERSION" /></ItemGroup>
+          </Project>
+          EOF
+          dotnet restore "$RUNNER_TEMP/consumer/Consumer.csproj" \
+            --source "$GITHUB_WORKSPACE/artifacts" --source https://api.nuget.org/v3/index.json
+
+      # The publish workflow pushes this exact file, so what is published is what was checked.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TheBuilder.AppTranslations-package
+          path: artifacts/*.nupkg
+          if-no-files-found: error

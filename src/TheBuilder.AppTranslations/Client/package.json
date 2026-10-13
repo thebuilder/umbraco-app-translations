@@ -9,6 +9,7 @@
     "fix": "ultracite fix",
     "generate-client": "node scripts/generate-openapi.js",
     "lint": "ultracite check",
+    "notices": "node scripts/third-party-notices.js",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "watch": "tsc && vite build --watch"

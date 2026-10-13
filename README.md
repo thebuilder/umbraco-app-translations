@@ -34,7 +34,7 @@ The package requires Umbraco 17.
    files, the languages to read, and the message syntax your application uses. **Test source** fetches it
    without saving anything; **Sync now** reads it in.
 
-4. Open the **Translation** section and start editing.
+4. Open the **App Translations** section and start editing.
 
 5. Point your application at the delivery endpoint, as described in
    [Using the translations in your application](#using-the-translations-in-your-application).
@@ -90,7 +90,7 @@ Only do that in development or a network you trust.
 
 ## Editing translations
 
-The **Translation** section lists every message, one row per key. Choose the language you are
+The **App Translations** section lists every message, one row per key. Choose the language you are
 editing and, if you like, a language to compare against. The ⇄ button between them swaps the two.
 The editor remembers the pair for the rest of the browser session.
 
@@ -108,8 +108,26 @@ The editor remembers the pair for the rest of the browser session.
 - **Default changed** marks custom text whose application default has changed since someone wrote
   it, so you can check it still fits.
 
-Anyone with access to the Translation section can edit. Administrators manage sources and the AI
-settings.
+Anyone with access to the App Translations section can edit. Administrators manage sources and the
+AI settings.
+
+### Who can open the section
+
+The package installs its own **App Translations** section and opens it to the user groups that can
+open Umbraco's **Translation** section, which on a new site are Administrators and Translators. To
+let more people edit, add the section to their user group in **Users > User groups**.
+
+### Umbraco's Translation section
+
+Umbraco's own **Translation** section holds only the Dictionary. On a site without Dictionary items
+it is a second, empty translation section next to App Translations, so the package hides it while
+the Dictionary is empty. As soon as the site has a Dictionary item, the section shows again.
+
+To show it on a site without Dictionary items, for example to start adding some, turn off **Hide
+while the Dictionary is empty** in **Settings > App translations**. The section comes back at once.
+
+Hiding it changes nothing in the user groups: the package leaves it out of the backoffice, so
+uninstalling the package brings it back.
 
 ## AI suggestions
 
@@ -275,3 +293,13 @@ pnpm --dir src/TheBuilder.AppTranslations/Client generate-client -- https://loca
 
 The sample documents the deployment sync API at
 `/umbraco/swagger/thebuilder-app-translations-automation/swagger.json`.
+
+`THIRD-PARTY-NOTICES.md` lists the npm packages the backoffice bundle includes, with their licenses.
+After changing the client's dependencies, run `pnpm build` and then `pnpm notices` to regenerate it;
+CI fails while it is out of date.
+
+[RELEASE.md](RELEASE.md) describes how to publish a release.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

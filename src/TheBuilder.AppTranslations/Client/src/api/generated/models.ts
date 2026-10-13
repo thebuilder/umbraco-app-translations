@@ -30,6 +30,8 @@ export type {
   SourceFormat,
   SourceRequestWritable as SourceRequest,
   SourceResponse as Source,
+  TranslationSectionRequest,
+  TranslationSectionResponse as TranslationSection,
   TranslationSourceTestResult as SourceTestResult,
   TranslationSyncResult as SyncResult,
 } from "../openapi/types.gen.js";

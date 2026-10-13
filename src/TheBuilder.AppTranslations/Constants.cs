@@ -3,6 +3,7 @@ namespace TheBuilder.AppTranslations;
 public static class Constants
 {
     public const string PackageName = "TheBuilder.AppTranslations";
+    public const string SectionAlias = "TheBuilder.AppTranslations.Section";
     public const string ApiName = "thebuilder-app-translations";
     public const string AutomationApiName = "thebuilder-app-translations-automation";
     public const string ApiRoot = "management/api/v{version:apiVersion}/app-translations";

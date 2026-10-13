@@ -5,12 +5,17 @@
     <PackageId>TheBuilder.AppTranslations</PackageId>
     <Product>App Translations</Product>
     <Title>App Translations</Title>
+    <!-- The local fallback. A release sets the version from its tag; see RELEASE.md. -->
     <Version>0.1.0</Version>
     <Authors>Daniel Schmidt</Authors>
     <Description>Manage application translation overrides from the Umbraco backoffice.</Description>
     <PackageTags>umbraco;translations;localization;next-intl;i18next;icu</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/thebuilder/umbraco-app-translations</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/thebuilder/umbraco-app-translations.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>See https://github.com/thebuilder/umbraco-app-translations/releases for release notes.</PackageReleaseNotes>
     <BackofficeClientDirectory>$(MSBuildProjectDirectory)/Client</BackofficeClientDirectory>
     <BackofficeAssetsPattern>wwwroot/App_Plugins/TheBuilder.AppTranslations/**/*</BackofficeAssetsPattern>
     <BackofficeAssetsDirectory>$(MSBuildProjectDirectory)/wwwroot/App_Plugins/TheBuilder.AppTranslations</BackofficeAssetsDirectory>
@@ -42,15 +47,18 @@
   <ItemGroup>
     <Content Remove="Client\**" />
     <Content Remove="wwwroot/App_Plugins/TheBuilder.AppTranslations/**/*" />
-    <None Include="Client\public\umbraco-package.json" Pack="false" />
+    <None Include="Client\umbraco-package.json" Pack="false" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
+    <None Include="..\..\THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot/App_Plugins/TheBuilder.AppTranslations/" />
     <InternalsVisibleTo Include="TheBuilder.AppTranslations.Tests" />
   </ItemGroup>
   <Target Name="BuildBackofficeAssetsForPack" Condition="'$(_IsPacking)' == 'true' and '$(NoBuild)' != 'true'">
-    <Exec Command="corepack pnpm build" WorkingDirectory="$(BackofficeClientDirectory)" />
+    <!-- The version goes in the manifest Umbraco reads, so the two cannot disagree. -->
+    <Exec Command="corepack pnpm build" WorkingDirectory="$(BackofficeClientDirectory)" EnvironmentVariables="PACKAGE_VERSION=$(Version)" />
   </Target>
   <Target Name="RefreshBackofficeStaticWebAssets" BeforeTargets="ResolveProjectStaticWebAssets" DependsOnTargets="BuildBackofficeAssetsForPack">
     <ItemGroup><Content Include="$(BackofficeAssetsPattern)" /></ItemGroup>

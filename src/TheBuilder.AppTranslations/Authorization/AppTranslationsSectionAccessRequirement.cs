@@ -4,14 +4,14 @@ using Umbraco.Extensions;
 
 namespace TheBuilder.AppTranslations.Authorization;
 
-internal sealed class TranslationSectionAccessRequirement : IAuthorizationRequirement;
+internal sealed class AppTranslationsSectionAccessRequirement : IAuthorizationRequirement;
 
-internal sealed class TranslationSectionAccessHandler(IBackOfficeSecurityAccessor securityAccessor)
-    : AuthorizationHandler<TranslationSectionAccessRequirement>
+internal sealed class AppTranslationsSectionAccessHandler(IBackOfficeSecurityAccessor securityAccessor)
+    : AuthorizationHandler<AppTranslationsSectionAccessRequirement>
 {
-    internal const string SectionAlias = "translation";
+    internal const string SectionAlias = Constants.SectionAlias;
 
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, TranslationSectionAccessRequirement requirement)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, AppTranslationsSectionAccessRequirement requirement)
     {
 #pragma warning disable CS0618 // Management API bearer requests expose allowed sections through this Umbraco claims API, not IUser.
         if (context.User.Identities.Any(identity => identity.GetAllowedApplications().Contains(SectionAlias, StringComparer.Ordinal)))

@@ -1,5 +1,5 @@
-using System.Text.Json;
 using System.Text.Json.Serialization;
+using TheBuilder.AppTranslations.Configuration;
 using Umbraco.Cms.Core.Services;
 
 namespace TheBuilder.AppTranslations.Assistant;
@@ -25,34 +25,6 @@ public sealed record AssistantSettings(bool Enabled, Guid? ProfileId, string? In
         string.IsNullOrWhiteSpace(Instructions) ? AssistantPrompts.DefaultInstructions : Instructions;
 }
 
-/// <summary>
-/// Kept in Umbraco's own key-value store: one small record edited from the settings dashboard needs
-/// no table of its own, and the store already travels with the database the rest of the site uses.
-/// </summary>
+/// <summary>An unset or unreadable value turns the assistant off, the safe way to be wrong.</summary>
 public sealed class AssistantSettingsStore(IKeyValueService keyValues)
-{
-    private const string StoreKey = Constants.PackageName + ".Assistant";
-
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
-
-    public AssistantSettings Get()
-    {
-        var stored = keyValues.GetValue(StoreKey);
-        if (string.IsNullOrEmpty(stored))
-            return AssistantSettings.Default;
-
-        try
-        {
-            return JsonSerializer.Deserialize<AssistantSettings>(stored, Json) ?? AssistantSettings.Default;
-        }
-        catch (JsonException)
-        {
-            // Something else wrote the key, or a later version did and this one is reading it back.
-            // Falling back to the defaults turns the assistant off, which is safer than guessing what was meant.
-            return AssistantSettings.Default;
-        }
-    }
-
-    public void Save(AssistantSettings settings) =>
-        keyValues.SetValue(StoreKey, JsonSerializer.Serialize(settings, Json));
-}
+    : KeyValueSettingsStore<AssistantSettings>(keyValues, Constants.PackageName + ".Assistant", AssistantSettings.Default);

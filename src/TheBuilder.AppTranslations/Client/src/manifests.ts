@@ -1,15 +1,26 @@
 import type { ManifestDashboard } from "@umbraco-cms/backoffice/dashboard";
-import type { ManifestSectionView } from "@umbraco-cms/backoffice/section";
-import { UMB_TRANSLATION_SECTION_ALIAS } from "@umbraco-cms/backoffice/translation";
-import { editorViewPathname } from "./translation-section.js";
+import type { ManifestSection, ManifestSectionView } from "@umbraco-cms/backoffice/section";
+
+/** The package's own section. Matches `Constants.SectionAlias`, which user groups are granted. */
+const sectionAlias = "TheBuilder.AppTranslations.Section";
+
+const sectionManifest: ManifestSection = {
+  type: "section",
+  alias: sectionAlias,
+  name: "App Translations Section",
+  // Just after Umbraco's Translation section (400), where a site that keeps it will look.
+  weight: 390,
+  meta: { label: "App Translations", pathname: "app-translations" },
+  conditions: [{ alias: "Umb.Condition.SectionUserPermission", match: sectionAlias }],
+};
 
 const editorManifest: ManifestSectionView = {
   type: "sectionView",
   alias: "TheBuilder.AppTranslations.SectionView",
   name: "App Translations Editor",
   element: () => import("./editor/editor-host.element.js"),
-  meta: { label: "App translations", pathname: editorViewPathname, icon: "icon-globe" },
-  conditions: [{ alias: "Umb.Condition.SectionAlias", match: UMB_TRANSLATION_SECTION_ALIAS }],
+  meta: { label: "App translations", pathname: "overview", icon: "icon-globe" },
+  conditions: [{ alias: "Umb.Condition.SectionAlias", match: sectionAlias }],
 };
 
 const settingsManifest: ManifestDashboard = {
@@ -24,4 +35,8 @@ const settingsManifest: ManifestDashboard = {
   ],
 };
 
-export const extensionManifests: UmbExtensionManifest[] = [editorManifest, settingsManifest];
+export const extensionManifests: UmbExtensionManifest[] = [
+  sectionManifest,
+  editorManifest,
+  settingsManifest,
+];

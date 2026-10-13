@@ -1,12 +1,9 @@
-import { umbExtensionsRegistry } from "@umbraco-cms/backoffice/extension-registry";
 import { manifests as entrypointManifests } from "./entrypoints/manifest.js";
 import { extensionManifests } from "./manifests.js";
-import { replacedExtensions } from "./translation-section.js";
+import { conditionTranslationSection } from "./translation-section.js";
 
-// When Umbraco evaluates the bundle, before it registers what the bundle exports, so that the
-// Translation section never sees the editor and the UI it replaces side by side.
-for (const alias of replacedExtensions) {
-  umbExtensionsRegistry.exclude(alias);
-}
+// When Umbraco evaluates the bundle, before the header renders, so that Umbraco's Translation
+// section waits for the package's answer instead of showing first and disappearing after.
+conditionTranslationSection();
 
 export const manifests: UmbExtensionManifest[] = [...entrypointManifests, ...extensionManifests];

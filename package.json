@@ -10,6 +10,7 @@
     "deadcode": "fallow dead-code",
     "check": "pnpm typecheck && pnpm lint && pnpm deadcode",
     "test": "pnpm --dir src/TheBuilder.AppTranslations/Client test",
+    "notices": "pnpm --dir src/TheBuilder.AppTranslations/Client notices",
     "audit-changes": "fallow audit --base main"
   },
   "devDependencies": {
