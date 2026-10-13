@@ -160,6 +160,22 @@ jobs:
       - name: Pack
         run: dotnet pack src/TheBuilder.AppTranslations/TheBuilder.AppTranslations.csproj -c Release -o artifacts
 
+      # Packing succeeds even when the nuspec names a dependency nuget.org does not have, which is
+      # how the Core project once became an unpublished package reference. Restoring the package
+      # into a fresh project, with nuget.org as the only other source, is what an installer does.
+      - name: Install into a fresh project
+        run: |
+          version=$(ls artifacts/TheBuilder.AppTranslations.*.nupkg | sed -E 's|.*/TheBuilder\.AppTranslations\.(.*)\.nupkg|\1|')
+          mkdir -p "$RUNNER_TEMP/consumer"
+          cat > "$RUNNER_TEMP/consumer/Consumer.csproj" <<EOF
+          <Project Sdk="Microsoft.NET.Sdk.Web">
+            <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+            <ItemGroup><PackageReference Include="TheBuilder.AppTranslations" Version="$version" /></ItemGroup>
+          </Project>
+          EOF
+          dotnet restore "$RUNNER_TEMP/consumer/Consumer.csproj" \
+            --source "$GITHUB_WORKSPACE/artifacts" --source https://api.nuget.org/v3/index.json
+
       - uses: actions/upload-artifact@v4
         with:
           name: nupkg

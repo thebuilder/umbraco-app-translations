@@ -16,9 +16,14 @@
     <BackofficeAssetsDirectory>$(MSBuildProjectDirectory)/wwwroot/App_Plugins/TheBuilder.AppTranslations</BackofficeAssetsDirectory>
     <BackofficeManifest>$(BackofficeAssetsDirectory)/umbraco-package.json</BackofficeManifest>
     <BackofficeEntryPoint>$(BackofficeAssetsDirectory)/translations.js</BackofficeEntryPoint>
+    <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeCoreInPackage</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" />
+    <!-- Core ships inside this package rather than as a package of its own, so it is private here
+         and IncludeCoreInPackage puts its assembly in lib/. Without that, the nuspec lists a
+         TheBuilder.AppTranslations.Core dependency that nuget.org does not have, and install fails.
+         Core's one dependency, Microsoft.Extensions.Http, already comes with Umbraco.Cms.Web.Website. -->
+    <ProjectReference Include="../TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" PrivateAssets="all" />
     <PackageReference Include="Umbraco.AI" />
     <!-- Not used directly. Umbraco.AI's SQLite persistence brings in 2.1.11, which has a known
          high-severity vulnerability (GHSA-2m69-gcr7-jv3q); referencing the fixed version here lifts
@@ -53,5 +58,10 @@
   <Target Name="ValidateBackofficeAssetsForPack" BeforeTargets="IncludeStaticWebAssetsPackItems" Condition="'$(_IsPacking)' == 'true'">
     <Error Condition="!Exists('$(BackofficeManifest)')" Text="Cannot pack TheBuilder.AppTranslations because the backoffice manifest is missing." />
     <Error Condition="!Exists('$(BackofficeEntryPoint)')" Text="Cannot pack TheBuilder.AppTranslations because the backoffice entry point is missing." />
+  </Target>
+  <Target Name="IncludeCoreInPackage" DependsOnTargets="ResolveReferences">
+    <ItemGroup>
+      <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference' and '%(ReferenceCopyLocalPaths.Extension)' == '.dll'" />
+    </ItemGroup>
   </Target>
 </Project>

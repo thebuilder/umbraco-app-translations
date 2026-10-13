@@ -12,5 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/TheBuilder.AppTranslations/TheBuilder.AppTranslations.csproj" />
+    <!-- Direct, because the package keeps Core private to ship it inside itself. -->
+    <ProjectReference Include="../../src/TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" />
   </ItemGroup>
 </Project>
