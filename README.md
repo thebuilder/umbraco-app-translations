@@ -293,3 +293,13 @@ pnpm --dir src/TheBuilder.AppTranslations/Client generate-client -- https://loca
 
 The sample documents the deployment sync API at
 `/umbraco/swagger/thebuilder-app-translations-automation/swagger.json`.
+
+`THIRD-PARTY-NOTICES.md` lists the npm packages the backoffice bundle includes, with their licenses.
+After changing the client's dependencies, run `pnpm build` and then `pnpm notices` to regenerate it;
+CI fails while it is out of date.
+
+[RELEASE.md](RELEASE.md) describes how to publish a release.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
