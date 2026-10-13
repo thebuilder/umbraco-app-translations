@@ -136,10 +136,11 @@ With [Umbraco.AI](https://docs.umbraco.com/umbraco-ai) set up, the editor can tr
 from the language you are comparing against. It can also improve, simplify or shorten the text in
 the field, or fix its spelling.
 
+Suggestions need Umbraco.AI 17.5 or later, which needs Umbraco 17.5 or later. This package does not
+install Umbraco.AI for you. It comes with the provider package you install in step 1. Until the
+site has it, the AI assistant card says what to install.
+
 1. Install an Umbraco.AI provider package for your Umbraco version, for example `Umbraco.AI.OpenAI`.
-   It installs Umbraco.AI, which suggestions need in version 17.5 or later, so they start at
-   Umbraco 17.5. This package does not depend on Umbraco.AI. Without it, the AI assistant card
-   says what to install instead of offering the setting.
 2. In the **AI** section, add a connection and a chat profile. Put brand voice and tone on the
    profile as contexts. They apply to every suggestion.
 3. In **Settings > App translations**, turn on **Offer in the editor** in the AI assistant card and
