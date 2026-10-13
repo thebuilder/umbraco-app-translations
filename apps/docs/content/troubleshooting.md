@@ -16,7 +16,7 @@ The locale or namespace does not match what Umbraco stores.
 
 ## An edit does not show up in the application
 
-The endpoints allow caching for 60 seconds, and your application may cache on top of that. Wait a minute, or subscribe to the [App translations updated webhook](/syncing#telling-your-application-something-changed) and drop the cache when it fires. Also check that the application asks `overrides` or `all` for the language you edited.
+Responses from the delivery endpoints may be cached for 60 seconds, and your application may cache on top of that. Wait a minute, or subscribe to the [App translations updated webhook](/syncing#telling-your-application-something-changed) and drop the cache when it fires. Also check that the application asks `overrides` or `all` for the language you edited.
 
 ## The delivery endpoint returns `401`
 

@@ -166,8 +166,8 @@ custom text in place of the application's text wherever an editor wrote some.
 GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website&format=next-intl
 ```
 
-Both endpoints answer with an ETag, so a client that sends `If-None-Match` gets `304 Not Modified`
-until something changes. They allow caching for 60 seconds.
+Both endpoints send an ETag with every response, so a client that sends `If-None-Match` gets
+`304 Not Modified` until something changes. Responses may be cached for 60 seconds.
 
 The endpoints are public until you set `TheBuilder:AppTranslations:Delivery:ApiKey`. With a key set,
 a request needs it in an `Api-Key` header or as a bearer token, and gets `401` without it. **Settings > App translations** lists the exact URL for each language and

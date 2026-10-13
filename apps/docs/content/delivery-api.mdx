@@ -110,7 +110,7 @@ Umbraco never converts text between ICU and i18next syntax, so keep each namespa
 
 ## Caching
 
-Both endpoints answer with an ETag, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes. They allow caching for 60 seconds, so an edit can take up to a minute to reach a client that caches. To drop a cached dictionary the moment it changes, subscribe to the [App translations updated webhook](/syncing#telling-your-application-something-changed).
+Both endpoints send an ETag with every response, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes. Responses may be cached for 60 seconds, so an edit can take up to a minute to reach a client that caches. To drop a cached dictionary the moment it changes, subscribe to the [App translations updated webhook](/syncing#telling-your-application-something-changed).
 
 ## Access
 
@@ -120,7 +120,7 @@ The endpoints are public, which suits most sites: the text ends up in the applic
 TheBuilder__AppTranslations__Delivery__ApiKey=replace-with-a-long-random-value
 ```
 
-A request then needs the key in an `Api-Key` header, as Umbraco's own Delivery API expects, or as a bearer token, and gets `401` without it. A keyed answer is cached as private, so a CDN does not hand it to anyone else. Keep the key on the server side of your application, never in code that runs in the browser.
+A request then needs the key in an `Api-Key` header, as Umbraco's own Delivery API expects, or as a bearer token, and gets `401` without it. A response to a keyed request is marked private, so a CDN does not hand it to anyone else. Keep the key on the server side of your application, never in code that runs in the browser.
 
 ## Responses
 
