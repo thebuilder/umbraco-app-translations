@@ -1,7 +1,7 @@
 {
   "name": "thebuilder-app-translations-workspace",
   "private": true,
-  "packageManager": "pnpm@11.13.0",
+  "packageManager": "pnpm@11.13.1",
   "scripts": {
     "build": "pnpm --dir src/TheBuilder.AppTranslations/Client build",
     "docs:dev": "pnpm --filter @thebuilder/app-translations-docs dev",
