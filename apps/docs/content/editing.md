@@ -7,6 +7,8 @@ seo:
 
 The **App Translations** section lists every message, one row per key. Choose the language you are editing and, if you like, a language to compare against. The ⇄ button between them swaps the two. The editor remembers the pair for the rest of the browser session.
 
+![The editor with Danish against English, and the greeting open: custom Danish text with its {name} placeholder highlighted, the default text under it, and Save](./screenshots/editor.png)
+
 ## Finding a message
 
 - Search finds text in any language, and keys.

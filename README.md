@@ -295,7 +295,9 @@ The sample documents the deployment sync API at
 `/umbraco/swagger/thebuilder-app-translations-automation/swagger.json`.
 
 The documentation site lives in `apps/docs` and is built with Blume. `pnpm docs:dev` serves it
-with hot reload, and `pnpm docs:build` builds it as CI does.
+with hot reload, and `pnpm docs:build` builds it as CI does. With the sample running,
+`pnpm docs:screenshots` retakes the backoffice screenshots the docs use; set `UMBRACO_URL` if the
+sample is not at `https://localhost:44389`.
 
 `THIRD-PARTY-NOTICES.md` lists the npm packages the backoffice bundle includes, with their licenses.
 After changing the client's dependencies, run `pnpm build` and then `pnpm notices` to regenerate it;

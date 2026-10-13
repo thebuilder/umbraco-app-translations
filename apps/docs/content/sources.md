@@ -21,6 +21,8 @@ Umbraco's language codes carry a region, such as `en-US`, but many applications 
 
 ## Settings
 
+![A source's settings: its name, the URL with a {locale} placeholder, request headers, the Umbraco languages it supplies, the catalogue format, namespace and message syntax](./screenshots/source-editor.png)
+
 - **Message syntax.** ICU messages, as next-intl and FormatJS use them, i18next JSON v4, or plain text. The editor checks every change against the syntax, so an edit cannot break a placeholder or a plural.
 - **Namespace handling.** Use the first key of the JSON as the namespace, or put every message in one namespace you name. The namespace is part of the delivery URL.
 - **Advanced.** The source identifier for [deployment-triggered sync](/syncing#syncing-from-a-deployment), a request timeout, and the largest response the source accepts.

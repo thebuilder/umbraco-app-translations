@@ -21,6 +21,8 @@ Umbraco reads your application's translation files over HTTP, one file per langu
 
 In Umbraco, go to **Settings > App translations** and add a source. A source holds the URL of the files, the languages to read, and the message syntax your application uses.
 
+![Settings > App translations, with one source and the delivery URL for Danish](./screenshots/settings.png)
+
 - **Test source** fetches the files without saving anything.
 - **Sync now** reads them in.
 
