@@ -278,6 +278,16 @@ export type TranslationParserOptions = {
     sourceFormat: SourceFormat;
 };
 
+export type TranslationSectionRequest = {
+    hideWhileDictionaryIsEmpty: boolean;
+};
+
+export type TranslationSectionResponse = {
+    hideWhileDictionaryIsEmpty: boolean;
+    hasDictionaryItems: boolean;
+    hidden: boolean;
+};
+
 export type TranslationSourceMessage = {
     namespace: string;
     key: string;
@@ -1041,3 +1051,53 @@ export type SourcesTestSourceConfigurationResponses = {
 };
 
 export type SourcesTestSourceConfigurationResponse = SourcesTestSourceConfigurationResponses[keyof SourcesTestSourceConfigurationResponses];
+
+export type TranslationSectionGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/umbraco/management/api/v1/app-translations/translation-section';
+};
+
+export type TranslationSectionGetErrors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+};
+
+export type TranslationSectionGetResponses = {
+    /**
+     * OK
+     */
+    200: TranslationSectionResponse;
+};
+
+export type TranslationSectionGetResponse = TranslationSectionGetResponses[keyof TranslationSectionGetResponses];
+
+export type TranslationSectionSaveData = {
+    body?: TranslationSectionRequest;
+    path?: never;
+    query?: never;
+    url: '/umbraco/management/api/v1/app-translations/translation-section';
+};
+
+export type TranslationSectionSaveErrors = {
+    /**
+     * The resource is protected and requires an authentication token
+     */
+    401: unknown;
+    /**
+     * The authenticated user does not have access to this resource
+     */
+    403: unknown;
+};
+
+export type TranslationSectionSaveResponses = {
+    /**
+     * OK
+     */
+    200: TranslationSectionResponse;
+};
+
+export type TranslationSectionSaveResponse = TranslationSectionSaveResponses[keyof TranslationSectionSaveResponses];

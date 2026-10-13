@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AssistantGetSettingsData, AssistantGetSettingsErrors, AssistantGetSettingsResponses, AssistantGetStatusData, AssistantGetStatusErrors, AssistantGetStatusResponses, AssistantSaveSettingsData, AssistantSaveSettingsErrors, AssistantSaveSettingsResponses, AssistantSuggestData, AssistantSuggestErrors, AssistantSuggestResponses, HealthGetHealthData, HealthGetHealthErrors, HealthGetHealthResponses, MessageKeysListMessageKeyIdsData, MessageKeysListMessageKeyIdsErrors, MessageKeysListMessageKeyIdsResponses, MessageKeysListMessageKeysData, MessageKeysListMessageKeysErrors, MessageKeysListMessageKeysResponses, MessagesGetMessageData, MessagesGetMessageErrors, MessagesGetMessageFacetsData, MessagesGetMessageFacetsErrors, MessagesGetMessageFacetsResponses, MessagesGetMessageResponses, MessagesListMessagesData, MessagesListMessagesErrors, MessagesListMessagesResponses, MessagesResetOverrideData, MessagesResetOverrideErrors, MessagesResetOverrideResponses, MessagesSaveOverrideData, MessagesSaveOverrideErrors, MessagesSaveOverrideResponses, PermissionsGetPermissionsData, PermissionsGetPermissionsErrors, PermissionsGetPermissionsResponses, SourcesCreateSourceData, SourcesCreateSourceErrors, SourcesCreateSourceResponses, SourcesDeleteSourceData, SourcesDeleteSourceErrors, SourcesDeleteSourceResponses, SourcesGetSourceData, SourcesGetSourceErrors, SourcesGetSourceResponses, SourcesListSourcesData, SourcesListSourcesErrors, SourcesListSourcesResponses, SourcesListSourceSyncsData, SourcesListSourceSyncsErrors, SourcesListSourceSyncsResponses, SourcesSyncSourceData, SourcesSyncSourceErrors, SourcesSyncSourceResponses, SourcesTestSourceConfigurationData, SourcesTestSourceConfigurationErrors, SourcesTestSourceConfigurationResponses, SourcesTestSourceData, SourcesTestSourceErrors, SourcesTestSourceResponses, SourcesUpdateSourceData, SourcesUpdateSourceErrors, SourcesUpdateSourceResponses } from './types.gen';
+import type { AssistantGetSettingsData, AssistantGetSettingsErrors, AssistantGetSettingsResponses, AssistantGetStatusData, AssistantGetStatusErrors, AssistantGetStatusResponses, AssistantSaveSettingsData, AssistantSaveSettingsErrors, AssistantSaveSettingsResponses, AssistantSuggestData, AssistantSuggestErrors, AssistantSuggestResponses, HealthGetHealthData, HealthGetHealthErrors, HealthGetHealthResponses, MessageKeysListMessageKeyIdsData, MessageKeysListMessageKeyIdsErrors, MessageKeysListMessageKeyIdsResponses, MessageKeysListMessageKeysData, MessageKeysListMessageKeysErrors, MessageKeysListMessageKeysResponses, MessagesGetMessageData, MessagesGetMessageErrors, MessagesGetMessageFacetsData, MessagesGetMessageFacetsErrors, MessagesGetMessageFacetsResponses, MessagesGetMessageResponses, MessagesListMessagesData, MessagesListMessagesErrors, MessagesListMessagesResponses, MessagesResetOverrideData, MessagesResetOverrideErrors, MessagesResetOverrideResponses, MessagesSaveOverrideData, MessagesSaveOverrideErrors, MessagesSaveOverrideResponses, PermissionsGetPermissionsData, PermissionsGetPermissionsErrors, PermissionsGetPermissionsResponses, SourcesCreateSourceData, SourcesCreateSourceErrors, SourcesCreateSourceResponses, SourcesDeleteSourceData, SourcesDeleteSourceErrors, SourcesDeleteSourceResponses, SourcesGetSourceData, SourcesGetSourceErrors, SourcesGetSourceResponses, SourcesListSourcesData, SourcesListSourcesErrors, SourcesListSourcesResponses, SourcesListSourceSyncsData, SourcesListSourceSyncsErrors, SourcesListSourceSyncsResponses, SourcesSyncSourceData, SourcesSyncSourceErrors, SourcesSyncSourceResponses, SourcesTestSourceConfigurationData, SourcesTestSourceConfigurationErrors, SourcesTestSourceConfigurationResponses, SourcesTestSourceData, SourcesTestSourceErrors, SourcesTestSourceResponses, SourcesUpdateSourceData, SourcesUpdateSourceErrors, SourcesUpdateSourceResponses, TranslationSectionGetData, TranslationSectionGetErrors, TranslationSectionGetResponses, TranslationSectionSaveData, TranslationSectionSaveErrors, TranslationSectionSaveResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -303,6 +303,34 @@ export class TranslationsService {
                     type: 'http'
                 }],
             url: '/umbraco/management/api/v1/app-translations/sources/test',
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options?.headers
+            }
+        });
+    }
+    
+    public static translationSectionGet<ThrowOnError extends boolean = false>(options?: Options<TranslationSectionGetData, ThrowOnError>): RequestResult<TranslationSectionGetResponses, TranslationSectionGetErrors, ThrowOnError> {
+        return (options?.client ?? client).get<TranslationSectionGetResponses, TranslationSectionGetErrors, ThrowOnError>({
+            security: [{
+                    key: 'Backoffice-User',
+                    scheme: 'bearer',
+                    type: 'http'
+                }],
+            url: '/umbraco/management/api/v1/app-translations/translation-section',
+            ...options
+        });
+    }
+    
+    public static translationSectionSave<ThrowOnError extends boolean = false>(options?: Options<TranslationSectionSaveData, ThrowOnError>): RequestResult<TranslationSectionSaveResponses, TranslationSectionSaveErrors, ThrowOnError> {
+        return (options?.client ?? client).put<TranslationSectionSaveResponses, TranslationSectionSaveErrors, ThrowOnError>({
+            security: [{
+                    key: 'Backoffice-User',
+                    scheme: 'bearer',
+                    type: 'http'
+                }],
+            url: '/umbraco/management/api/v1/app-translations/translation-section',
             ...options,
             headers: {
                 'Content-Type': 'application/json',

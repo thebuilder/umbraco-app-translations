@@ -32,6 +32,7 @@ import {
 import { assistantDraft } from "./assistant-settings.element.js";
 import "./output-api.element.js";
 import "./source-editor.element.js";
+import "./translation-section-settings.element.js";
 
 /** The characters an alias may use, so it can sit in a URL path without escaping. */
 const SOURCE_ALIAS = /^[a-z0-9._~-]+$/;
@@ -585,6 +586,7 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
                 </thebuilder-app-translations-assistant-settings>`
               : null
           }
+          <thebuilder-app-translations-translation-section-settings></thebuilder-app-translations-translation-section-settings>
         `;
   }
 

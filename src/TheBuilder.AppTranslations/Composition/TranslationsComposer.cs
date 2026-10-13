@@ -15,6 +15,7 @@ using TheBuilder.AppTranslations.Persistence;
 using TheBuilder.AppTranslations.Webhooks;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Notifications;
 using Umbraco.Extensions;
 
 namespace TheBuilder.AppTranslations.Composition;
@@ -39,7 +40,7 @@ public sealed class TranslationsComposer : IComposer
         builder.Services.AddAuthorization(ConfigurePolicies);
         builder.Services.AddSingleton<DeploymentSyncApiKeyAuthenticator>();
         builder.Services.AddSingleton<IAuthorizationHandler, BackofficeAdministratorHandler>();
-        builder.Services.AddSingleton<IAuthorizationHandler, TranslationSectionAccessHandler>();
+        builder.Services.AddSingleton<IAuthorizationHandler, AppTranslationsSectionAccessHandler>();
         builder.Services.AddSingleton(TimeProvider.System);
         builder.Services.AddSingleton<IMessageFormatValidator, MessageFormatValidator>();
         // The concrete parsers are registered as themselves; only the one that chooses between them
@@ -66,12 +67,15 @@ public sealed class TranslationsComposer : IComposer
         builder.Services.AddScoped<IAssistantChat, UmbracoAiAssistantChat>();
         builder.Services.AddScoped<AssistantSettingsStore>();
         builder.Services.AddScoped<TranslationAssistant>();
+        builder.Services.AddScoped<TranslationSectionSettingsStore>();
+        builder.Services.AddScoped<DictionaryPresence>();
+        builder.AddNotificationHandler<DictionaryCacheRefresherNotification, DictionaryPresenceInvalidator>();
     }
 
     private static void ConfigurePolicies(AuthorizationOptions options)
     {
-        options.AddPolicy(TranslationPolicies.View, policy => policy.RequireAuthenticatedUser().AddRequirements(new TranslationSectionAccessRequirement()));
-        options.AddPolicy(TranslationPolicies.Edit, policy => policy.RequireAuthenticatedUser().AddRequirements(new TranslationSectionAccessRequirement()));
+        options.AddPolicy(TranslationPolicies.View, policy => policy.RequireAuthenticatedUser().AddRequirements(new AppTranslationsSectionAccessRequirement()));
+        options.AddPolicy(TranslationPolicies.Edit, policy => policy.RequireAuthenticatedUser().AddRequirements(new AppTranslationsSectionAccessRequirement()));
         options.AddPolicy(TranslationPolicies.ManageSources, policy => policy.RequireAuthenticatedUser().AddRequirements(new BackofficeAdministratorRequirement()));
         options.AddPolicy(TranslationPolicies.Sync, policy => policy.RequireAuthenticatedUser().AddRequirements(new BackofficeAdministratorRequirement()));
     }

@@ -9,6 +9,7 @@ import type {
   OverrideRequest,
   ResetOverrideRequest,
   SourceRequest,
+  TranslationSectionRequest,
 } from "./models.js";
 
 interface ApiConfiguration {
@@ -40,6 +41,10 @@ export const api = {
   /** Text for one translation, already validated like a save. Nothing is written. */
   suggest: (body: AssistantSuggestionRequest, signal?: AbortSignal) =>
     unwrap(TranslationsService.assistantSuggest({ ...requestOptions, body, signal })),
+  /** Whether Umbraco's Translation section is hidden, the setting behind it, and the Dictionary's part. */
+  translationSection: () => unwrap(TranslationsService.translationSectionGet(requestOptions)),
+  saveTranslationSection: (body: TranslationSectionRequest) =>
+    unwrap(TranslationsService.translationSectionSave({ ...requestOptions, body })),
   facets: (signal?: AbortSignal) =>
     unwrap(TranslationsService.messagesGetMessageFacets({ ...requestOptions, signal })),
   permissions: (signal?: AbortSignal) =>

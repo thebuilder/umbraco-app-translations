@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useUrlFilters } from "./use-url-filters.js";
 
 beforeEach(() => {
-  history.replaceState(null, "", "/umbraco/section/translation/view/overview");
+  history.replaceState(null, "", "/umbraco/section/app-translations/view/overview");
   sessionStorage.clear();
 });
 afterEach(() => {
@@ -59,14 +59,14 @@ describe("useUrlFilters", () => {
   });
 
   it("writes the pathname back verbatim", async () => {
-    history.replaceState(null, "", "/umbraco/section/translation/view/overview");
+    history.replaceState(null, "", "/umbraco/section/app-translations/view/overview");
     const { result } = renderHook(() => useUrlFilters());
 
     act(() => result.current[1]({ locale: "da-DK" }));
     await waitFor(() => expect(location.search).toContain("locale=da-DK"));
 
     // Rebuilding the path is how you end up fighting the backoffice router.
-    expect(location.pathname).toBe("/umbraco/section/translation/view/overview");
+    expect(location.pathname).toBe("/umbraco/section/app-translations/view/overview");
   });
 
   it("picks up a filter change from the back button", async () => {
