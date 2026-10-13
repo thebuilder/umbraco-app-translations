@@ -5,6 +5,8 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
 using TheBuilder.AppTranslations.Authorization;
 using TheBuilder.AppTranslations.Configuration;
 using TheBuilder.AppTranslations.Core.Output;
@@ -79,18 +81,36 @@ public sealed class TranslationOutputController(
                 return Conflict(exception.Message);
             }
             response = new CachedDeliveryResponse(json, $"\"{Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(json))).ToLowerInvariant()}\"");
-            // Only responses with messages in them. Anyone can ask for a locale or namespace that
-            // does not exist, and keeping each of those would let them fill the server's memory.
-            if (namespaceMessages.Count > 0)
+            // Only responses with messages in them, asked for by the spelling the messages are stored
+            // under. Anyone can ask for a locale or namespace that does not exist, and on a
+            // case-insensitive database for every casing of one that does; keeping each of those
+            // would let them fill the server's memory. Other spellings are still served, just
+            // built each time.
+            if (namespaceMessages.Count > 0 &&
+                string.Equals(namespaceMessages[0].Message.Identity.Locale, locale, StringComparison.Ordinal) &&
+                string.Equals(namespaceMessages[0].Message.Identity.Namespace, messageNamespace, StringComparison.Ordinal))
                 cache.Store(key, response, generation);
         }
 
         // On the 304 too: a revalidated response carries the same validator and caching rules.
         Response.Headers.ETag = response.ETag;
         Response.Headers.CacheControl = CacheControl(access, options.Value.MaxAgeSeconds);
-        if (Request.Headers.IfNoneMatch.Contains(response.ETag))
+        if (Matches(Request.Headers.IfNoneMatch, response.ETag))
             return StatusCode(StatusCodes.Status304NotModified);
         return Content(response.Json, "application/json", Encoding.UTF8);
+    }
+
+    /// <summary>
+    /// Whether <c>If-None-Match</c> names this response, compared the way HTTP says to: weakly, so a
+    /// proxy that compressed the response and weakened its ETag to <c>W/"..."</c> still gets a 304,
+    /// against every tag in the list, and with <c>*</c> matching anything.
+    /// </summary>
+    internal static bool Matches(StringValues ifNoneMatch, string etag)
+    {
+        if (!EntityTagHeaderValue.TryParseList(ifNoneMatch, out var tags))
+            return false;
+        var current = new EntityTagHeaderValue(etag);
+        return tags.Any(tag => tag.Equals(EntityTagHeaderValue.Any) || tag.Compare(current, useStrongComparison: false));
     }
 
     /// <summary>

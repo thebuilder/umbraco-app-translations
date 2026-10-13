@@ -116,7 +116,7 @@ public sealed class TranslationOutputControllerTests
     public async Task A_repeat_request_is_served_without_reading_the_database_again()
     {
         var repository = new CountingRepository();
-        var cache = new DeliveryResponseCache();
+        var cache = new DeliveryResponseCache(TimeProvider.System);
 
         var first = Assert.IsType<ContentResult>(await Create(repository, cache: cache).GetAll("en", "website", cancellationToken: CancellationToken.None));
         var second = Assert.IsType<ContentResult>(await Create(repository, cache: cache).GetAll("en", "website", cancellationToken: CancellationToken.None));
@@ -129,7 +129,7 @@ public sealed class TranslationOutputControllerTests
     public async Task A_cleared_cache_reads_the_database_again()
     {
         var repository = new CountingRepository();
-        var cache = new DeliveryResponseCache();
+        var cache = new DeliveryResponseCache(TimeProvider.System);
 
         await Create(repository, cache: cache).GetAll("en", "website", cancellationToken: CancellationToken.None);
         cache.Clear();
@@ -142,7 +142,7 @@ public sealed class TranslationOutputControllerTests
     public async Task A_response_with_no_messages_is_not_kept()
     {
         var repository = new CountingRepository(empty: true);
-        var cache = new DeliveryResponseCache();
+        var cache = new DeliveryResponseCache(TimeProvider.System);
 
         await Create(repository, cache: cache).GetAll("xx", "made-up", cancellationToken: CancellationToken.None);
         await Create(repository, cache: cache).GetAll("xx", "made-up", cancellationToken: CancellationToken.None);
@@ -154,7 +154,7 @@ public sealed class TranslationOutputControllerTests
     public async Task Overrides_and_all_are_kept_apart()
     {
         var repository = new CountingRepository();
-        var cache = new DeliveryResponseCache();
+        var cache = new DeliveryResponseCache(TimeProvider.System);
 
         await Create(repository, cache: cache).GetAll("en", "website", cancellationToken: CancellationToken.None);
         await Create(repository, cache: cache).GetOverrides("en", "website", cancellationToken: CancellationToken.None);
@@ -166,7 +166,7 @@ public sealed class TranslationOutputControllerTests
     public async Task A_revalidation_answers_304_with_the_same_validator_and_caching_rules()
     {
         var repository = new CountingRepository();
-        var cache = new DeliveryResponseCache();
+        var cache = new DeliveryResponseCache(TimeProvider.System);
         var first = Create(repository, cache: cache);
         await first.GetAll("en", "website", cancellationToken: CancellationToken.None);
         var etag = first.Response.Headers.ETag.ToString();
@@ -177,6 +177,47 @@ public sealed class TranslationOutputControllerTests
         Assert.Equal(StatusCodes.Status304NotModified, Assert.IsType<StatusCodeResult>(result).StatusCode);
         Assert.Equal(etag, second.Response.Headers.ETag.ToString());
         Assert.Equal("public,max-age=60", second.Response.Headers.CacheControl.ToString());
+    }
+
+    [Fact]
+    public async Task Another_spelling_of_a_stored_locale_is_served_but_not_kept()
+    {
+        // On a case-insensitive database, DA-DK finds the rows stored under da-DK.
+        var repository = new CountingRepository(storedLocale: "da-DK");
+        var cache = new DeliveryResponseCache(TimeProvider.System);
+
+        var result = await Create(repository, cache: cache).GetAll("DA-DK", "website", cancellationToken: CancellationToken.None);
+        await Create(repository, cache: cache).GetAll("DA-DK", "website", cancellationToken: CancellationToken.None);
+
+        Assert.Contains("greeting", Assert.IsType<ContentResult>(result).Content, StringComparison.Ordinal);
+        Assert.Equal(2, repository.Reads);
+    }
+
+    [Theory]
+    [InlineData("W/{0}")]
+    [InlineData("\"something-else\", {0}")]
+    [InlineData("*")]
+    public async Task A_weak_listed_or_wildcard_validator_still_gets_304(string ifNoneMatch)
+    {
+        var repository = new CountingRepository();
+        var cache = new DeliveryResponseCache(TimeProvider.System);
+        var first = Create(repository, cache: cache);
+        await first.GetAll("en", "website", cancellationToken: CancellationToken.None);
+        var etag = first.Response.Headers.ETag.ToString();
+
+        var result = await Create(repository, cache: cache, ifNoneMatch: string.Format(System.Globalization.CultureInfo.InvariantCulture, ifNoneMatch, etag))
+            .GetAll("en", "website", cancellationToken: CancellationToken.None);
+
+        Assert.Equal(StatusCodes.Status304NotModified, Assert.IsType<StatusCodeResult>(result).StatusCode);
+    }
+
+    [Fact]
+    public async Task A_different_validator_gets_the_response()
+    {
+        var result = await Create(new CountingRepository(), ifNoneMatch: "\"something-else\"")
+            .GetAll("en", "website", cancellationToken: CancellationToken.None);
+
+        Assert.IsType<ContentResult>(result);
     }
 
     [Theory]
@@ -223,7 +264,7 @@ public sealed class TranslationOutputControllerTests
             repository,
             new NestedJsonOutputSerializer(),
             new DeliveryApiKeyAuthenticator(options),
-            cache ?? new DeliveryResponseCache(),
+            cache ?? new DeliveryResponseCache(TimeProvider.System),
             options)
         {
             ControllerContext = new ControllerContext { HttpContext = context },
@@ -231,7 +272,7 @@ public sealed class TranslationOutputControllerTests
     }
 
     /// <summary>One ICU message, or none, counting how often it is read.</summary>
-    private sealed class CountingRepository(bool empty = false) : UnusedRepository
+    private sealed class CountingRepository(bool empty = false, string? storedLocale = null) : UnusedRepository
     {
         public int Reads { get; private set; }
 
@@ -241,7 +282,7 @@ public sealed class TranslationOutputControllerTests
             if (empty)
                 return Task.FromResult<IReadOnlyList<TranslationMessageView>>([]);
             var now = DateTimeOffset.UtcNow;
-            var message = new TranslationMessage(Guid.NewGuid(), new(Guid.NewGuid(), messageNamespace, "greeting", locale),
+            var message = new TranslationMessage(Guid.NewGuid(), new(Guid.NewGuid(), messageNamespace, "greeting", storedLocale ?? locale),
                 "Hello {name}", MessageFormat.Icu, new Dictionary<string, string> { ["name"] = "string" }, null,
                 "revision", "checksum", null, now, now, TranslationMessageState.Active);
             return Task.FromResult<IReadOnlyList<TranslationMessageView>>([new(message, null)]);

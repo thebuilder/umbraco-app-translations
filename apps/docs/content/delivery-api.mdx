@@ -110,7 +110,7 @@ Umbraco never converts text between ICU and i18next syntax, so keep each namespa
 
 ## Caching
 
-Umbraco keeps each response in memory until the translations change: a sync that changed something, a saved or reverted message, or a deleted source. The change clears it on every server, so the next request reads the new text from the database.
+Umbraco keeps each response in memory until the translations change: a sync that changed something, a saved or reverted message, or a deleted source. The change clears it on every server, so the next request reads the new text from the database. A response is also rebuilt after an hour, in case the database changed some other way, such as a restored backup.
 
 Clients and CDNs may keep a response for 60 seconds by default, so an edit can take up to a minute to reach a client that caches. Set the lifetime with `TheBuilder:AppTranslations:Delivery:MaxAgeSeconds`:
 
@@ -118,7 +118,7 @@ Clients and CDNs may keep a response for 60 seconds by default, so an edit can t
 TheBuilder__AppTranslations__Delivery__MaxAgeSeconds=0
 ```
 
-With `0`, clients keep the response but check it on every request, and see an edit as soon as it is saved. Every response carries an ETag, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes, and Umbraco answers that from memory.
+With `0`, clients keep the response but check it on every request, and see an edit as soon as it is saved. Every response carries an ETag, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes. Once Umbraco has built a response it answers those checks from memory; the first request after a change, and requests for a locale or namespace with no messages, still read the database.
 
 To drop a cached dictionary in your own application the moment it changes, subscribe to the [App translations updated webhook](/syncing#telling-your-application-something-changed).
 
