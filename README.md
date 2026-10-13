@@ -17,7 +17,7 @@ A site can also translate into languages the application does not ship. Umbraco 
 written for such a language as the whole message, because the application has nothing to merge it
 over.
 
-The package supports Umbraco 17.1 and later, Umbraco 18 included, on .NET 10.
+App Translations supports Umbraco CMS 17.1 through 18.x on .NET 10.
 
 ## Getting started
 
@@ -136,8 +136,8 @@ With [Umbraco.AI](https://docs.umbraco.com/umbraco-ai) set up, the editor can tr
 from the language you are comparing against. It can also improve, simplify or shorten the text in
 the field, or fix its spelling.
 
-Suggestions need Umbraco.AI 17.5 or later, which needs Umbraco 17.5 or later. This package does not
-install Umbraco.AI for you. It comes with the provider package you install in step 1. Until the
+Suggestions need Umbraco.AI, which needs CMS 17.5 or later on 17.x, or CMS 18.x. This package does
+not install Umbraco.AI for you. It comes with the provider package you install in step 1. Until the
 site has it, the AI assistant card says what to install.
 
 1. Install an Umbraco.AI provider package for your Umbraco version, for example `Umbraco.AI.OpenAI`.
