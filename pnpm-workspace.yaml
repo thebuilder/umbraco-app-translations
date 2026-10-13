@@ -9,3 +9,6 @@ allowBuilds:
   # download, so it never runs.
   '@scarf/scarf': false
   esbuild: true
+minimumReleaseAgeExclude:
+  # Our own packages are trusted, so new releases install right away.
+  - '@thebuilder/*'
