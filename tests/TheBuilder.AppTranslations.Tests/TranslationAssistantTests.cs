@@ -1,4 +1,5 @@
 using Microsoft.Extensions.AI;
+using TheBuilder.AppTranslations.Core.Assistant;
 using Microsoft.Extensions.Logging.Abstractions;
 using TheBuilder.AppTranslations.Assistant;
 using TheBuilder.AppTranslations.Core.Messages;
@@ -289,10 +290,33 @@ public sealed class TranslationAssistantTests
         Assert.Equal(AssistantSettings.Default, new AssistantSettingsStore(values).Get());
     }
 
+    [Fact]
+    public async Task Without_Umbraco_AI_the_assistant_is_unavailable_and_says_what_to_install()
+    {
+        var (assistant, chat, _, _) = Create();
+        chat.IsInstalled = false;
+
+        Assert.False(await assistant.IsAvailableAsync(CancellationToken.None));
+        var refused = await Assert.ThrowsAsync<AssistantRefusedException>(() => assistant.SuggestAsync(Rewrite("Hej"), CancellationToken.None));
+        Assert.Equal(AssistantRefusal.Unavailable, refused.Refusal);
+        Assert.Equal(TranslationAssistant.NotInstalledReason, refused.Message);
+    }
+
+    [Fact]
+    public async Task Without_Umbraco_AI_the_assistant_cannot_be_turned_on()
+    {
+        var (assistant, chat, _, _) = Create();
+        chat.IsInstalled = false;
+
+        Assert.Equal(TranslationAssistant.NotInstalledReason, await assistant.SaveSettingsAsync(On, CancellationToken.None));
+        Assert.Null(await assistant.SaveSettingsAsync(AssistantSettings.Default, CancellationToken.None));
+    }
+
     private sealed class FakeChat(IEnumerable<string> replies) : IAssistantChat
     {
         private readonly Queue<string> _replies = new(replies);
 
+        public bool IsInstalled { get; set; } = true;
         public bool DefaultProfile { get; set; } = true;
         public List<AssistantProfile> Profiles { get; } = [];
         public List<IReadOnlyList<ChatMessage>> Conversations { get; } = [];

@@ -225,9 +225,18 @@ jobs:
 
           for entry in README.md LICENSE THIRD-PARTY-NOTICES.md \
             lib/net10.0/TheBuilder.AppTranslations.dll lib/net10.0/TheBuilder.AppTranslations.Core.dll \
+            adapters/net10.0/TheBuilder.AppTranslations.UmbracoAI.dll buildTransitive/TheBuilder.AppTranslations.targets \
             "$manifest" staticwebassets/App_Plugins/TheBuilder.AppTranslations/translations.js; do
             grep -Fqx "$entry" <<< "$entries" || { echo "The package is missing $entry." >&2; exit 1; }
           done
+          # The adapter references Umbraco.AI. In lib/ it would sit beside the site's assemblies,
+          # where Umbraco loads every reference at startup, and stop a site without Umbraco.AI.
+          if grep -Fqx lib/net10.0/TheBuilder.AppTranslations.UmbracoAI.dll <<< "$entries"; then
+            echo "The Umbraco.AI adapter is in lib/, where it stops sites without Umbraco.AI." >&2; exit 1
+          fi
+          if grep -Fq 'id="Umbraco.AI' <<< "$nuspec"; then
+            echo "The package depends on Umbraco.AI, which would lock it to one Umbraco major." >&2; exit 1
+          fi
           test "$(unzip -p "$package" "$manifest" | jq -r '.version')" = "$PACKAGE_VERSION"
           grep -Fq "<version>$PACKAGE_VERSION</version>" <<< "$nuspec"
           if [[ -n "$RELEASE_TAG" ]]; then
@@ -237,17 +246,24 @@ jobs:
       # Packing succeeds even when the nuspec names a dependency nuget.org does not have, which is
       # how the Core project once became an unpublished package reference. Restoring the package
       # into a fresh project, with nuget.org as the only other source, is what an installer does.
+      # Building it then checks what the package's buildTransitive targets copy: the Umbraco.AI
+      # adapter in a folder of its own, and not beside the site's assemblies.
       - name: Install into a fresh project
         run: |
-          mkdir -p "$RUNNER_TEMP/consumer"
-          cat > "$RUNNER_TEMP/consumer/Consumer.csproj" <<EOF
+          consumer="$RUNNER_TEMP/consumer"
+          mkdir -p "$consumer"
+          cat > "$consumer/Consumer.csproj" <<EOF
           <Project Sdk="Microsoft.NET.Sdk.Web">
             <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
             <ItemGroup><PackageReference Include="TheBuilder.AppTranslations" Version="$PACKAGE_VERSION" /></ItemGroup>
           </Project>
           EOF
-          dotnet restore "$RUNNER_TEMP/consumer/Consumer.csproj" \
+          echo 'Microsoft.AspNetCore.Builder.WebApplication.Create(args).Run();' > "$consumer/Program.cs"
+          dotnet restore "$consumer/Consumer.csproj" \
             --source "$GITHUB_WORKSPACE/artifacts" --source https://api.nuget.org/v3/index.json
+          dotnet build "$consumer/Consumer.csproj" --no-restore -o "$consumer/out"
+          test -f "$consumer/out/TheBuilder.AppTranslations.UmbracoAI/TheBuilder.AppTranslations.UmbracoAI.dll"
+          test ! -e "$consumer/out/TheBuilder.AppTranslations.UmbracoAI.dll"
 
       # The publish workflow pushes this exact file, so what is published is what was checked.
       - uses: actions/upload-artifact@v4

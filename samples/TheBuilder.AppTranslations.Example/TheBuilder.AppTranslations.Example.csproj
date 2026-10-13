@@ -6,9 +6,16 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms" />
+    <!-- What a site's AI provider package brings. The package does not depend on Umbraco.AI, so the
+         sample references it as a site would. Build with SampleWithoutUmbracoAI=true to run it as a
+         site that has none. -->
+    <PackageReference Include="Umbraco.AI" Condition="'$(SampleWithoutUmbracoAI)' != 'true'" />
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" />
     <ProjectReference Include="../../src/TheBuilder.AppTranslations/TheBuilder.AppTranslations.csproj" />
-    <!-- Direct, because the package keeps Core private to ship it inside itself. -->
+    <!-- Direct, because the package keeps Core private to ship it inside itself. A site that
+         installs the package gets it from the lib folder. The Umbraco.AI adapter must not be
+         referenced like this: it would land beside the site's assemblies, where Umbraco loads its
+         references at startup. The package project copies it to a folder of its own instead. -->
     <ProjectReference Include="../../src/TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" />
   </ItemGroup>
 </Project>

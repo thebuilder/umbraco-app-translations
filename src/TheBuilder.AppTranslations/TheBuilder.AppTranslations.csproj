@@ -22,6 +22,12 @@
     <BackofficeManifest>$(BackofficeAssetsDirectory)/umbraco-package.json</BackofficeManifest>
     <BackofficeEntryPoint>$(BackofficeAssetsDirectory)/translations.js</BackofficeEntryPoint>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeCoreInPackage</TargetsForTfmSpecificBuildOutput>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);IncludeUmbracoAIAdapterInPackage</TargetsForTfmSpecificContentInPackage>
+    <!-- The folder beside the site's assemblies that the Umbraco.AI adapter is copied to. The
+         assistant loads it from there by this name, so the two have to agree. -->
+    <UmbracoAIAdapterFolder>TheBuilder.AppTranslations.UmbracoAI</UmbracoAIAdapterFolder>
+    <!-- NU5100 says an assembly outside lib/ is not referenced. The adapter is there on purpose. -->
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <!-- Core ships inside this package rather than as a package of its own, so it is private here
@@ -29,11 +35,13 @@
          TheBuilder.AppTranslations.Core dependency that nuget.org does not have, and install fails.
          Core's one dependency, Microsoft.Extensions.Http, already comes with Umbraco.Cms.Web.Website. -->
     <ProjectReference Include="../TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" PrivateAssets="all" />
-    <PackageReference Include="Umbraco.AI" />
-    <!-- Not used directly. Umbraco.AI's SQLite persistence brings in 2.1.11, which has a known
-         high-severity vulnerability (GHSA-2m69-gcr7-jv3q); referencing the fixed version here lifts
-         it for every site that installs this package. Drop it once Umbraco.AI depends on 2.1.12. -->
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" />
+    <!-- The Umbraco.AI adapter ships inside the package too, but not beside the other assemblies:
+         Umbraco loads the references of every assembly in the site's folder at startup, and the
+         adapter's include Umbraco.AI, which a site may not have. It is built, never referenced, and
+         copied to a folder of its own; see that project, and AssistantChatRegistration. -->
+    <ProjectReference Include="../TheBuilder.AppTranslations.UmbracoAI/TheBuilder.AppTranslations.UmbracoAI.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="UmbracoAIAdapterAssembly" />
+    <!-- Core's dependency too, but Core is private to the package, so the package declares it. -->
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
     <PackageReference Include="Umbraco.Cms.Web.Website" />
     <PackageReference Include="Umbraco.Cms.Web.Common" />
     <PackageReference Include="Umbraco.Cms.Api.Common" />
@@ -51,6 +59,8 @@
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
     <None Include="..\..\THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="\" />
+    <!-- Copies the adapter into a site's output, for sites that install the package. -->
+    <None Include="buildTransitive\TheBuilder.AppTranslations.targets" Pack="true" PackagePath="buildTransitive\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot/App_Plugins/TheBuilder.AppTranslations/" />
@@ -70,6 +80,18 @@
   <Target Name="IncludeCoreInPackage" DependsOnTargets="ResolveReferences">
     <ItemGroup>
       <BuildOutputInPackage Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.ReferenceSourceTarget)' == 'ProjectReference' and '%(ReferenceCopyLocalPaths.Extension)' == '.dll'" />
+    </ItemGroup>
+  </Target>
+  <!-- The same copy the package's buildTransitive targets make, for the sample and the tests, which
+       reference this project rather than the package. A copy item flows to referencing projects. -->
+  <Target Name="CopyUmbracoAIAdapterToOutput" BeforeTargets="AssignTargetPaths" DependsOnTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <None Include="@(UmbracoAIAdapterAssembly)" Link="$(UmbracoAIAdapterFolder)/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" Visible="false" Pack="false" />
+    </ItemGroup>
+  </Target>
+  <Target Name="IncludeUmbracoAIAdapterInPackage" DependsOnTargets="ResolveProjectReferences">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(UmbracoAIAdapterAssembly)" PackagePath="adapters/$(TargetFramework)/" />
     </ItemGroup>
   </Target>
 </Project>

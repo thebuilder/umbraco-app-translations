@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="src/TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" />
   <Project Path="src/TheBuilder.AppTranslations/TheBuilder.AppTranslations.csproj" />
+  <Project Path="src/TheBuilder.AppTranslations.UmbracoAI/TheBuilder.AppTranslations.UmbracoAI.csproj" />
   <Project Path="samples/TheBuilder.AppTranslations.Example/TheBuilder.AppTranslations.Example.csproj" />
   <Project Path="tests/TheBuilder.AppTranslations.Core.Tests/TheBuilder.AppTranslations.Core.Tests.csproj" />
   <Project Path="tests/TheBuilder.AppTranslations.Tests/TheBuilder.AppTranslations.Tests.csproj" />

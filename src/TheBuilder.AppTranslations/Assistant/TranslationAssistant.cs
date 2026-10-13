@@ -1,4 +1,5 @@
 using Microsoft.Extensions.AI;
+using TheBuilder.AppTranslations.Core.Assistant;
 using Microsoft.Extensions.Logging;
 using TheBuilder.AppTranslations.Core.Messages;
 using TheBuilder.AppTranslations.Core.Persistence;
@@ -74,6 +75,8 @@ public sealed class TranslationAssistant(
     {
         if (next.Instructions?.Length > MaximumInstructionsLength)
             return $"The instructions must be {MaximumInstructionsLength} characters or fewer.";
+        if (next.Enabled && !chat.IsInstalled)
+            return NotInstalledReason;
         if (next.ProfileId is { } id && !await chat.ProfileExistsAsync(id, cancellationToken))
             return "That AI profile does not exist, or is not a chat profile.";
 
@@ -168,8 +171,14 @@ public sealed class TranslationAssistant(
         }
     }
 
+    /// <summary>Why the assistant cannot run on this site at all, whatever its settings say.</summary>
+    internal const string NotInstalledReason =
+        "AI suggestions need Umbraco.AI 17.5 or later. Install an Umbraco.AI provider package for this site, such as Umbraco.AI.OpenAI.";
+
     private async Task<string?> UnavailableReasonAsync(AssistantSettings current, CancellationToken cancellationToken)
     {
+        if (!chat.IsInstalled)
+            return NotInstalledReason;
         if (!current.Enabled)
             return "The translation assistant is turned off in the translation settings.";
         if (current.ProfileId is { } profileId)
