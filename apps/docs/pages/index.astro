@@ -2,12 +2,16 @@
 // @ts-nocheck - Blume's React island types flag valid Astro attributes.
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
+import { loadUmbracoPackages } from "@thebuilder/umbraco-docs";
 import { EcosystemSection, InstallCommand, LandingRoot } from "@thebuilder/umbraco-docs/astro";
 
 import "./_home/home.css";
 
 import editorShot from "../content/screenshots/editor.png";
-import { appTranslationsPackage, ecosystemPackages } from "../umbraco-package";
+import { appTranslationsPackage } from "../umbraco-package";
+
+// The other packages come from the hub at umbraco.thebuilder.dk, so this list never needs editing here.
+const ecosystemPackages = await loadUmbracoPackages();
 
 const { config } = data;
 const installCommand = "dotnet add package TheBuilder.AppTranslations";

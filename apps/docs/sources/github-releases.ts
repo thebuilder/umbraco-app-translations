@@ -51,6 +51,39 @@ const noReleasesYet = ({ owner, repo }: ReleaseSourceOptions): SourceEntry => {
   };
 };
 
+// Blume rebuilds a custom() source on each run's context through withContext, so the wrapper
+// re-wraps the rebuilt engine. Spreading the engine's own withContext would hand Blume the bare
+// releases source and drop the search exclusion and the placeholder.
+const wrapReleaseSource = (
+  source: ContentSource,
+  options: ReleaseSourceOptions,
+): ContentSource => {
+  const read = source.read;
+
+  return {
+    ...source,
+    load: async () => {
+      const result = await source.load();
+
+      return {
+        ...result,
+        entries:
+          result.entries.length > 0
+            ? result.entries.map(excludeFromSearch)
+            : [noReleasesYet(options)],
+      };
+    },
+    read: read
+      ? async (ref: string) => excludeSearchFromRaw(await read(ref))
+      : undefined,
+    withContext: (context) =>
+      wrapReleaseSource(
+        source.withContext?.(context) ?? source,
+        options,
+      ),
+  };
+};
+
 export const githubReleaseChangelogSource = ({
   owner,
   repo,
@@ -70,23 +103,6 @@ export const githubReleaseChangelogSource = ({
       refresh: !isDev,
     },
   );
-  const read = source.read;
 
-  return {
-    ...source,
-    load: async () => {
-      const result = await source.load();
-
-      return {
-        ...result,
-        entries:
-          result.entries.length > 0
-            ? result.entries.map(excludeFromSearch)
-            : [noReleasesYet({ owner, repo })],
-      };
-    },
-    read: read
-      ? async (ref: string) => excludeSearchFromRaw(await read(ref))
-      : undefined,
-  };
+  return wrapReleaseSource(source, { owner, repo });
 };
