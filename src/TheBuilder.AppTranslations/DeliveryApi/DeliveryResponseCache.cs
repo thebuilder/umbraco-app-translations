@@ -24,25 +24,40 @@ internal sealed record CachedDeliveryResponse(string Json, string ETag);
 /// commits. A request that read the database before the change, and finishes after the clear, must
 /// not put its old response back: <see cref="Generation"/> counts the clears, and a response is
 /// stored only if no clear happened while it was being built.
+///
+/// A response is also dropped after <see cref="Lifetime"/>, whatever happened. Something can change
+/// the translations without this site hearing about it: a restored backup, a row edited by hand, a
+/// lost cache instruction. The lifetime bounds how long that goes unnoticed, at the cost of one
+/// rebuild per response per hour.
 /// </summary>
-public sealed class DeliveryResponseCache
+public sealed class DeliveryResponseCache(TimeProvider timeProvider)
 {
-    private readonly ConcurrentDictionary<DeliveryResponseKey, CachedDeliveryResponse> _responses = new();
+    internal static readonly TimeSpan Lifetime = TimeSpan.FromHours(1);
+
+    private readonly ConcurrentDictionary<DeliveryResponseKey, (CachedDeliveryResponse Response, DateTimeOffset StoredAt)> _responses = new();
     private readonly Lock _gate = new();
     private long _generation;
 
     /// <summary>Read before building a response, and handed back to <see cref="Store"/>.</summary>
     internal long Generation => Interlocked.Read(ref _generation);
 
-    internal bool TryGet(DeliveryResponseKey key, out CachedDeliveryResponse response) =>
-        _responses.TryGetValue(key, out response!);
+    internal bool TryGet(DeliveryResponseKey key, out CachedDeliveryResponse response)
+    {
+        if (_responses.TryGetValue(key, out var entry) && timeProvider.GetUtcNow() - entry.StoredAt < Lifetime)
+        {
+            response = entry.Response;
+            return true;
+        }
+        response = null!;
+        return false;
+    }
 
     internal void Store(DeliveryResponseKey key, CachedDeliveryResponse response, long generationAtRead)
     {
         lock (_gate)
         {
             if (generationAtRead == _generation)
-                _responses[key] = response;
+                _responses[key] = (response, timeProvider.GetUtcNow());
         }
     }
 

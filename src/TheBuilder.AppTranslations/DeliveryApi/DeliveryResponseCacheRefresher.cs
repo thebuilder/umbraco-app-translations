@@ -30,18 +30,13 @@ internal sealed class DeliveryResponseCacheRefresher : CacheRefresherBase<Delive
     public override string Name => "App Translations delivery responses";
 
     // Every change clears everything: a sync can touch any locale and namespace, edits are rare next
-    // to reads, and the next request for each response rebuilds it once.
+    // to reads, and the next request for each response rebuilds it once. RefreshAll is the only
+    // instruction the package sends, so it is the only one this handles.
     public override void RefreshAll()
     {
         _cache.Clear();
         base.RefreshAll();
     }
-
-    public override void Refresh(int id) => RefreshAll();
-
-    public override void Refresh(Guid id) => RefreshAll();
-
-    public override void Remove(int id) => RefreshAll();
 }
 
 internal sealed class DeliveryResponseCacheRefresherNotification(object messageObject, MessageType messageType)

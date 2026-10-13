@@ -1,5 +1,6 @@
 using TheBuilder.AppTranslations.Core.Output;
 using TheBuilder.AppTranslations.DeliveryApi;
+using TheBuilder.AppTranslations.Notifications;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
@@ -15,7 +16,7 @@ public sealed class DeliveryResponseCacheTests
     [Fact]
     public void A_stored_response_is_found_until_the_cache_is_cleared()
     {
-        var cache = new DeliveryResponseCache();
+        var cache = new DeliveryResponseCache(TimeProvider.System);
         cache.Store(Key, Response, cache.Generation);
 
         Assert.True(cache.TryGet(Key, out var found));
@@ -28,7 +29,7 @@ public sealed class DeliveryResponseCacheTests
     [Fact]
     public void A_response_built_before_a_clear_is_not_put_back()
     {
-        var cache = new DeliveryResponseCache();
+        var cache = new DeliveryResponseCache(TimeProvider.System);
         var generationAtRead = cache.Generation;
 
         // A change commits, and clears the cache, while this response is still being built from
@@ -40,18 +41,70 @@ public sealed class DeliveryResponseCacheTests
     }
 
     [Fact]
-    public void The_refresher_clears_the_cache_for_every_kind_of_instruction()
+    public void A_response_is_dropped_after_its_lifetime()
     {
-        var cache = new DeliveryResponseCache();
-        var refresher = new DeliveryResponseCacheRefresher(AppCaches.NoCache, new SilentEvents(), new NotificationFactory(), cache);
-        Action[] instructions = [refresher.RefreshAll, () => refresher.Refresh(1), () => refresher.Refresh(Guid.NewGuid()), () => refresher.Remove(1)];
+        var clock = new Clock();
+        var cache = new DeliveryResponseCache(clock);
+        cache.Store(Key, Response, cache.Generation);
 
-        foreach (var instruction in instructions)
-        {
-            cache.Store(Key, Response, cache.Generation);
-            instruction();
-            Assert.False(cache.TryGet(Key, out _));
-        }
+        clock.Now += DeliveryResponseCache.Lifetime - TimeSpan.FromSeconds(1);
+        Assert.True(cache.TryGet(Key, out _));
+
+        clock.Now += TimeSpan.FromSeconds(1);
+        Assert.False(cache.TryGet(Key, out _));
+    }
+
+    [Fact]
+    public void The_refresher_clears_the_cache()
+    {
+        var cache = new DeliveryResponseCache(TimeProvider.System);
+        cache.Store(Key, Response, cache.Generation);
+
+        Refresher(cache).RefreshAll();
+
+        Assert.False(cache.TryGet(Key, out _));
+    }
+
+    [Fact]
+    public void A_committed_change_asks_every_server_to_clear_its_cache()
+    {
+        var cache = new DeliveryResponseCache(TimeProvider.System);
+        var refresher = Refresher(cache);
+        var messenger = new RecordingMessenger();
+        var distributedCache = new DistributedCache(messenger, new CacheRefresherCollection(() => [refresher]));
+
+        new DeliveryResponseCacheInvalidator(distributedCache).Handle(
+            new(Guid.NewGuid(), "website", TranslationChange.OverrideSaved, DateTimeOffset.UtcNow));
+
+        Assert.Equal([DeliveryResponseCacheRefresher.UniqueId], messenger.RefreshedAll);
+    }
+
+    private static DeliveryResponseCacheRefresher Refresher(DeliveryResponseCache cache) =>
+        new(AppCaches.NoCache, new SilentEvents(), new NotificationFactory(), cache);
+
+    private sealed class Clock : TimeProvider
+    {
+        public DateTimeOffset Now { get; set; } = new(2026, 10, 13, 12, 0, 0, TimeSpan.Zero);
+
+        public override DateTimeOffset GetUtcNow() => Now;
+    }
+
+    /// <summary>Records which refreshers were asked to refresh everything, on every server.</summary>
+    private sealed class RecordingMessenger : IServerMessenger
+    {
+        public List<Guid> RefreshedAll { get; } = [];
+
+        public void QueueRefreshAll(ICacheRefresher refresher) => RefreshedAll.Add(refresher.RefresherUniqueId);
+
+        public void Sync() { }
+        public void SendMessages() { }
+        public void QueueRefresh<TPayload>(ICacheRefresher refresher, TPayload[] payload) => throw new NotSupportedException();
+        public void QueueRefresh<T>(ICacheRefresher refresher, Func<T, int> getNumericId, params T[] instances) => throw new NotSupportedException();
+        public void QueueRefresh<T>(ICacheRefresher refresher, Func<T, Guid> getGuidId, params T[] instances) => throw new NotSupportedException();
+        public void QueueRemove<T>(ICacheRefresher refresher, Func<T, int> getNumericId, params T[] instances) => throw new NotSupportedException();
+        public void QueueRemove(ICacheRefresher refresher, params int[] numericIds) => throw new NotSupportedException();
+        public void QueueRefresh(ICacheRefresher refresher, params int[] numericIds) => throw new NotSupportedException();
+        public void QueueRefresh(ICacheRefresher refresher, params Guid[] guidIds) => throw new NotSupportedException();
     }
 
     private sealed class NotificationFactory : ICacheRefresherNotificationFactory
