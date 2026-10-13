@@ -9,8 +9,10 @@ using TheBuilder.AppTranslations.Core.Persistence;
 using TheBuilder.AppTranslations.Core.Sources;
 using TheBuilder.AppTranslations.Core.Synchronization;
 using TheBuilder.AppTranslations.Core.Validation;
+using TheBuilder.AppTranslations.DeliveryApi;
 using TheBuilder.AppTranslations.Localization;
 using TheBuilder.AppTranslations.Migrations;
+using TheBuilder.AppTranslations.Notifications;
 using TheBuilder.AppTranslations.Persistence;
 using TheBuilder.AppTranslations.Webhooks;
 using Umbraco.Cms.Core.Composing;
@@ -32,12 +34,16 @@ public sealed class TranslationsComposer : IComposer
         builder.Services.AddOptions<DeliveryOptions>()
             .Bind(builder.Config.GetSection(DeliveryOptions.SectionName))
             .Validate(options => ApiKey.IsUsable(options.ApiKey), $"{DeliveryOptions.ApiKeyConfigurationName} must not contain whitespace.")
+            .Validate(options => options.MaxAgeSeconds >= 0, $"{DeliveryOptions.MaxAgeSecondsConfigurationName} must be 0 or more.")
             .ValidateOnStart();
         builder.Services.AddOptions<TranslationSourceSecurityOptions>()
             .Bind(builder.Config.GetSection(TranslationSourceSecurityOptions.SectionName));
         builder.Services.AddAuthorization(ConfigurePolicies);
         builder.Services.AddSingleton<DeploymentSyncApiKeyAuthenticator>();
         builder.Services.AddSingleton<DeliveryApiKeyAuthenticator>();
+        builder.Services.AddSingleton<DeliveryResponseCache>();
+        builder.CacheRefreshers().Add<DeliveryResponseCacheRefresher>();
+        builder.AddNotificationHandler<TranslationsUpdatedNotification, DeliveryResponseCacheInvalidator>();
         builder.Services.AddSingleton<IAuthorizationHandler, BackofficeAdministratorHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, AppTranslationsSectionAccessHandler>();
         builder.Services.AddSingleton(TimeProvider.System);

@@ -12,6 +12,7 @@ App Translations reads its settings from the `TheBuilder:AppTranslations` sectio
 | `TheBuilder:AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`. |
 | `TheBuilder:AppTranslations:DeploymentSync:ApiKey` | none | Turns on [deployment-triggered sync](/syncing#syncing-from-a-deployment). A long random value, without spaces. |
 | `TheBuilder:AppTranslations:Delivery:ApiKey` | none | Requires a key for the [delivery endpoints](/delivery-api#access), which are public without one. A long random value, without spaces. |
+| `TheBuilder:AppTranslations:Delivery:MaxAgeSeconds` | `60` | How long clients and CDNs may keep a [delivery response](/delivery-api#caching). `0` makes them check every time. |
 
 A key that contains whitespace stops the site at startup, because it could never match what a client sends.
 
