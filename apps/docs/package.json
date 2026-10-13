@@ -12,8 +12,8 @@
     "check:og": "umbraco-docs-og --check"
   },
   "dependencies": {
-    "@thebuilder/umbraco-docs": "^1.0.4",
-    "blume": "^1.6.4"
+    "@thebuilder/umbraco-docs": "^1.1.0",
+    "blume": "^2.2.3"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",

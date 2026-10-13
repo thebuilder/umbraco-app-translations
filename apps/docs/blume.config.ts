@@ -1,4 +1,5 @@
 import { defineConfig } from "blume";
+import { custom, filesystem } from "blume/sources";
 import { githubReleaseChangelogSource } from "./sources/github-releases";
 import { appTranslationsPackage } from "./umbraco-package";
 
@@ -16,15 +17,14 @@ export default defineConfig({
   },
   content: {
     sources: [
-      { type: "filesystem", root: "content" },
+      filesystem({ root: "content" }),
       // GitHub Releases are the changelog, as RELEASE.md says, so the notes are written once.
-      {
-        type: "custom",
-        source: githubReleaseChangelogSource({
+      custom(
+        githubReleaseChangelogSource({
           owner: "thebuilder",
           repo: "umbraco-app-translations",
         }),
-      },
+      ),
     ],
   },
   navigation: {
@@ -36,7 +36,6 @@ export default defineConfig({
     ],
   },
   deployment: {
-    output: "static",
     site: "https://app-translations.thebuilder.dk",
   },
   seo: {
@@ -50,7 +49,7 @@ export default defineConfig({
       display: "inter-tight",
     },
   },
-  ai: {
+  agents: {
     llmsTxt: true,
   },
 });
