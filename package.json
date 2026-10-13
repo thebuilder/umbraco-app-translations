@@ -1,15 +1,15 @@
 {
-  "name": "thebuilder-translations-workspace",
+  "name": "thebuilder-app-translations-workspace",
   "private": true,
   "packageManager": "pnpm@11.13.0",
   "scripts": {
-    "build": "pnpm --dir src/TheBuilder.Translations/Client build",
-    "typecheck": "pnpm --dir src/TheBuilder.Translations/Client typecheck",
-    "lint": "pnpm --dir src/TheBuilder.Translations/Client lint",
-    "fix": "pnpm --dir src/TheBuilder.Translations/Client fix",
+    "build": "pnpm --dir src/TheBuilder.AppTranslations/Client build",
+    "typecheck": "pnpm --dir src/TheBuilder.AppTranslations/Client typecheck",
+    "lint": "pnpm --dir src/TheBuilder.AppTranslations/Client lint",
+    "fix": "pnpm --dir src/TheBuilder.AppTranslations/Client fix",
     "deadcode": "fallow dead-code",
     "check": "pnpm typecheck && pnpm lint && pnpm deadcode",
-    "test": "pnpm --dir src/TheBuilder.Translations/Client test",
+    "test": "pnpm --dir src/TheBuilder.AppTranslations/Client test",
     "audit-changes": "fallow audit --base main"
   },
   "devDependencies": {
