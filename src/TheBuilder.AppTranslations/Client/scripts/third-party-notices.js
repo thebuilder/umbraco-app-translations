@@ -15,11 +15,14 @@ const noticesFile = resolve(clientDirectory, "../../../THIRD-PARTY-NOTICES.md");
 const check = process.argv.includes("--check");
 
 // The package directory a bundled source file came from: the last node_modules/<name> in its path,
-// which under pnpm is the real package rather than a link to it.
+// which under pnpm is the real package rather than a link to it. Matched on forward slashes, so
+// paths are normalised first: on Windows, resolve() returns backslashes.
 const packageDirectoryPattern = /^(.*\/node_modules\/(?:@[^/]+\/)?[^/]+)\//;
 
 const mapFiles = existsSync(bundleDirectory)
-  ? readdirSync(bundleDirectory).filter((file) => file.endsWith(".js.map"))
+  ? readdirSync(bundleDirectory)
+      .filter((file) => file.endsWith(".js.map"))
+      .sort()
   : [];
 if (mapFiles.length === 0) {
   console.error(`No source maps in ${bundleDirectory}. Run pnpm build first.`);
@@ -30,7 +33,9 @@ const packageDirectories = new Set();
 for (const mapFile of mapFiles) {
   const map = JSON.parse(readFileSync(join(bundleDirectory, mapFile), "utf8"));
   for (const source of map.sources) {
-    const match = packageDirectoryPattern.exec(resolve(bundleDirectory, source));
+    const match = packageDirectoryPattern.exec(
+      resolve(bundleDirectory, source).replaceAll("\\", "/")
+    );
     if (match) {
       packageDirectories.add(match[1]);
     }
@@ -41,10 +46,16 @@ const licenseFilePattern = /^(licen[cs]e|copying)(\.(md|txt))?$/i;
 const gitPrefix = /^git\+/;
 const gitSuffix = /\.git$/;
 
+// Sorted throughout, here and for license files below, because readdirSync's order differs between
+// operating systems: a choice between two copies or two license files must not depend on it, or
+// CI would disagree with the file a developer generated.
 const packages = [...packageDirectories]
+  .sort()
   .map((directory) => {
     const manifest = JSON.parse(readFileSync(join(directory, "package.json"), "utf8"));
-    const licenseFile = readdirSync(directory).find((file) => licenseFilePattern.test(file));
+    const licenseFile = readdirSync(directory)
+      .sort()
+      .find((file) => licenseFilePattern.test(file));
     const repository =
       typeof manifest.repository === "string" ? manifest.repository : manifest.repository?.url;
     return {

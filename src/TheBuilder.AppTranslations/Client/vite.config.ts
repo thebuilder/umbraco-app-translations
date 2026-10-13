@@ -2,21 +2,30 @@ import { readFileSync } from "node:fs";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
+const projectVersionPattern = /<Version>([^<]+)<\/Version>/;
+
 /**
  * Writes umbraco-package.json with the package's version, so the manifest Umbraco reads and the
- * NuGet package always agree. A release passes the version from its tag as PACKAGE_VERSION; a local
- * build uses the client's package.json.
+ * NuGet package always agree. `dotnet pack` passes the version as PACKAGE_VERSION; a plain build
+ * reads the project file's, which is the one place the local version is written down.
  */
 const packageManifest = (): Plugin => {
-  const read = (file: string) => JSON.parse(readFileSync(new URL(file, import.meta.url), "utf8"));
-  const version: string = process.env.PACKAGE_VERSION ?? read("./package.json").version;
+  const read = (file: string) => readFileSync(new URL(file, import.meta.url), "utf8");
+  const projectVersion = projectVersionPattern.exec(
+    read("../TheBuilder.AppTranslations.csproj")
+  )?.[1];
+  // || rather than ??: an empty PACKAGE_VERSION means none was given, not an empty version.
+  const version = process.env.PACKAGE_VERSION || projectVersion;
+  if (!version) {
+    throw new Error("No PACKAGE_VERSION, and no <Version> in TheBuilder.AppTranslations.csproj.");
+  }
   return {
     name: "package-manifest",
     generateBundle() {
       this.emitFile({
         type: "asset",
         fileName: "umbraco-package.json",
-        source: `${JSON.stringify({ ...read("./umbraco-package.json"), version }, null, 2)}\n`,
+        source: `${JSON.stringify({ ...JSON.parse(read("./umbraco-package.json")), version }, null, 2)}\n`,
       });
     },
   };
