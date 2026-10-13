@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using TheBuilder.AppTranslations.Authorization;
+using TheBuilder.AppTranslations.Configuration;
 using TheBuilder.AppTranslations.Core.Output;
 using TheBuilder.AppTranslations.Core.Persistence;
 using TheBuilder.AppTranslations.Core.Messages;
@@ -15,7 +18,7 @@ public sealed class TranslationOutputControllerTests
     [InlineData("   ")]
     public async Task All_output_requires_a_namespace(string? messageNamespace)
     {
-        var controller = new TranslationOutputController(new UnusedRepository(), new NestedJsonOutputSerializer());
+        var controller = Create(new UnusedRepository());
 
         var result = await controller.GetAll("da", messageNamespace, cancellationToken: CancellationToken.None);
 
@@ -29,7 +32,7 @@ public sealed class TranslationOutputControllerTests
     [InlineData("   ")]
     public async Task All_output_requires_a_locale(string? locale)
     {
-        var controller = new TranslationOutputController(new UnusedRepository(), new NestedJsonOutputSerializer());
+        var controller = Create(new UnusedRepository());
 
         var result = await controller.GetAll(locale, "website", cancellationToken: CancellationToken.None);
 
@@ -40,10 +43,7 @@ public sealed class TranslationOutputControllerTests
     [Fact]
     public async Task All_output_accepts_i18next_v4_json_format()
     {
-        var controller = new TranslationOutputController(new EmptyRepository(), new NestedJsonOutputSerializer())
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
-        };
+        var controller = Create(new EmptyRepository());
 
         var result = await controller.GetAll("en", "website", "i18next-v4", CancellationToken.None);
 
@@ -55,10 +55,7 @@ public sealed class TranslationOutputControllerTests
     [Fact]
     public async Task I18next_output_rejects_an_icu_namespace()
     {
-        var controller = new TranslationOutputController(new IcuRepository(), new NestedJsonOutputSerializer())
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
-        };
+        var controller = Create(new IcuRepository());
 
         var result = await controller.GetAll("en", "website", "i18next-v4", CancellationToken.None);
 
@@ -69,14 +66,68 @@ public sealed class TranslationOutputControllerTests
     [Fact]
     public async Task Override_output_validates_the_full_namespace_syntax()
     {
-        var controller = new TranslationOutputController(new MixedRepository(), new NestedJsonOutputSerializer())
-        {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
-        };
+        var controller = Create(new MixedRepository());
 
         var result = await controller.GetOverrides("en", "website", "i18next-v4", CancellationToken.None);
 
         Assert.IsType<ConflictObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Output_is_public_and_shared_caches_may_keep_it_when_no_key_is_configured()
+    {
+        var controller = Create(new EmptyRepository());
+
+        var result = await controller.GetAll("en", "website", cancellationToken: CancellationToken.None);
+
+        Assert.IsType<ContentResult>(result);
+        Assert.Equal("public,max-age=60", controller.Response.Headers.CacheControl.ToString());
+    }
+
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData("wrong-key", null)]
+    [InlineData(null, "Bearer wrong-key")]
+    [InlineData(null, "Basic delivery-key")]
+    public async Task Output_refuses_a_request_without_the_configured_key(string? apiKey, string? authorization)
+    {
+        var controller = Create(new EmptyRepository(), configuredKey: "delivery-key", apiKey, authorization);
+
+        var result = await controller.GetOverrides("en", "website", cancellationToken: CancellationToken.None);
+
+        Assert.IsType<UnauthorizedResult>(result);
+        Assert.Equal("Bearer", controller.Response.Headers.WWWAuthenticate.ToString());
+    }
+
+    [Theory]
+    [InlineData("delivery-key", null)]
+    [InlineData(null, "Bearer delivery-key")]
+    public async Task Output_answers_the_configured_key_and_keeps_it_out_of_shared_caches(string? apiKey, string? authorization)
+    {
+        var controller = Create(new EmptyRepository(), configuredKey: "delivery-key", apiKey, authorization);
+
+        var result = await controller.GetAll("en", "website", cancellationToken: CancellationToken.None);
+
+        Assert.IsType<ContentResult>(result);
+        Assert.Equal("private,max-age=60", controller.Response.Headers.CacheControl.ToString());
+    }
+
+    private static TranslationOutputController Create(
+        ITranslationMessageRepository repository,
+        string? configuredKey = null,
+        string? apiKey = null,
+        string? authorization = null)
+    {
+        var context = new DefaultHttpContext();
+        if (apiKey is not null)
+            context.Request.Headers[DeliveryApiKeyAuthenticator.HeaderName] = apiKey;
+        if (authorization is not null)
+            context.Request.Headers.Authorization = authorization;
+        var authenticator = new DeliveryApiKeyAuthenticator(Options.Create(new DeliveryOptions { ApiKey = configuredKey }));
+        return new TranslationOutputController(repository, new NestedJsonOutputSerializer(), authenticator)
+        {
+            ControllerContext = new ControllerContext { HttpContext = context },
+        };
     }
 
     private class UnusedRepository : ITranslationMessageRepository

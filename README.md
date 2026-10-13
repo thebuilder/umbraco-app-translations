@@ -8,8 +8,8 @@ that need changing, and your application fetches those changes and lays them ove
 
 - **The application owns the messages.** Keys, the default text, the message syntax and the
   placeholders all come from the application's files, and stay there.
-- **Umbraco owns the edits.** Editors write custom text for any message in any language, with a
-  history of who changed what.
+- **Umbraco owns the edits.** Editors write custom text for any message in any language, and
+  Umbraco records who last changed each one, and when.
 - **The application decides what to show.** It merges the custom text over its own, or asks
   Umbraco for the complete dictionary.
 
@@ -65,9 +65,10 @@ A source has three more settings.
 
 ### Sources that need authentication
 
-You can add request headers to a source, but Umbraco never stores their values. Each header names a
-configuration setting instead, and your site's configuration supplies the value. This example gives
-a header `X-Api-Key` the setting name `Translations:SourceApiKey`:
+You can add request headers to a source. Each header either holds its value, or names a
+configuration setting that supplies the value when Umbraco makes the request. A typed value is
+stored in the database in plain text, so put secrets in a setting. This example gives a header
+`X-Api-Key` the setting name `Translations:SourceApiKey`:
 
 ```json
 {
@@ -165,8 +166,11 @@ custom text in place of the application's text wherever an editor wrote some.
 GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website&format=next-intl
 ```
 
-Both endpoints answer with an ETag, so a client that sends `If-None-Match` gets `304 Not Modified`
-until something changes. **Settings > App translations** lists the exact URL for each language and
+Both endpoints send an ETag with every response, so a client that sends `If-None-Match` gets
+`304 Not Modified` until something changes. Responses may be cached for 60 seconds.
+
+The endpoints are public until you set `TheBuilder:AppTranslations:Delivery:ApiKey`. With a key set,
+a request needs it in an `Api-Key` header or as a bearer token, and gets `401` without it. **Settings > App translations** lists the exact URL for each language and
 namespace.
 
 For i18next, use `format=i18next-v4` and set the source's message syntax to **i18next JSON v4**.
@@ -254,6 +258,7 @@ load-balanced setup, Umbraco sends webhooks only from the Single or SchedulingPu
 | --------------------------------------------------------------- | ------- | -------------------------------------------------------- |
 | `TheBuilder:AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`.  |
 | `TheBuilder:AppTranslations:DeploymentSync:ApiKey`                 | none    | Turns on deployment-triggered sync. A long random value, without spaces. |
+| `TheBuilder:AppTranslations:Delivery:ApiKey`                       | none    | Requires a key for the delivery endpoints, which are public without one. |
 
 Source headers read their values from the setting names you give them.
 
@@ -293,6 +298,11 @@ pnpm --dir src/TheBuilder.AppTranslations/Client generate-client -- https://loca
 
 The sample documents the deployment sync API at
 `/umbraco/swagger/thebuilder-app-translations-automation/swagger.json`.
+
+The documentation site lives in `apps/docs` and is built with Blume. `pnpm docs:dev` serves it
+with hot reload, and `pnpm docs:build` builds it as CI does. With the sample running,
+`pnpm docs:screenshots` retakes the backoffice screenshots the docs use; set `UMBRACO_URL` if the
+sample is not at `https://localhost:44389`.
 
 `THIRD-PARTY-NOTICES.md` lists the npm packages the backoffice bundle includes, with their licenses.
 After changing the client's dependencies, run `pnpm build` and then `pnpm notices` to regenerate it;

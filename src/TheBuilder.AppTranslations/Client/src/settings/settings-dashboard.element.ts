@@ -65,6 +65,7 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
   @state() private _languages: UmbLanguageDetailModel[] = [];
   @state() private _outputEndpoints: OutputEndpoint[] = [];
   @state() private _outputConflicts: OutputConflict[] = [];
+  @state() private _deliveryRequiresApiKey = false;
   @state() private _draft?: SourceDraft;
   @state() private _editing?: Source;
   @state() private _loading = true;
@@ -109,6 +110,7 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
       this._languages = languageResponse;
       this._outputEndpoints = facets.outputEndpoints;
       this._outputConflicts = facets.outputConflicts ?? [];
+      this._deliveryRequiresApiKey = facets.deliveryRequiresApiKey;
     } catch (error) {
       this._loadError = this.#message(error, "Could not load translation settings.");
     } finally {
@@ -280,6 +282,7 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
         }
         this._outputEndpoints = facets.outputEndpoints;
         this._outputConflicts = facets.outputConflicts ?? [];
+        this._deliveryRequiresApiKey = facets.deliveryRequiresApiKey;
       } catch (error) {
         this.#notification?.peek("warning", {
           data: {
@@ -327,6 +330,7 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
         const facets = await api.facets();
         this._outputEndpoints = facets.outputEndpoints;
         this._outputConflicts = facets.outputConflicts ?? [];
+        this._deliveryRequiresApiKey = facets.deliveryRequiresApiKey;
       } catch (error) {
         this.#notification?.peek("warning", {
           data: {
@@ -571,6 +575,7 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
           <thebuilder-app-translations-output-api
             .endpoints=${this._outputEndpoints}
             .conflicts=${this._outputConflicts}
+            .requiresApiKey=${this._deliveryRequiresApiKey}
             .languages=${this._languages}>
           </thebuilder-app-translations-output-api>
           ${

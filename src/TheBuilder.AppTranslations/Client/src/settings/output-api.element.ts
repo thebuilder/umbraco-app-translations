@@ -1,3 +1,5 @@
+// biome-ignore-all lint/suspicious/noUnnecessaryConditions: Lit's @property decorator assigns these fields from outside the class, so the initializer is a default and not the only value they ever hold. The rule reads the initializer's literal type and calls every check on them constant.
+
 import { UmbElementMixin } from "@umbraco-cms/backoffice/element-api";
 import {
   css,
@@ -20,6 +22,8 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
   @property({ attribute: false }) endpoints: OutputEndpoint[] = [];
   @property({ attribute: false }) conflicts: OutputConflict[] = [];
   @property({ attribute: false }) languages: UmbLanguageDetailModel[] = [];
+  /** The site has a delivery key, so a browser opening the URL without it gets a 401. */
+  @property({ type: Boolean }) requiresApiKey = false;
 
   @state() private _deliveryMode: DeliveryMode = "overrides";
   @state() private _selectedLocale?: string;
@@ -151,7 +155,7 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
 
     return html`
       <uui-box headline="Translation output API" headline-variant="h2">
-        <p class="intro">Pick a language and namespace, then copy or open the URL.</p>
+        <p class="intro">Pick a language and namespace, then copy ${this.requiresApiKey ? "" : "or open "}the URL.</p>
         ${this.conflicts.map(
           (conflict) => html`
           <div class="conflict" role="status">
@@ -194,9 +198,18 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
                 <uui-button type="button" look="secondary" label="Copy translation output URL" @click=${() => {
                   this.#copy(outputUrl);
                 }}>Copy URL</uui-button>
-                <uui-button look="primary" label="Open translation output URL" href=${outputUrl} target="_blank" rel="noopener noreferrer">Open<uui-icon name="icon-out" aria-hidden="true"></uui-icon></uui-button>
+                ${
+                  this.requiresApiKey
+                    ? ""
+                    : html`<uui-button look="primary" label="Open translation output URL" href=${outputUrl} target="_blank" rel="noopener noreferrer">Open<uui-icon name="icon-out" aria-hidden="true"></uui-icon></uui-button>`
+                }
               </div>
             </div>
+            ${
+              this.requiresApiKey
+                ? html`<p class="summary">This site requires a key for these URLs. Send it in an <code>Api-Key</code> header, or as a bearer token.</p>`
+                : ""
+            }
             ${this.languages.some((language) => language.unique === selected?.locale) ? "" : html`<p class="language-warning"><uui-icon name="icon-alert" aria-hidden="true"></uui-icon> Umbraco no longer lists ${selected?.locale} as a language.</p>`}
           `
             : ""

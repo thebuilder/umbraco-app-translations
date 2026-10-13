@@ -1,0 +1,162 @@
+---
+// @ts-nocheck - Blume's React island types flag valid Astro attributes.
+import PageLayout from "blume/components/layout/PageLayout.astro";
+import data from "blume:data";
+import { EcosystemSection, InstallCommand, LandingRoot } from "@thebuilder/umbraco-docs/astro";
+
+import "./_home/home.css";
+
+import editorShot from "../content/screenshots/editor.png";
+import { appTranslationsPackage, ecosystemPackages } from "../umbraco-package";
+
+const { config } = data;
+const installCommand = "dotnet add package TheBuilder.AppTranslations";
+const repoUrl = appTranslationsPackage.links.github;
+const nugetUrl = appTranslationsPackage.links.nuget;
+const marketplaceUrl = appTranslationsPackage.links.marketplace;
+// The sample site's real answer for Danish after one edit.
+const deliveryRequest =
+  "GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl";
+const deliveryResponse = `{
+  "greeting": "Hej {name}, godt at se dig igen!"
+}`;
+
+const features = [
+  {
+    title: "Your files stay the source",
+    body: "Keys, default text, syntax and placeholders come from your application's own next-intl or i18next files. Umbraco reads them and stores only the edits.",
+  },
+  {
+    title: "Edits that cannot break",
+    body: "Every change is checked against the message's ICU or i18next syntax, so an editor cannot drop a placeholder or break a plural.",
+  },
+  {
+    title: "Live without a deploy",
+    body: "Your application fetches the custom text and lays it over its own. A webhook says when something changes, and ETags keep checking cheap.",
+  },
+];
+---
+
+<PageLayout
+  site={{ title: config.title, description: config.description }}
+  logo={config.logo}
+  favicon={config.favicon}
+  banner={config.banner}
+  analytics={config.analytics}
+  navigation={data.navigation}
+  fontCssVars={data.fontCssVars}
+  themeMode={config.theme.mode}
+  searchEnabled={config.search.enabled}
+  siteUrl={config.site}
+  ogEnabled={config.og.enabled}
+  ogImage="/og/index.png"
+  page={{
+    title: "App Translations for Umbraco",
+    description: config.description,
+    route: "/",
+  }}
+>
+  <LandingRoot class="home">
+    <section class="hero">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="shell hero__inner">
+        <img class="hero__mark reveal" src="/logo-mark.svg" width="72" height="72" alt="App Translations" style="--i: 0" decoding="async" />
+        <p class="eyebrow reveal" style="--i: 1">next-intl and i18next messages, edited in Umbraco</p>
+        <h1 class="hero__title reveal" style="--i: 2">
+          Your application's text, <span>edited without a deploy.</span>
+        </h1>
+        <p class="hero__lede reveal" style="--i: 3">
+          Your application keeps its translation files. Umbraco reads them, editors change the messages that need changing, and your application lays those changes over its own text.
+        </p>
+        <div class="hero__actions reveal" style="--i: 4">
+          <a class="button button--primary" href="/quickstart">Get started</a>
+          <a class="button button--secondary" href={repoUrl} rel="noopener">View on GitHub</a>
+        </div>
+        <div class="install-shell reveal" style="--i: 5">
+          <InstallCommand command={installCommand} />
+        </div>
+        <p class="hero__compat reveal" style="--i: 6">Umbraco CMS 17.5 or later · .NET 10</p>
+      </div>
+      <div class="shell">
+        <figure class="screenshot reveal" style="--i: 6">
+          <div class="screenshot__bar" aria-hidden="true"><span></span><span></span><span></span></div>
+          <img src={editorShot.src} width={editorShot.width} height={editorShot.height} alt="The App Translations editor in Umbraco, editing a Danish message next to the English one" loading="eager" decoding="async" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="shell trust reveal">
+      <p><strong>Umbraco never changes your files.</strong> It stores the edits next to them, and your application decides whether to merge them over its own text or ask for the complete dictionary.</p>
+    </section>
+
+    <section class="shell section" aria-labelledby="features-title">
+      <div class="section-heading reveal">
+        <span class="rule" aria-hidden="true"></span>
+        <h2 id="features-title">Built for applications that own their text</h2>
+        <p>For next-intl, i18next and FormatJS applications whose messages live in code, and editors who need to change them.</p>
+      </div>
+      <div class="feature-grid">
+        {features.map((feature, index) => (
+          <article class="feature-card reveal" style={`--i: ${index + 1}`}>
+            <span aria-hidden="true">0{index + 1}</span>
+            <h3>{feature.title}</h3>
+            <p>{feature.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="shell flow" aria-labelledby="flow-title">
+      <div class="flow__copy reveal">
+        <span class="rule" aria-hidden="true"></span>
+        <h2 id="flow-title">How it fits together</h2>
+        <p>A source points Umbraco at your translation files. Sync reads them in, editors write custom text, and the delivery endpoints serve it.</p>
+        <a class="text-link" href="/sources">Add your first source <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="status-list reveal" style="--i: 1">
+        <div><strong>Sync</strong><span>From the backoffice, or from your deployment once new files are live.</span></div>
+        <div><strong>Edit</strong><span>Any message, in any language. Umbraco records who last changed it, and when.</span></div>
+        <div><strong>Deliver</strong><span>The custom text alone, or the complete dictionary, as next-intl or i18next JSON.</span></div>
+      </div>
+    </section>
+
+    <section class="shell api" aria-labelledby="api-title">
+      <div class="api__copy reveal">
+        <span class="rule" aria-hidden="true"></span>
+        <h2 id="api-title">Merge it over your own messages</h2>
+        <p>Fetch the custom text for a language and namespace and lay it over what your application bundles. Only what an editor changed comes back.</p>
+        <a class="button button--secondary" href="/delivery-api">Read the API guide</a>
+      </div>
+      <figure class="code-preview reveal" style="--i: 1">
+        <figcaption>Custom text for Danish <span>HTTP</span></figcaption>
+        <pre tabindex="0"><code>{`${deliveryRequest}\n\n${deliveryResponse}`}</code></pre>
+      </figure>
+    </section>
+
+    <section class="shell closing reveal">
+      <h2>Change your first message</h2>
+      <p>Install the package, point a source at your translation files, and edit a message in the App Translations section.</p>
+      <a class="button button--primary" href="/quickstart">Read the quickstart</a>
+    </section>
+
+    <EcosystemSection
+      packages={ecosystemPackages}
+      currentPackageId={appTranslationsPackage.id}
+    />
+  </LandingRoot>
+
+  <footer class="home-footer" slot="footer">
+    <div class="shell home-footer__inner">
+      <div>
+        <strong>App Translations</strong>
+        <span>MIT licensed · built by <a href="https://github.com/thebuilder" rel="noopener">thebuilder</a></span>
+      </div>
+      <nav aria-label="Footer">
+        <a href="/overview">Docs</a>
+        <a href={repoUrl} rel="noopener">GitHub</a>
+        <a href={nugetUrl} rel="noopener">NuGet</a>
+        <a href={marketplaceUrl} rel="noopener">Marketplace</a>
+      </nav>
+    </div>
+  </footer>
+</PageLayout>

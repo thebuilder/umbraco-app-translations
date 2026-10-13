@@ -1,0 +1,5 @@
+@media (max-width: 30rem) {
+  [data-blume-header] > a[href="/"] > [aria-hidden="true"] {
+    display: none;
+  }
+}

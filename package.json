@@ -4,6 +4,9 @@
   "packageManager": "pnpm@11.13.0",
   "scripts": {
     "build": "pnpm --dir src/TheBuilder.AppTranslations/Client build",
+    "docs:dev": "pnpm --filter @thebuilder/app-translations-docs dev",
+    "docs:build": "pnpm --filter @thebuilder/app-translations-docs build",
+    "docs:screenshots": "pnpm --filter @thebuilder/app-translations-docs screenshots",
     "typecheck": "pnpm --dir src/TheBuilder.AppTranslations/Client typecheck",
     "lint": "pnpm --dir src/TheBuilder.AppTranslations/Client lint",
     "fix": "pnpm --dir src/TheBuilder.AppTranslations/Client fix",

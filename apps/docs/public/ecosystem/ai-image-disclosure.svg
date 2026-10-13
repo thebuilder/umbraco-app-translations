@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">AI Image Disclosure</title>
+  <defs>
+    <linearGradient id="blue" x1="8" y1="8" x2="30" y2="36" gradientUnits="userSpaceOnUse"><stop stop-color="#4FA2F8"/><stop offset="1" stop-color="#3979EC"/></linearGradient>
+    <linearGradient id="violet" x1="19" y1="15" x2="42" y2="44" gradientUnits="userSpaceOnUse"><stop stop-color="#A07AF1"/><stop offset="1" stop-color="#7959DF"/></linearGradient>
+    <linearGradient id="pink" x1="29" y1="22" x2="54" y2="51" gradientUnits="userSpaceOnUse"><stop stop-color="#ED68BE"/><stop offset="1" stop-color="#D84DA7"/></linearGradient>
+  </defs>
+  <rect x="5" y="9" width="31" height="31" rx="8" fill="url(#blue)"/>
+  <rect x="15" y="15" width="34" height="34" rx="9" fill="url(#violet)"/>
+  <rect x="25" y="22" width="34" height="34" rx="9" fill="url(#pink)"/>
+  <circle cx="53" cy="52" r="9" fill="#8067E8"/>
+  <circle cx="53" cy="52" r="3.5" fill="#F4EFFF"/>
+</svg>

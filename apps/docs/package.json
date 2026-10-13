@@ -1,0 +1,23 @@
+{
+  "name": "@thebuilder/app-translations-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "blume dev",
+    "build": "pnpm run generate:brand && pnpm run generate:og && blume build",
+    "check": "blume check",
+    "generate:brand": "node scripts/generate-brand.mjs",
+    "screenshots": "node scripts/screenshots.mjs",
+    "generate:og": "umbraco-docs-og",
+    "check:og": "umbraco-docs-og --check"
+  },
+  "dependencies": {
+    "@thebuilder/umbraco-docs": "^1.0.4",
+    "blume": "^1.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "playwright": "^1.62.1",
+    "sharp": "^0.35.4"
+  }
+}

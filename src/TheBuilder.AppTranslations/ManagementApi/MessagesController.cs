@@ -17,7 +17,8 @@ public sealed class MessagesController(
     ITranslationMessageRepository store,
     ITranslationEditorRepository editor,
     IMessageFormatValidator validator,
-    ITranslationLocaleCatalog locales) : TranslationsApiControllerBase
+    ITranslationLocaleCatalog locales,
+    DeliveryApiKeyAuthenticator deliveryAccess) : TranslationsApiControllerBase
 {
     [HttpGet("messages")]
     public async Task<ActionResult<MessageListResponse>> ListMessages(
@@ -122,7 +123,8 @@ public sealed class MessagesController(
             facets.TotalKeys,
             facets.OutputEndpoints.Select(endpoint => new OutputEndpointResponse(endpoint.Locale, endpoint.Namespace, endpoint.Format)).ToArray(),
             facets.OutputConflicts.Select(conflict => new OutputConflictResponse(conflict.Locale, conflict.Namespace, conflict.MessageFormats)).ToArray(),
-            facets.StatusCounts.ToDictionary(item => item.Key.ToString(), item => item.Value));
+            facets.StatusCounts.ToDictionary(item => item.Key.ToString(), item => item.Value),
+            deliveryAccess.KeyRequired);
     }
 
     /// <summary>
