@@ -13,3 +13,7 @@ samples/**/appsettings-schema*.json
 samples/**/umbraco-package-schema.json
 /artifacts/
 .DS_Store
+apps/docs/.blume/
+apps/docs/public/og/
+apps/docs/public/opengraph-image.png
+**/.astro/

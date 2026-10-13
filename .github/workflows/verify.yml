@@ -24,6 +24,22 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
 
 jobs:
+  # The documentation site, so a page that does not build fails the change that broke it rather
+  # than the next deploy. The build also draws the Open Graph cards and the favicon from the logo.
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build documentation
+        run: pnpm docs:build
+
   client:
     name: Client
     runs-on: ubuntu-latest

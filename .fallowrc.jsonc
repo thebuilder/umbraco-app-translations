@@ -17,7 +17,10 @@
 
   // Written by `pnpm generate-client` from the running API's OpenAPI document, which describes far
   // more of the server than this client calls. Trimming it by hand lasts until the next run.
-  "ignorePatterns": ["src/TheBuilder.AppTranslations/Client/src/api/openapi/**"],
+  //
+  // The documentation site is not the package. Blume loads its config, content and pages by
+  // convention rather than by import, so to fallow every file there looks unreachable.
+  "ignorePatterns": ["src/TheBuilder.AppTranslations/Client/src/api/openapi/**", "apps/docs/**"],
 
   // Called by the browser, not by this code.
   "usedClassMembers": ["connectedCallback", "disconnectedCallback"]
