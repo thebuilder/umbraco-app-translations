@@ -63,7 +63,8 @@ class TranslationAssistantSettingsElement extends LitElement {
 
   render() {
     const { settings, value } = this;
-    const ready = settings.profiles.length > 0 || settings.hasDefaultProfile;
+    const ready =
+      settings.installed && (settings.profiles.length > 0 || settings.hasDefaultProfile);
     // On or off is the card's one decision, so it sits in the card's header rather than taking a row.
     return html`<uui-box headline="AI assistant" headline-variant="h2">
       ${
@@ -83,6 +84,18 @@ class TranslationAssistantSettingsElement extends LitElement {
 
   #renderBody() {
     const { settings, value } = this;
+
+    // The package does not depend on Umbraco.AI, so the site may not have it, and then there is no
+    // AI section to send anyone to either.
+    if (!settings.installed) {
+      return html`
+        <p class="intro">
+          The translation editor can suggest translations and rewrites with AI. That needs Umbraco.AI
+          17.5 or later, which this site does not have. Install an Umbraco.AI provider package for
+          the site's Umbraco version, such as Umbraco.AI.OpenAI, and restart the site.
+        </p>
+      `;
+    }
 
     // Nothing to choose from: the assistant needs a chat profile, and those are made in the AI section.
     if (settings.profiles.length === 0 && !settings.hasDefaultProfile) {

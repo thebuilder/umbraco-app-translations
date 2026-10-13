@@ -17,6 +17,7 @@ export type AssistantSettingsRequest = {
 };
 
 export type AssistantSettingsResponse = {
+    installed: boolean;
     hasDefaultProfile: boolean;
     profiles: Array<AssistantProfile>;
     enabled: boolean;
@@ -266,7 +267,7 @@ export type SourceResponse = {
     lastSuccessfulSync?: string | null;
     syncInProgress: boolean;
     syncLeaseExpiresAt?: string | null;
-    lastSync?: TranslationSyncResult;
+    lastSync?: TranslationSyncResult | null;
 };
 
 export type TranslationOutputFormat = 'next-intl' | 'i18next-v4';
@@ -367,7 +368,7 @@ export type SourceResponseWritable = {
     lastSuccessfulSync?: string | null;
     syncInProgress: boolean;
     syncLeaseExpiresAt?: string | null;
-    lastSync?: TranslationSyncResult;
+    lastSync?: TranslationSyncResult | null;
 };
 
 export type AssistantGetStatusData = {
