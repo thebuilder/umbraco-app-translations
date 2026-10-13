@@ -22,7 +22,13 @@ The **App Translations** section lists every message, one row per key. Choose th
 - **Revert to default** removes the custom text and returns to what the application ships.
 - **Default changed** marks custom text whose application default has changed since someone wrote it, so you can check it still fits.
 
-Anyone with access to the App Translations section can edit. Administrators manage sources and the AI settings.
+Each message shows who last changed it, and when. Anyone with access to the App Translations section can edit. Administrators manage sources and the AI settings.
+
+## Languages your application does not ship
+
+A site can offer a language its application has no files for. Add the language in **Settings > Languages**, and leave it unticked on the source, since the source does not supply it. The language then appears in the editor with every message empty, and editors write the text from scratch. Each message keeps the placeholders and plural rules of the languages the application does ship, so the editor checks the new text the same way.
+
+The delivery endpoints serve that text as the whole message, because the application has nothing to merge it over. If the application later ships the language, tick it on the source: the next sync fills in its default text, and keeps what the editors wrote as custom text.
 
 ## Who can open the section
 

@@ -1,4 +1,5 @@
 import { defineConfig } from "blume";
+import { githubReleaseChangelogSource } from "./sources/github-releases";
 import { appTranslationsPackage } from "./umbraco-package";
 
 export default defineConfig({
@@ -14,12 +15,25 @@ export default defineConfig({
     dir: "apps/docs",
   },
   content: {
-    root: "content",
+    sources: [
+      { type: "filesystem", root: "content" },
+      // GitHub Releases are the changelog, as RELEASE.md says, so the notes are written once.
+      {
+        type: "custom",
+        source: githubReleaseChangelogSource({
+          owner: "thebuilder",
+          repo: "umbraco-app-translations",
+        }),
+      },
+    ],
   },
   navigation: {
     // A custom landing page owns "/", so the Docs tab links to the overview
     // while keeping path "/" to stay highlighted across every docs route.
-    tabs: [{ label: "Docs", path: "/", href: "/overview" }],
+    tabs: [
+      { label: "Docs", path: "/", href: "/overview" },
+      { label: "Changelog", path: "/changelog", href: "/changelog" },
+    ],
   },
   deployment: {
     output: "static",

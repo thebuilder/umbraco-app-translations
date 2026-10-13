@@ -11,6 +11,8 @@ export default defineMeta({
     "syncing",
     "ai-suggestions",
     "configuration",
+    "operations",
+    "troubleshooting",
     "license",
   ],
 });

@@ -1,0 +1,133 @@
+---
+title: Delivery API
+description: Fetch the custom text for a language and namespace, or the complete dictionary, and merge it into next-intl or i18next.
+seo:
+  image: /og/delivery-api.png
+---
+
+Your application fetches translations from two endpoints, one language and one [namespace](/sources#namespaces) per request. **Settings > App translations** lists the exact URL for each language and namespace.
+
+## Custom text only
+
+Fetch what editors changed, and merge it over the messages your application already bundles:
+
+```http
+GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl
+```
+
+```json
+{
+  "greeting": "Hej {name}, godt at se dig igen!"
+}
+```
+
+## The complete dictionary
+
+If your application does not bundle its own text, fetch everything instead. It has the custom text in place of the application's text wherever an editor wrote some.
+
+```http
+GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website&format=next-intl
+```
+
+## Parameters
+
+| Parameter | Value |
+| --- | --- |
+| `locale` | The Umbraco language code, such as `da-DK`. It has to match exactly. |
+| `namespace` | The namespace, such as `website`. |
+| `format` | `next-intl` for ICU messages, or `i18next-v4` for i18next JSON v4. |
+
+:::caution
+The locale is Umbraco's code, not your application's. A request for `da` when the site stores `da-DK` finds nothing and returns `{}`. Map your application's locales to Umbraco's, as the examples below do.
+:::
+
+A locale or namespace that has no messages also returns `{}`, not `404`, so an application keeps its own text rather than failing.
+
+## next-intl
+
+In a next-intl application, merge the custom text in the request configuration. This example uses next-intl 4 with the App Router and one `website` namespace:
+
+```ts src/i18n/request.ts
+import { getRequestConfig } from "next-intl/server";
+import { hasLocale } from "next-intl";
+import { routing } from "./routing";
+
+// Your application's locales, and the Umbraco language codes they are stored under.
+const umbracoLocales: Record<string, string> = { en: "en-US", da: "da-DK" };
+
+type Messages = { [key: string]: string | Messages };
+
+const merge = (base: Messages, overrides: Messages): Messages => {
+  const merged: Messages = { ...base };
+  for (const [key, value] of Object.entries(overrides)) {
+    const current = merged[key];
+    merged[key] =
+      typeof value === "object" && typeof current === "object" ? merge(current, value) : value;
+  }
+  return merged;
+};
+
+export default getRequestConfig(async ({ requestLocale }) => {
+  const requested = await requestLocale;
+  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale;
+  const messages: Messages = (await import(`../../messages/${locale}.json`)).default;
+
+  const url = new URL("/umbraco/delivery/api/v1/app-translations/overrides", process.env.UMBRACO_URL);
+  url.search = new URLSearchParams({
+    locale: umbracoLocales[locale],
+    namespace: "website",
+    format: "next-intl",
+  }).toString();
+
+  // If Umbraco cannot be reached, the application still has its own text.
+  const response = await fetch(url, { next: { revalidate: 60 } }).catch(() => undefined);
+  const overrides: Messages = response?.ok ? await response.json() : {};
+
+  return { locale, messages: merge(messages, overrides) };
+});
+```
+
+## i18next
+
+i18next can merge a bundle in place. Add the custom text once its own resources are loaded:
+
+```ts
+const url = new URL("/umbraco/delivery/api/v1/app-translations/overrides", UMBRACO_URL);
+url.search = new URLSearchParams({ locale: "da-DK", namespace: "website", format: "i18next-v4" }).toString();
+
+const response = await fetch(url);
+if (response.ok) {
+  // Deep, and overwriting: the custom text replaces the bundled text key by key.
+  i18next.addResourceBundle("da", "translation", await response.json(), true, true);
+}
+```
+
+Use `format=i18next-v4` and set the source's message syntax to **i18next JSON v4**. The output keeps nested keys, `{{variable}}` interpolation, context keys and plural suffixes such as `_one`, `_other` and `_ordinal_one`.
+
+:::note
+Umbraco never converts text between ICU and i18next syntax, so keep each namespace to one syntax. Umbraco refuses to serve a namespace that mixes them until you split it.
+:::
+
+## Caching
+
+Both endpoints answer with an ETag, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes. They allow caching for 60 seconds, so an edit can take up to a minute to reach a client that caches. To drop a cached dictionary the moment it changes, subscribe to the [App translations updated webhook](/syncing#telling-your-application-something-changed).
+
+## Access
+
+The endpoints are public, which suits most sites: the text ends up in the application's bundle anyway. To keep them to your own applications, set a key:
+
+```sh
+TheBuilder__AppTranslations__Delivery__ApiKey=replace-with-a-long-random-value
+```
+
+A request then needs the key in an `Api-Key` header, as Umbraco's own Delivery API expects, or as a bearer token, and gets `401` without it. A keyed answer is cached as private, so a CDN does not hand it to anyone else. Keep the key on the server side of your application, never in code that runs in the browser.
+
+## Responses
+
+| Status | Meaning |
+| --- | --- |
+| `200` | The messages, as JSON. `{}` when the locale or namespace has none. |
+| `304` | Nothing changed since the ETag you sent. |
+| `400` | `locale` or `namespace` is missing, or `format` is not one of the two. |
+| `401` | A key is configured, and the request did not send it. |
+| `409` | The namespace mixes ICU and i18next messages, or two sources supply the same key. |

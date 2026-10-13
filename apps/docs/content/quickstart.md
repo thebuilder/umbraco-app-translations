@@ -15,7 +15,14 @@ Start the site. On the first start, the package creates its tables and opens its
 
 ## 2. Make your translation files reachable
 
-Umbraco reads your application's translation files over HTTP, one file per language, for example `https://app.example.com/messages/en-US.json`. Serve them from your application, a CDN or any URL your Umbraco site can reach.
+Umbraco reads your application's translation files over HTTP, one file per language. Serve them from your application, a CDN or any URL your Umbraco site can reach. A next-intl application's `messages/en-US.json` might look like this:
+
+```json
+{
+  "navigation": { "home": "Home", "contact": "Contact" },
+  "greeting": "Welcome, {name}!"
+}
+```
 
 ## 3. Add a source
 
@@ -23,10 +30,22 @@ In Umbraco, go to **Settings > App translations** and add a source. A source hol
 
 ![Settings > App translations, with one source and the delivery URL for Danish](./screenshots/settings.png)
 
+For the file above, served at `https://app.example.com/messages/en-US.json` and `.../da-DK.json`:
+
+| Setting | Value |
+| --- | --- |
+| Messages endpoint | `https://app.example.com/messages/{locale}.json` |
+| Site languages | English (United States) and Danish |
+| Catalogue format | Nested JSON |
+| Namespace handling | Use one namespace for every message, named `website` |
+| Message syntax | ICU messages |
+
+The messages arrive as `website.navigation.home`, `website.greeting` and so on.
+
 - **Test source** fetches the files without saving anything.
 - **Sync now** reads them in.
 
-See [Sources](/sources) for the URL placeholders and every setting.
+See [Sources](/sources) for the URL placeholders, namespaces and every setting.
 
 ## 4. Edit a message
 
@@ -40,4 +59,4 @@ Point your application at the delivery endpoint for a language and namespace, an
 GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl
 ```
 
-[Delivery API](/delivery-api) covers both endpoints, caching and i18next.
+The locale is Umbraco's code, `da-DK`, even if your application calls it `da`. [Delivery API](/delivery-api) has a complete next-intl and i18next example, and covers caching and keys.

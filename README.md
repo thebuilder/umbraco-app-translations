@@ -8,8 +8,8 @@ that need changing, and your application fetches those changes and lays them ove
 
 - **The application owns the messages.** Keys, the default text, the message syntax and the
   placeholders all come from the application's files, and stay there.
-- **Umbraco owns the edits.** Editors write custom text for any message in any language, with a
-  history of who changed what.
+- **Umbraco owns the edits.** Editors write custom text for any message in any language, and
+  Umbraco records who last changed each one, and when.
 - **The application decides what to show.** It merges the custom text over its own, or asks
   Umbraco for the complete dictionary.
 
@@ -65,9 +65,10 @@ A source has three more settings.
 
 ### Sources that need authentication
 
-You can add request headers to a source, but Umbraco never stores their values. Each header names a
-configuration setting instead, and your site's configuration supplies the value. This example gives
-a header `X-Api-Key` the setting name `Translations:SourceApiKey`:
+You can add request headers to a source. Each header either holds its value, or names a
+configuration setting that supplies the value when Umbraco makes the request. A typed value is
+stored in the database in plain text, so put secrets in a setting. This example gives a header
+`X-Api-Key` the setting name `Translations:SourceApiKey`:
 
 ```json
 {

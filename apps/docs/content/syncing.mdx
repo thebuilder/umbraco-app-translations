@@ -7,7 +7,18 @@ seo:
 
 ## Syncing a source
 
-Umbraco reads a source when someone presses **Sync now** in **Settings > App translations**, which also keeps the history of every sync. Sources are not polled on a schedule. To sync as part of a deployment, use the endpoint below.
+Umbraco reads a source when someone presses **Sync now** in **Settings > App translations**. **History** next to it lists every sync, with what it added, changed and removed, or why it failed. Sources are not polled on a schedule. To sync as part of a deployment, use the endpoint below.
+
+## What a sync changes
+
+A sync compares the files with what Umbraco has and applies the difference. Custom text is never lost.
+
+- **A new key** arrives with the application's text.
+- **Changed default text** replaces the old default. Custom text written for that message stays, marked **Default changed** so an editor can check it still fits.
+- **A key the files no longer have** is deleted if nobody wrote custom text for it. If somebody did, the message stays as **No longer used**, with its custom text, but the delivery endpoints stop serving it. If the key comes back, so does the text.
+- **Text written for a language the source does not supply** is left alone. See [Languages your application does not ship](/editing#languages-your-application-does-not-ship).
+
+A sync that reads exactly what Umbraco already has changes nothing, and is not announced.
 
 ## Syncing from a deployment
 
