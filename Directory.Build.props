@@ -5,10 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  <!-- SixLabors.ImageSharp 3.1.12 advisories, fixed only in 4.1.2. Umbraco 17 itself depends on
-       3.1.12 (Umbraco.Cms.Imaging.ImageSharp), and Umbraco.AI caps it below 4, so this repository
-       cannot lift it the way it lifts SQLitePCLRaw: every Umbraco 17 site has it, with or without
-       this package. Suppressed by ID so any new advisory still fails the build. Drop these once
+  <!-- SixLabors.ImageSharp 3.1.12 advisories, fixed only in 4.1.2. Umbraco 17 and 18 themselves
+       depend on 3.1.12 (Umbraco.Cms.Imaging.ImageSharp), and Umbraco.AI caps it below 4, so this
+       repository cannot lift it the way it lifts SQLitePCLRaw: every Umbraco 17 and 18 site has
+       it, with or without this package. Suppressed by ID so any new advisory still fails the build. Drop these once
        Umbraco ships a fixed ImageSharp. -->
   <ItemGroup>
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-gwg2-r3hj-4w44" />

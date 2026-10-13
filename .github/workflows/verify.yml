@@ -123,9 +123,18 @@ jobs:
       - name: Third-party notices
         run: pnpm notices --check
 
+  # The package and its tests across the Umbraco range: the lowest release it allows and the
+  # newest of each major, so a dependency floor or an API that moved shows up before a site meets it.
   dotnet:
-    name: .NET
+    name: .NET (Umbraco ${{ matrix.umbraco-version }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        umbraco-version:
+          - 17.1.0
+          - 17.*
+          - 18.*
     steps:
       - uses: actions/checkout@v4
 
@@ -142,19 +151,72 @@ jobs:
           key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
           restore-keys: nuget-${{ runner.os }}-
 
-      - run: dotnet restore TheBuilder.AppTranslations.slnx
-
       # TreatWarningsAsErrors is on for every project, so this is the warning gate too.
-      - run: dotnet build TheBuilder.AppTranslations.slnx -c Release --no-restore
+      - name: Test
+        env:
+          UMBRACO_VERSION: ${{ matrix.umbraco-version }}
+        run: |
+          for project in tests/TheBuilder.AppTranslations.Core.Tests tests/TheBuilder.AppTranslations.Tests; do
+            dotnet test "$project" -c Release "-p:UmbracoVersion=$UMBRACO_VERSION"
+          done
 
-      - run: dotnet test TheBuilder.AppTranslations.slnx -c Release --no-build
+  # The sample site, which pins its own Umbraco release rather than following the range.
+  sample:
+    name: Sample site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - run: dotnet build samples/TheBuilder.AppTranslations.Example -c Release
+
+      # A build cannot see an assembly Umbraco fails to load at startup, which is how the Umbraco.AI
+      # adapter once stopped every site without Umbraco.AI. So the sample starts on the oldest
+      # Umbraco the package allows, without Umbraco.AI, and has to answer. Debug, because the
+      # Release build above left Umbraco.AI's assemblies in its output. Audit is off because that
+      # old release has advisories, which matter for sites, not for this check.
+      # Built first, so the wait below is for startup alone and a build failure reads as one.
+      - name: Build without Umbraco.AI
+        run: >-
+          dotnet build samples/TheBuilder.AppTranslations.Example -c Debug
+          -p:SampleUmbracoVersion=17.1.0 -p:SampleWithoutUmbracoAI=true -p:NuGetAudit=false
+
+      - name: Start without Umbraco.AI
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
+        run: |
+          log="$RUNNER_TEMP/sample.log"
+          dotnet run --no-build --project samples/TheBuilder.AppTranslations.Example -c Debug \
+            -- --urls http://localhost:5080 > "$log" 2>&1 &
+          sample=$!
+          for attempt in $(seq 1 90); do
+            if curl -fs "http://localhost:5080/umbraco/delivery/api/v1/app-translations/overrides?locale=en-US&namespace=website" > /dev/null; then
+              kill "$sample"
+              exit 0
+            fi
+            if ! kill -0 "$sample" 2> /dev/null; then break; fi
+            sleep 2
+          done
+          cat "$log"
+          echo "The sample did not start without Umbraco.AI." >&2
+          exit 1
 
   package:
     name: Package
     runs-on: ubuntu-latest
     # Last, because it repeats both toolchains: no point paying for it while either half
     # is still failing on its own.
-    needs: [client, dotnet]
+    needs: [client, dotnet, sample]
     steps:
       - uses: actions/checkout@v4
 

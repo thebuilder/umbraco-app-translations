@@ -26,7 +26,7 @@ for a temporary NuGet API key, so no long-lived NuGet API key is stored in GitHu
 1. Check that CI passes for the commit you are releasing.
 2. Run `dotnet list src/TheBuilder.AppTranslations/TheBuilder.AppTranslations.csproj package --vulnerable --include-transitive`
    and resolve any high or critical finding. `Directory.Build.props` suppresses five ImageSharp
-   advisories that come with Umbraco 17 itself; check whether Umbraco has shipped a fixed ImageSharp
+   advisories that come with Umbraco 17 and 18 themselves; check whether Umbraco has shipped a fixed ImageSharp
    and the suppressions can go.
 3. Review `pnpm audit --prod`.
 4. Look at the package CI built before approving the `nuget` environment deployment.

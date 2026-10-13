@@ -45,6 +45,7 @@ public sealed class TranslationsComposer : IComposer
         builder.CacheRefreshers().Add<DeliveryResponseCacheRefresher>();
         builder.AddNotificationHandler<TranslationsUpdatedNotification, DeliveryResponseCacheInvalidator>();
         builder.Services.AddSingleton<IAuthorizationHandler, BackofficeAdministratorHandler>();
+        builder.Services.AddSingleton<IBackOfficeUserSections, UmbracoBackOfficeUserSections>();
         builder.Services.AddSingleton<IAuthorizationHandler, AppTranslationsSectionAccessHandler>();
         builder.Services.AddSingleton(TimeProvider.System);
         builder.Services.AddSingleton<IMessageFormatValidator, MessageFormatValidator>();
