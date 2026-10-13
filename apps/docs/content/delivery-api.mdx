@@ -110,7 +110,17 @@ Umbraco never converts text between ICU and i18next syntax, so keep each namespa
 
 ## Caching
 
-Both endpoints send an ETag with every response, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes. Responses may be cached for 60 seconds, so an edit can take up to a minute to reach a client that caches. To drop a cached dictionary the moment it changes, subscribe to the [App translations updated webhook](/syncing#telling-your-application-something-changed).
+Umbraco keeps each response in memory until the translations change: a sync that changed something, a saved or reverted message, or a deleted source. The change clears it on every server, so the next request reads the new text from the database.
+
+Clients and CDNs may keep a response for 60 seconds by default, so an edit can take up to a minute to reach a client that caches. Set the lifetime with `TheBuilder:AppTranslations:Delivery:MaxAgeSeconds`:
+
+```sh
+TheBuilder__AppTranslations__Delivery__MaxAgeSeconds=0
+```
+
+With `0`, clients keep the response but check it on every request, and see an edit as soon as it is saved. Every response carries an ETag, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes, and Umbraco answers that from memory.
+
+To drop a cached dictionary in your own application the moment it changes, subscribe to the [App translations updated webhook](/syncing#telling-your-application-something-changed).
 
 ## Access
 

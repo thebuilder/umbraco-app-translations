@@ -22,13 +22,13 @@ The AI assistant settings and the Translation section setting are in Umbraco's k
 
 - **Syncing.** A source syncs on one server at a time. Each sync holds a lease on its source, and a second sync that starts meanwhile gets `409`. A lease left by a server that stopped expires on its own.
 - **Webhooks.** Umbraco sends them only from the Single or SchedulingPublisher server.
-- **Delivery.** Every server builds its responses from the shared database, with the same ETag for the same text.
+- **Delivery.** Every server keeps its own copy of each response, built from the shared database, with the same ETag for the same text. A change clears the copies on every server, through Umbraco's distributed cache.
 
 ## Limits
 
 - A source's request times out after 10 seconds, and its response can be at most 10 MB. Both are set per source, under **Advanced**.
 - Sources connect only to public addresses, do not follow redirects and do not use the host's proxy, unless you [allow private networks](/sources#sources-on-a-private-network).
-- Responses from the delivery endpoints may be cached for 60 seconds.
+- Clients and CDNs may keep delivery responses for 60 seconds, unless you [change it](/delivery-api#caching).
 
 ## Upgrading
 

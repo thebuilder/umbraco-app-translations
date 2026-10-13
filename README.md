@@ -166,8 +166,10 @@ custom text in place of the application's text wherever an editor wrote some.
 GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website&format=next-intl
 ```
 
-Both endpoints send an ETag with every response, so a client that sends `If-None-Match` gets
-`304 Not Modified` until something changes. Responses may be cached for 60 seconds.
+Umbraco keeps each response in memory until the translations change, on every server. Clients and
+CDNs may keep it for 60 seconds; `TheBuilder:AppTranslations:Delivery:MaxAgeSeconds` changes that,
+and `0` makes them check on every request. Every response carries an ETag, so a client that sends
+`If-None-Match` gets `304 Not Modified` until something changes.
 
 The endpoints are public until you set `TheBuilder:AppTranslations:Delivery:ApiKey`. With a key set,
 a request needs it in an `Api-Key` header or as a bearer token, and gets `401` without it. **Settings > App translations** lists the exact URL for each language and
@@ -259,6 +261,7 @@ load-balanced setup, Umbraco sends webhooks only from the Single or SchedulingPu
 | `TheBuilder:AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`.  |
 | `TheBuilder:AppTranslations:DeploymentSync:ApiKey`                 | none    | Turns on deployment-triggered sync. A long random value, without spaces. |
 | `TheBuilder:AppTranslations:Delivery:ApiKey`                       | none    | Requires a key for the delivery endpoints, which are public without one. |
+| `TheBuilder:AppTranslations:Delivery:MaxAgeSeconds`                | `60`    | How long clients and CDNs may keep a delivery response. `0` makes them check every time. |
 
 Source headers read their values from the setting names you give them.
 
