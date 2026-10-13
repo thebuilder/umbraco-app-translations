@@ -1,6 +1,4 @@
 using System.Net.Http.Headers;
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.Extensions.Options;
 using TheBuilder.AppTranslations.Configuration;
 
@@ -19,9 +17,7 @@ public sealed class DeploymentSyncApiKeyAuthenticator(IOptions<DeploymentSyncOpt
             string.IsNullOrWhiteSpace(authorization.Parameter))
             return DeploymentSyncAuthenticationResult.Unauthorized;
 
-        var configuredHash = SHA256.HashData(Encoding.UTF8.GetBytes(configuredKey));
-        var suppliedHash = SHA256.HashData(Encoding.UTF8.GetBytes(authorization.Parameter));
-        return CryptographicOperations.FixedTimeEquals(configuredHash, suppliedHash)
+        return ApiKey.Matches(configuredKey, authorization.Parameter)
             ? DeploymentSyncAuthenticationResult.Authorized
             : DeploymentSyncAuthenticationResult.Unauthorized;
     }

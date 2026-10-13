@@ -55,6 +55,7 @@ export type FacetResponse = {
     statusCounts: {
         [key: string]: number;
     };
+    deliveryRequiresApiKey: boolean;
 };
 
 export type HttpTranslationHeaderOptions = {

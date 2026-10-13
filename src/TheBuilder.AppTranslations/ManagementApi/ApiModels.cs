@@ -139,7 +139,8 @@ public sealed record FacetResponse(
     int TotalKeys,
     IReadOnlyList<OutputEndpointResponse> OutputEndpoints,
     IReadOnlyList<OutputConflictResponse> OutputConflicts,
-    IReadOnlyDictionary<string, int> StatusCounts);
+    IReadOnlyDictionary<string, int> StatusCounts,
+    bool DeliveryRequiresApiKey);
 internal static class ApiModelMapping
 {
     public static MessageListItem ToListItem(this TranslationMessageView view) => new(

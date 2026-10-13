@@ -166,7 +166,10 @@ GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website
 ```
 
 Both endpoints answer with an ETag, so a client that sends `If-None-Match` gets `304 Not Modified`
-until something changes. **Settings > App translations** lists the exact URL for each language and
+until something changes. They allow caching for 60 seconds.
+
+The endpoints are public until you set `TheBuilder:AppTranslations:Delivery:ApiKey`. With a key set,
+a request needs it in an `Api-Key` header or as a bearer token, and gets `401` without it. **Settings > App translations** lists the exact URL for each language and
 namespace.
 
 For i18next, use `format=i18next-v4` and set the source's message syntax to **i18next JSON v4**.
@@ -254,6 +257,7 @@ load-balanced setup, Umbraco sends webhooks only from the Single or SchedulingPu
 | --------------------------------------------------------------- | ------- | -------------------------------------------------------- |
 | `TheBuilder:AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`.  |
 | `TheBuilder:AppTranslations:DeploymentSync:ApiKey`                 | none    | Turns on deployment-triggered sync. A long random value, without spaces. |
+| `TheBuilder:AppTranslations:Delivery:ApiKey`                       | none    | Requires a key for the delivery endpoints, which are public without one. |
 
 Source headers read their values from the setting names you give them.
 

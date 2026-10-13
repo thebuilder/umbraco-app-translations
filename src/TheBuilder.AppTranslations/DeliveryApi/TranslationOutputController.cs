@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TheBuilder.AppTranslations.Authorization;
 using TheBuilder.AppTranslations.Core.Output;
 using TheBuilder.AppTranslations.Core.Persistence;
 
@@ -12,9 +13,13 @@ namespace TheBuilder.AppTranslations.DeliveryApi;
 [ApiController]
 [ApiVersion("1.0")]
 [Route(Constants.DeliveryApiRoot)]
-public sealed class TranslationOutputController(ITranslationMessageRepository store, ITranslationOutputSerializer serializer) : ControllerBase
+public sealed class TranslationOutputController(
+    ITranslationMessageRepository store,
+    ITranslationOutputSerializer serializer,
+    DeliveryApiKeyAuthenticator authenticator) : ControllerBase
 {
     [HttpGet("overrides")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public Task<IActionResult> GetOverrides(
         [FromQuery, Required] string? locale,
         [FromQuery(Name = "namespace"), Required] string? messageNamespace,
@@ -23,6 +28,7 @@ public sealed class TranslationOutputController(ITranslationMessageRepository st
         GetOutput(locale, messageNamespace, format, TranslationOutputMode.Overrides, cancellationToken);
 
     [HttpGet("all")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public Task<IActionResult> GetAll(
         [FromQuery, Required] string? locale,
         [FromQuery(Name = "namespace"), Required] string? messageNamespace,
@@ -37,6 +43,13 @@ public sealed class TranslationOutputController(ITranslationMessageRepository st
         TranslationOutputMode mode,
         CancellationToken cancellationToken)
     {
+        var access = authenticator.Authenticate(Request.Headers[DeliveryApiKeyAuthenticator.HeaderName], Request.Headers.Authorization);
+        if (access is DeliveryAuthenticationResult.Unauthorized)
+        {
+            Response.Headers.WWWAuthenticate = "Bearer";
+            return Unauthorized();
+        }
+
         if (string.IsNullOrWhiteSpace(locale))
             return BadRequest("The locale query parameter is required.");
         if (string.IsNullOrWhiteSpace(messageNamespace))
@@ -60,7 +73,9 @@ public sealed class TranslationOutputController(ITranslationMessageRepository st
         var etag = $"\"{Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(json))).ToLowerInvariant()}\"";
         if (Request.Headers.IfNoneMatch.Contains(etag)) return StatusCode(StatusCodes.Status304NotModified);
         Response.Headers.ETag = etag;
-        Response.Headers.CacheControl = "public,max-age=60";
+        // A shared cache may keep a public answer for a minute. One that needed a key must stay with
+        // the client that sent it, or a CDN would hand it to anyone who asked.
+        Response.Headers.CacheControl = access is DeliveryAuthenticationResult.Public ? "public,max-age=60" : "private,max-age=60";
         return Content(json, "application/json", Encoding.UTF8);
     }
 }

@@ -27,18 +27,17 @@ public sealed class TranslationsComposer : IComposer
         builder.PackageMigrationPlans().Add(typeof(TranslationsMigrationPlan));
         builder.Services.AddOptions<DeploymentSyncOptions>()
             .Bind(builder.Config.GetSection(DeploymentSyncOptions.SectionName))
-            // No minimum length: how strong the secret is, is the site's call. Whitespace is refused
-            // because a key with a space or a stray newline from an environment variable can never
-            // match the bearer token a pipeline sends, and would otherwise fail as a puzzling 401.
-            .Validate(
-                options => string.IsNullOrWhiteSpace(options.ApiKey) ||
-                           options.ApiKey.All(character => !char.IsWhiteSpace(character)),
-                $"{DeploymentSyncOptions.ApiKeyConfigurationName} must not contain whitespace.")
+            .Validate(options => ApiKey.IsUsable(options.ApiKey), $"{DeploymentSyncOptions.ApiKeyConfigurationName} must not contain whitespace.")
+            .ValidateOnStart();
+        builder.Services.AddOptions<DeliveryOptions>()
+            .Bind(builder.Config.GetSection(DeliveryOptions.SectionName))
+            .Validate(options => ApiKey.IsUsable(options.ApiKey), $"{DeliveryOptions.ApiKeyConfigurationName} must not contain whitespace.")
             .ValidateOnStart();
         builder.Services.AddOptions<TranslationSourceSecurityOptions>()
             .Bind(builder.Config.GetSection(TranslationSourceSecurityOptions.SectionName));
         builder.Services.AddAuthorization(ConfigurePolicies);
         builder.Services.AddSingleton<DeploymentSyncApiKeyAuthenticator>();
+        builder.Services.AddSingleton<DeliveryApiKeyAuthenticator>();
         builder.Services.AddSingleton<IAuthorizationHandler, BackofficeAdministratorHandler>();
         builder.Services.AddSingleton<IAuthorizationHandler, AppTranslationsSectionAccessHandler>();
         builder.Services.AddSingleton(TimeProvider.System);
