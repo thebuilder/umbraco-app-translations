@@ -23,7 +23,8 @@ The package reads nested JSON, as next-intl and i18next write it, and next-intl'
 
 ## Requirements
 
-- Umbraco CMS 17.5 or later, on .NET 10.
+- Umbraco CMS 17.1 or later, Umbraco 18 included, on .NET 10.
+- For [AI suggestions](/ai-suggestions) only, Umbraco.AI 17.5 or later, which needs Umbraco 17.5 or later.
 - Translation files your Umbraco site can fetch over HTTP, one file per language.
 
 ## Where to go next

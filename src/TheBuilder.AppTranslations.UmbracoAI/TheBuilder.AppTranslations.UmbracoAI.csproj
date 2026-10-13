@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Everything in the package that touches Umbraco.AI, kept apart from the rest. The package does
+    not depend on Umbraco.AI: each Umbraco.AI release is locked to one Umbraco major, so a
+    dependency would lock the package to that major too. Umbraco.AI comes with the provider package
+    a site installs to use AI at all, such as Umbraco.AI.OpenAI, for the site's own Umbraco major.
+
+    At startup Umbraco loads every assembly in the site's folder and the assemblies each one
+    references, and stops the site if one is missing. This one references Umbraco.AI, so it is not
+    in that folder: the package copies it to a TheBuilder.AppTranslations.UmbracoAI folder beside
+    it, and the main assembly loads it from there, only once it has found a supported Umbraco.AI.
+
+    It compiles against Umbraco.AI.Core's assembly, downloaded without joining the dependency graph,
+    and does not ship it. The members it calls are the same in Umbraco.AI 17.5 and 18.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- Ships inside the TheBuilder.AppTranslations package, never as a package of its own. -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" />
+    <PackageDownload Include="Umbraco.AI.Core" Version="[17.5.0]" />
+    <Reference Include="Umbraco.AI.Core">
+      <HintPath>$(NuGetPackageRoot)umbraco.ai.core/17.5.0/lib/net10.0/Umbraco.AI.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

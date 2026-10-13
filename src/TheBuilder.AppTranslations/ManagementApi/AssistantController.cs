@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using TheBuilder.AppTranslations.Core.Assistant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,9 @@ public sealed record AssistantStatusResponse(bool Available);
 /// <summary>Everything the settings dashboard shows about the assistant, and what it can be set to.</summary>
 /// <param name="HasDefaultProfile">Whether Umbraco.AI has a default chat profile to fall back on.</param>
 /// <param name="Instructions">The site's own instructions, or null to use <paramref name="DefaultInstructions"/>.</param>
+/// <param name="Installed">Whether the site has a version of Umbraco.AI the assistant can use.</param>
 public sealed record AssistantSettingsResponse(
+    bool Installed,
     bool HasDefaultProfile,
     IReadOnlyList<AssistantProfile> Profiles,
     bool Enabled,
@@ -109,6 +112,7 @@ public sealed class AssistantController(
         AssistantSettings current,
         CancellationToken cancellationToken) =>
         new(
+            Installed: chat.IsInstalled,
             HasDefaultProfile: await chat.HasDefaultProfileAsync(cancellationToken),
             Profiles: await chat.GetProfilesAsync(cancellationToken),
             current.Enabled,

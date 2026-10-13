@@ -1,23 +1,38 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Floating versions, so CI can build against the newest release of each major. -->
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
+    <!-- The Umbraco versions the package supports, as the other TheBuilder packages state theirs.
+         CI overrides it to test the lowest release and the newest of each major. -->
+    <UmbracoVersion Condition="'$(UmbracoVersion)' == ''">[17.1.0,19.0.0)</UmbracoVersion>
+    <!-- The sample site runs a fixed, patched release rather than the lowest the range allows. Set
+         both to an 18 release to run it as an Umbraco 18 site. -->
+    <SampleUmbracoVersion Condition="'$(SampleUmbracoVersion)' == ''">17.5.3</SampleUmbracoVersion>
+    <SampleUmbracoAIVersion Condition="'$(SampleUmbracoAIVersion)' == ''">17.5.0</SampleUmbracoAIVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="10.7.0" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="10.0.10" />
     <PackageVersion Include="MailKit" Version="4.17.0" />
     <PackageVersion Include="MessagePack" Version="3.1.8" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="2.11.0" />
+    <!-- Raised to the floor Umbraco 18 sets, which Umbraco 17 accepts too. -->
+    <PackageVersion Include="Microsoft.OpenApi" Version="2.12.2" />
     <PackageVersion Include="MimeKit" Version="4.17.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.10" />
-    <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.12" />
-    <PackageVersion Include="Umbraco.AI" Version="17.5.0" />
-    <PackageVersion Include="Umbraco.Cms" Version="17.5.3" />
-    <PackageVersion Include="Umbraco.Cms.Api.Common" Version="17.5.3" />
-    <PackageVersion Include="Umbraco.Cms.Api.Management" Version="17.5.3" />
-    <PackageVersion Include="Umbraco.Cms.Web.Common" Version="17.5.3" />
-    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="17.5.3" />
+    <!-- The sample and the tests only, which run SQLite: the floor Umbraco 18 sets, above the
+         release with the known vulnerability (GHSA-2m69-gcr7-jv3q). -->
+    <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.13" />
+    <!-- The sample site only, never the package. The package's Umbraco.AI adapter compiles
+         against Umbraco.AI.Core without depending on it; see TheBuilder.AppTranslations.UmbracoAI. -->
+    <PackageVersion Include="Umbraco.AI" Version="$(SampleUmbracoAIVersion)" />
+    <PackageVersion Include="Umbraco.Cms" Version="$(SampleUmbracoVersion)" />
+    <PackageVersion Include="Umbraco.Cms.Api.Common" Version="$(UmbracoVersion)" />
+    <PackageVersion Include="Umbraco.Cms.Api.Management" Version="$(UmbracoVersion)" />
+    <PackageVersion Include="Umbraco.Cms.Web.Common" Version="$(UmbracoVersion)" />
+    <PackageVersion Include="Umbraco.Cms.Web.Website" Version="$(UmbracoVersion)" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>

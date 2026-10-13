@@ -9,16 +9,9 @@ namespace TheBuilder.AppTranslations.Tests;
 public sealed class TranslationAuthorizationTests
 {
     [Fact]
-    public async Task Section_access_uses_the_authenticated_management_api_claims()
+    public async Task Section_access_is_granted_by_the_package_section()
     {
-        var identity = BackofficeIdentity(
-            allowedSections: [AppTranslationsSectionAccessHandler.SectionAlias],
-            roles: []);
-        var requirement = new AppTranslationsSectionAccessRequirement();
-        var context = new AuthorizationHandlerContext([requirement], new ClaimsPrincipal(identity), null);
-        var handler = new AppTranslationsSectionAccessHandler(new EmptyBackOfficeSecurityAccessor());
-
-        await handler.HandleAsync(context);
+        var context = await SectionAccess([AppTranslationsSectionAccessHandler.SectionAlias]);
 
         Assert.True(context.HasSucceeded);
     }
@@ -41,10 +34,7 @@ public sealed class TranslationAuthorizationTests
     [Fact]
     public async Task Section_access_denies_a_token_without_the_package_section()
     {
-        var requirement = new AppTranslationsSectionAccessRequirement();
-        var context = new AuthorizationHandlerContext([requirement], new ClaimsPrincipal(BackofficeIdentity([], [])), null);
-
-        await new AppTranslationsSectionAccessHandler(new EmptyBackOfficeSecurityAccessor()).HandleAsync(context);
+        var context = await SectionAccess([]);
 
         Assert.False(context.HasSucceeded);
     }
@@ -52,11 +42,7 @@ public sealed class TranslationAuthorizationTests
     [Fact]
     public async Task Section_access_is_not_granted_by_Umbracos_translation_section()
     {
-        var requirement = new AppTranslationsSectionAccessRequirement();
-        var identity = BackofficeIdentity([Umbraco.Cms.Core.Constants.Applications.Translation], []);
-        var context = new AuthorizationHandlerContext([requirement], new ClaimsPrincipal(identity), null);
-
-        await new AppTranslationsSectionAccessHandler(new EmptyBackOfficeSecurityAccessor()).HandleAsync(context);
+        var context = await SectionAccess([Umbraco.Cms.Core.Constants.Applications.Translation]);
 
         Assert.False(context.HasSucceeded);
     }
@@ -70,6 +56,27 @@ public sealed class TranslationAuthorizationTests
         await new BackofficeAdministratorHandler(new EmptyBackOfficeSecurityAccessor()).HandleAsync(context);
 
         Assert.False(context.HasSucceeded);
+    }
+
+    [Fact]
+    public async Task Section_access_is_denied_without_a_backoffice_user()
+    {
+        var context = await SectionAccess(null);
+
+        Assert.False(context.HasSucceeded);
+    }
+
+    private static async Task<AuthorizationHandlerContext> SectionAccess(IEnumerable<string>? allowedSections)
+    {
+        var requirement = new AppTranslationsSectionAccessRequirement();
+        var context = new AuthorizationHandlerContext([requirement], new ClaimsPrincipal(new ClaimsIdentity("BackOffice")), null);
+        await new AppTranslationsSectionAccessHandler(new FixedSections(allowedSections)).HandleAsync(context);
+        return context;
+    }
+
+    private sealed class FixedSections(IEnumerable<string>? allowed) : IBackOfficeUserSections
+    {
+        public Task<IEnumerable<string>?> GetAllowedSectionsAsync(ClaimsPrincipal principal) => Task.FromResult(allowed);
     }
 
     private static ClaimsIdentity BackofficeIdentity(IReadOnlyCollection<string> allowedSections, IReadOnlyCollection<string> roles)

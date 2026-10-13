@@ -27,6 +27,10 @@ The site has a [delivery key](/delivery-api#access). Send it in an `Api-Key` hea
 - **The namespace mixes syntaxes.** Umbraco never converts between ICU and i18next, so a namespace with both cannot be served in either format. Give each syntax its own source and namespace.
 - **Two sources supply the same key.** Give them different namespaces, or remove the key from one.
 
+## The AI assistant card says Umbraco.AI is missing
+
+The site has no Umbraco.AI, or one older than 17.5. Install an Umbraco.AI provider package for the site's Umbraco version, such as `Umbraco.AI.OpenAI`, and restart the site. Umbraco.AI 17.5 needs Umbraco 17.5, so a site on 17.1 to 17.4 has to upgrade Umbraco first. See [AI suggestions](/ai-suggestions).
+
 ## A sync fails
 
 **History** next to the source says why. The common causes:
