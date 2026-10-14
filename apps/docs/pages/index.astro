@@ -3,7 +3,8 @@
 import PageLayout from "blume/components/layout/PageLayout.astro";
 import data from "blume:data";
 import { loadUmbracoPackages } from "@thebuilder/umbraco-docs";
-import { EcosystemSection, InstallCommand, LandingRoot } from "@thebuilder/umbraco-docs/astro";
+import { EcosystemSection, InstallCommand, LandingHero, LandingRoot } from "@thebuilder/umbraco-docs/astro";
+import HeroParticles from "@thebuilder/umbraco-docs/components/HeroParticles";
 
 import "./_home/home.css";
 
@@ -61,33 +62,25 @@ const features = [
   }}
 >
   <LandingRoot class="home">
-    <section class="hero">
-      <div class="hero__glow" aria-hidden="true"></div>
-      <div class="shell hero__inner">
-        <img class="hero__mark reveal" src="/logo-mark.svg" width="72" height="72" alt="App Translations" style="--i: 0" decoding="async" />
-        <p class="eyebrow reveal" style="--i: 1">next-intl and i18next messages, edited in Umbraco</p>
-        <h1 class="hero__title reveal" style="--i: 2">
-          Your application's text, <span>edited without a deploy.</span>
-        </h1>
-        <p class="hero__lede reveal" style="--i: 3">
-          Your application keeps its translation files. Umbraco reads them, editors change the messages that need changing, and your application lays those changes over its own text.
-        </p>
-        <div class="hero__actions reveal" style="--i: 4">
-          <a class="button button--primary" href="/quickstart">Get started</a>
-          <a class="button button--secondary" href={repoUrl} rel="noopener">View on GitHub</a>
-        </div>
-        <div class="install-shell reveal" style="--i: 5">
-          <InstallCommand command={installCommand} />
-        </div>
-        <p class="hero__compat reveal" style="--i: 6">Umbraco CMS 17.1 or later · .NET 10</p>
-      </div>
+    <LandingHero
+      title="Your application's text,"
+      accent="edited without a deploy."
+      description="Your application keeps its translation files. Umbraco reads them, editors change the messages that need changing, and your application lays those changes over its own text."
+      compatibility="Umbraco CMS 17.1 or later · .NET 10"
+    >
+      <HeroParticles slot="background" logo="/logo-mark.svg" />
+      <Fragment slot="actions">
+        <a class="button button--primary" href="/quickstart">Get started</a>
+        <a class="button button--secondary" href={repoUrl} rel="noopener">View on GitHub</a>
+      </Fragment>
+      <InstallCommand slot="install" command={installCommand} />
       <div class="shell">
         <figure class="screenshot reveal" style="--i: 6">
           <div class="screenshot__bar" aria-hidden="true"><span></span><span></span><span></span></div>
           <img src={editorShot.src} width={editorShot.width} height={editorShot.height} alt="The App Translations editor in Umbraco, editing a Danish message next to the English one" loading="eager" decoding="async" />
         </figure>
       </div>
-    </section>
+    </LandingHero>
 
     <section class="shell trust reveal">
       <p><strong>Umbraco never changes your files.</strong> It stores the edits next to them, and your application decides whether to merge them over its own text or ask for the complete dictionary.</p>

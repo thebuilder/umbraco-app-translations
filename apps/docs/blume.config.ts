@@ -1,3 +1,4 @@
+import { docsTheme } from "@thebuilder/umbraco-docs";
 import { defineConfig } from "blume";
 import { custom, filesystem } from "blume/sources";
 import { githubReleaseChangelogSource } from "./sources/github-releases";
@@ -43,12 +44,8 @@ export default defineConfig({
     // Disable Blume's generated /og routes so it cannot overwrite them.
     og: { enabled: false },
   },
-  theme: {
-    accent: "#7557e8",
-    fonts: {
-      display: "inter-tight",
-    },
-  },
+  // The docs family's shared accent and fonts, so every package site looks alike.
+  theme: { ...docsTheme },
   agents: {
     llmsTxt: true,
   },
