@@ -21,7 +21,10 @@
     <PackageVersion Include="Microsoft.OpenApi" Version="2.12.2" />
     <PackageVersion Include="MimeKit" Version="4.17.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.10" />
+    <!-- Umbraco brings both in below 10.0.13, which fixes their advisories (GHSA-7hqp-7c5m-4vq6,
+         GHSA-846f-f764-76mx and others), so the package lifts them for every site that installs it. -->
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="10.0.13" />
     <!-- The sample and the tests only, which run SQLite: the floor Umbraco 18 sets, above the
          release with the known vulnerability (GHSA-2m69-gcr7-jv3q). -->
     <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.13" />
