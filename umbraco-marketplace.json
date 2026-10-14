@@ -1,0 +1,57 @@
+{
+  "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+  "AuthorDetails": {
+    "Name": "Daniel Schmidt",
+    "Description": "Developer focused on useful, editor-friendly digital experiences and integrations.",
+    "Url": "https://github.com/thebuilder",
+    "ImageUrl": "https://github.com/thebuilder.png",
+    "SyncContributorsFromRepository": true
+  },
+  "Category": "Translations",
+  "AlternateCategory": "Headless",
+  "Title": "App Translations",
+  "Description": "Let editors change the text in your next-intl or i18next application from the Umbraco backoffice, without a code change or a deploy.",
+  "DocumentationUrl": "https://app-translations.thebuilder.dk/",
+  "IssueTrackerUrl": "https://github.com/thebuilder/umbraco-app-translations/issues",
+  "LicenseTypes": [
+    "Free"
+  ],
+  "PackageType": "Package",
+  "Screenshots": [
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/thebuilder/umbraco-app-translations/refs/heads/main/apps/docs/content/screenshots/editor.png",
+      "Caption": "Edit any message against another language, with its placeholders highlighted and the application's default text beside it."
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/thebuilder/umbraco-app-translations/refs/heads/main/apps/docs/content/screenshots/settings.png",
+      "Caption": "Add the sources Umbraco reads your application's messages from, and copy the delivery URL for each language."
+    },
+    {
+      "ImageUrl": "https://raw.githubusercontent.com/thebuilder/umbraco-app-translations/refs/heads/main/apps/docs/content/screenshots/source-editor.png",
+      "Caption": "Point a source at your translation files, choose the languages it supplies, and the message syntax it uses."
+    }
+  ],
+  "Tags": [
+    "translations",
+    "localization",
+    "localisation",
+    "i18n",
+    "internationalization",
+    "next-intl",
+    "i18next",
+    "ICU",
+    "ICU MessageFormat",
+    "FormatJS",
+    "gettext",
+    "PO files",
+    "JSON",
+    "headless",
+    "Next.js",
+    "React",
+    "multilingual",
+    "copy",
+    "microcopy",
+    "Umbraco.AI",
+    "AI translation"
+  ]
+}
