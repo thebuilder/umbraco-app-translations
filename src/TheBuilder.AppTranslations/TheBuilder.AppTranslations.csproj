@@ -9,7 +9,8 @@
     <Version>0.1.0</Version>
     <Authors>Daniel Schmidt</Authors>
     <Description>Manage application translation overrides from the Umbraco backoffice.</Description>
-    <PackageTags>umbraco;translations;localization;next-intl;i18next;icu</PackageTags>
+    <PackageTags>umbraco;umbraco-marketplace;translations;localization;next-intl;i18next;icu</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/thebuilder/umbraco-app-translations</PackageProjectUrl>
@@ -58,6 +59,7 @@
     <Content Remove="wwwroot/App_Plugins/TheBuilder.AppTranslations/**/*" />
     <None Include="Client\umbraco-package.json" Pack="false" />
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
     <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
     <None Include="..\..\THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="\" />
     <!-- Copies the adapter into a site's output, for sites that install the package. -->
