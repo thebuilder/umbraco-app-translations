@@ -50,6 +50,7 @@
     <PackageReference Include="MessagePack" />
     <PackageReference Include="Microsoft.OpenApi" />
     <PackageReference Include="MimeKit" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
     <PackageReference Include="System.Security.Cryptography.Xml" />
   </ItemGroup>
   <ItemGroup>
