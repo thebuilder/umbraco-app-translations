@@ -15,8 +15,8 @@ importers:
   apps/docs:
     dependencies:
       '@thebuilder/umbraco-docs':
-        specifier: ^1.4.3
-        version: 1.4.3(@types/node@26.6.5)(blume@2.2.3(@asyncapi/converter@2.0.2)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.5.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.11(ws@8.21.3))(babel-plugin-react-compiler@1.0.0)(csstype@3.2.3)(esbuild@0.28.2)(prettier@3.9.10)(rollup@4.62.4)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))(ws@8.21.3)(yaml@2.9.1))(vgpu@0.6.0)
+        specifier: ^1.5.0
+        version: 1.5.0(@types/node@26.6.5)(blume@2.2.3(@asyncapi/converter@2.0.2)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.5.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.11(ws@8.21.3))(babel-plugin-react-compiler@1.0.0)(csstype@3.2.3)(esbuild@0.28.2)(prettier@3.9.10)(rollup@4.62.4)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))(ws@8.21.3)(yaml@2.9.1))(vgpu@0.6.0)
       blume:
         specifier: ^2.2.3
         version: 2.2.3(@asyncapi/converter@2.0.2)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.5.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.11(ws@8.21.3))(babel-plugin-react-compiler@1.0.0)(csstype@3.2.3)(esbuild@0.28.2)(prettier@3.9.10)(rollup@4.62.4)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))(ws@8.21.3)(yaml@2.9.1)
@@ -2199,8 +2199,8 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@thebuilder/umbraco-docs@1.4.3':
-    resolution: {integrity: sha512-mwj8r0P908YGjVmuJWCdA/JDWk5v7Cpq0zjBxAq3Mfl5pelSAScX37BsF1I0kRPyzbq7Ue24+yEj3PrqjnUtNA==}
+  '@thebuilder/umbraco-docs@1.5.0':
+    resolution: {integrity: sha512-p8W6ufGqKyzcUXjUupjlaop2XvtE4wA8fSA1E5/y7PWH/+Q1ROaUV2aSUdDGhDDHFOg94nYY1AM6RJx+jJciog==}
     engines: {node: '>=22.12'}
     hasBin: true
     peerDependencies:
@@ -8736,7 +8736,7 @@ snapshots:
       '@types/react': 19.2.18
       '@types/react-dom': 19.2.4(@types/react@19.2.18)
 
-  '@thebuilder/umbraco-docs@1.4.3(@types/node@26.6.5)(blume@2.2.3(@asyncapi/converter@2.0.2)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.5.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.11(ws@8.21.3))(babel-plugin-react-compiler@1.0.0)(csstype@3.2.3)(esbuild@0.28.2)(prettier@3.9.10)(rollup@4.62.4)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))(ws@8.21.3)(yaml@2.9.1))(vgpu@0.6.0)':
+  '@thebuilder/umbraco-docs@1.5.0(@types/node@26.6.5)(blume@2.2.3(@asyncapi/converter@2.0.2)(@emnapi/runtime@1.11.3)(@shikijs/themes@4.5.0)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(@vercel/functions@3.9.11(ws@8.21.3))(babel-plugin-react-compiler@1.0.0)(csstype@3.2.3)(esbuild@0.28.2)(prettier@3.9.10)(rollup@4.62.4)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))(ws@8.21.3)(yaml@2.9.1))(vgpu@0.6.0)':
     dependencies:
       gray-matter: 4.0.3
       sharp: 0.35.3(@types/node@26.6.5)

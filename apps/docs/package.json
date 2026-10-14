@@ -12,7 +12,7 @@
     "check:og": "umbraco-docs-og --check"
   },
   "dependencies": {
-    "@thebuilder/umbraco-docs": "^1.4.3",
+    "@thebuilder/umbraco-docs": "^1.5.0",
     "blume": "^2.2.3",
     "vgpu": "^0.6.0"
   },
