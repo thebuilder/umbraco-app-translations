@@ -128,6 +128,14 @@ describe("translation source form", () => {
     );
   });
 
+  it("leaves the namespace out to ask for every namespace", () => {
+    expect(
+      deliveryEndpoint("https://cms.example/umbraco/section/settings", "en", undefined, "all")
+    ).toBe(
+      "https://cms.example/umbraco/delivery/api/v1/app-translations/all?locale=en&format=next-intl"
+    );
+  });
+
   it("builds an i18next v4 output URL", () => {
     expect(
       deliveryEndpoint(

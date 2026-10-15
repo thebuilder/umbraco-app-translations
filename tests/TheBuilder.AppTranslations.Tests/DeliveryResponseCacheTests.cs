@@ -10,7 +10,7 @@ namespace TheBuilder.AppTranslations.Tests;
 
 public sealed class DeliveryResponseCacheTests
 {
-    private static readonly DeliveryResponseKey Key = new(TranslationOutputMode.All, TranslationOutputFormat.NextIntl, "da-DK", "website");
+    private static readonly DeliveryResponseKey Key = new(TranslationOutputMode.All, TranslationOutputFormat.NextIntl, "da-DK", DeliveryNamespaces.From(["website"]));
     private static readonly CachedDeliveryResponse Response = new("{}", "\"etag\"");
 
     [Fact]
@@ -24,6 +24,45 @@ public sealed class DeliveryResponseCacheTests
 
         cache.Clear();
         Assert.False(cache.TryGet(Key, out _));
+    }
+
+    [Fact]
+    public void Past_the_limit_the_oldest_set_of_namespaces_makes_room()
+    {
+        var clock = new Clock();
+        var cache = new DeliveryResponseCache(clock);
+        DeliveryResponseKey Set(int index) =>
+            new(TranslationOutputMode.All, TranslationOutputFormat.NextIntl, "da-DK", DeliveryNamespaces.From(["website", $"ns{index}"]));
+        void StoreAt(DeliveryResponseKey key)
+        {
+            clock.Now += TimeSpan.FromSeconds(1);
+            cache.Store(key, Response, cache.Generation);
+        }
+
+        for (var index = 0; index <= DeliveryResponseCache.MaximumNamespaceSets; index++)
+            StoreAt(Set(index));
+
+        Assert.False(cache.TryGet(Set(0), out _));
+        Assert.True(cache.TryGet(Set(1), out _));
+        Assert.True(cache.TryGet(Set(DeliveryResponseCache.MaximumNamespaceSets), out _));
+
+        // Storing a set that is already there again takes no one's place.
+        StoreAt(Set(1));
+        Assert.True(cache.TryGet(Set(2), out _));
+
+        // A single namespace, and every namespace, are not sets and are never made to make room.
+        StoreAt(Key);
+        StoreAt(Set(DeliveryResponseCache.MaximumNamespaceSets + 1));
+        Assert.True(cache.TryGet(Key, out _));
+        Assert.False(cache.TryGet(Set(2), out _));
+    }
+
+    [Fact]
+    public void The_same_namespaces_in_any_order_or_repeated_are_one_key()
+    {
+        Assert.Equal(DeliveryNamespaces.From(["website", "checkout"]), DeliveryNamespaces.From(["checkout", "website", "checkout", " "]));
+        Assert.NotEqual(DeliveryNamespaces.From(["website"]), DeliveryNamespaces.From(["Website"]));
+        Assert.Equal(DeliveryNamespaces.From(null), DeliveryNamespaces.From([""]));
     }
 
     [Fact]

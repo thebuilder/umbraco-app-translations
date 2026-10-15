@@ -119,7 +119,8 @@ export const hasLocaleToken = (template: string): boolean =>
 export const deliveryEndpoint = (
   backofficeUrl: string,
   locale: string,
-  namespace: string,
+  /** Leave it out for every namespace, each under its own name. */
+  namespace: string | undefined,
   mode: DeliveryMode = "overrides",
   format: DeliveryFormat = "next-intl"
 ): string => {
@@ -130,7 +131,9 @@ export const deliveryEndpoint = (
   endpoint.search = "";
   endpoint.hash = "";
   endpoint.searchParams.set("locale", locale);
-  endpoint.searchParams.set("namespace", namespace);
+  if (namespace !== undefined) {
+    endpoint.searchParams.set("namespace", namespace);
+  }
   endpoint.searchParams.set("format", format);
   return endpoint.toString();
 };

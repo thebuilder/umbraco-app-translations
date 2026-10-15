@@ -44,7 +44,7 @@ public sealed class MessageViewRowTests
     {
         using var database = Seeded(withOverride: true);
 
-        var rows = database.Fetch<MessageViewRow>(TranslationSql.OutputMessages("da", "website"));
+        var rows = database.Fetch<MessageViewRow>(TranslationSql.OutputMessages("da", ["website"]));
 
         // The delivery endpoints exist to serve these; returning the default instead would make
         // every override invisible at runtime.

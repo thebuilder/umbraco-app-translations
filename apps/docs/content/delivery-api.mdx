@@ -1,15 +1,18 @@
 ---
 title: Delivery API
-description: Fetch the custom text for a language and namespace, or the complete dictionary, and merge it into next-intl or i18next.
+description: Fetch the text editors changed, or every message, for one namespace or all of them, and merge it into next-intl or i18next.
 seo:
   image: /og/delivery-api.png
 ---
 
-Your application fetches translations from two endpoints, one language and one [namespace](/sources#namespaces) per request. **Settings > App translations** lists the exact URL for each language and namespace.
+Your application fetches translations one language per request, from one of two endpoints. **Settings > App translations** builds the URL for each language and [namespace](/sources#namespaces).
 
-## Custom text only
+| Endpoint | Returns | Use it when |
+| --- | --- | --- |
+| `overrides` | Only the messages an editor changed. | Your application bundles its own text, and merges the changes over it. |
+| `all` | Every message. An editor's text where there is one, your source's text everywhere else. | Your application has no text of its own, and takes it all from Umbraco. |
 
-Fetch what editors changed, and merge it over the messages your application already bundles:
+## Overrides
 
 ```http
 GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl
@@ -21,17 +24,55 @@ GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=w
 }
 ```
 
-## The complete dictionary
+Only `greeting` is here, because it is the only message an editor changed. Merge it over the messages your application already has.
 
-If your application does not bundle its own text, fetch everything instead. It has the custom text in place of the application's text wherever an editor wrote some.
+## All messages
 
 ```http
 GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website&format=next-intl
 ```
 
+```json
+{
+  "farewell": "Farvel",
+  "greeting": "Hej {name}, godt at se dig igen!"
+}
+```
+
+`greeting` is the editor's text. `farewell` has not been changed, so it is the text Umbraco read from your source.
+
+## One namespace, several, or all of them
+
+With one `namespace`, the response holds that namespace's messages, without the namespace around them, as in the examples above.
+
+Repeat `namespace` to fetch several at once, or leave it out to fetch every namespace in the language. Each namespace is then a top-level key:
+
+```http
+GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&format=next-intl
+```
+
+```json
+{
+  "checkout": { "pay": "Betal nu" },
+  "website": { "farewell": "Farvel", "greeting": "Hej {name}, godt at se dig igen!" }
+}
+```
+
+Naming both namespaces returns the same response, and leaves out any other namespace:
+
+```http
+GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=checkout&namespace=website&format=next-intl
+```
+
+The order you name them in does not matter, and each namespace comes back under the name you used for it. A namespace that does not exist is left out of the response, and you can name up to 20 at once.
+
+Repeat the parameter rather than separating names with commas: `namespace=checkout,website` asks for one namespace called `checkout,website`, and gets `400` when there is none.
+
+A source that takes its namespaces from the first key of its file comes back in the same shape as that file. A source that puts every message in one namespace comes back under that namespace's name, so ask for the namespace by name if you want the shape of the file. From `overrides`, a namespace no editor has changed is left out.
+
 ## Parameters
 
-Both endpoints take `locale`, `namespace` and `format`. The API reference lists every parameter and response for [custom text](/endpoints/overrides) and [all messages](/endpoints/all).
+Both endpoints take `locale`, `format` and an optional `namespace`, which you can repeat or leave out. The API reference lists every parameter and response for [custom text](/endpoints/overrides) and [all messages](/endpoints/all).
 
 :::caution
 The locale is Umbraco's code, not your application's. A request for `da` when the site stores `da-DK` finds nothing and returns `{}`. Map your application's locales to Umbraco's, as the examples below do.
@@ -85,23 +126,28 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
 ## i18next
 
-i18next can merge a bundle in place. Add the custom text once its own resources are loaded:
+When a source takes its namespaces from the first key of its file, they are the same as your i18next namespaces. Leave `namespace` out, and add each namespace in the response to i18next once it has loaded its own resources:
 
 ```ts
 const url = new URL("/umbraco/delivery/api/v1/app-translations/overrides", UMBRACO_URL);
-url.search = new URLSearchParams({ locale: "da-DK", namespace: "website", format: "i18next-v4" }).toString();
+url.search = new URLSearchParams({ locale: "da-DK", format: "i18next-v4" }).toString();
 
 const response = await fetch(url);
 if (response.ok) {
-  // Deep, and overwriting: the custom text replaces the bundled text key by key.
-  i18next.addResourceBundle("da", "translation", await response.json(), true, true);
+  const namespaces: Record<string, object> = await response.json();
+  for (const [ns, messages] of Object.entries(namespaces)) {
+    // Deep, and overwriting: the custom text replaces the bundled text key by key.
+    i18next.addResourceBundle("da", ns, messages, true, true);
+  }
 }
 ```
+
+With a source that puts every message in one namespace, ask for that namespace by name instead, and add the response to the i18next namespace your application uses, such as `translation`.
 
 Use `format=i18next-v4` and set the source's message syntax to **i18next JSON v4**. The output keeps nested keys, `{{variable}}` interpolation, context keys and plural suffixes such as `_one`, `_other` and `_ordinal_one`.
 
 :::note
-Umbraco never converts text between ICU and i18next syntax, so keep each namespace to one syntax. Umbraco refuses to serve a namespace that mixes them until you split it.
+Umbraco never converts text between ICU and i18next syntax, so keep each namespace to one syntax. Umbraco refuses to serve a namespace that mixes them until you split it. If a language has ICU namespaces and i18next namespaces, fetch each namespace on its own, in the format that suits it.
 :::
 
 ## Caching
@@ -114,7 +160,7 @@ Clients and CDNs may keep a response for 60 seconds by default, so an edit can t
 TheBuilder__AppTranslations__Delivery__MaxAgeSeconds=0
 ```
 
-With `0`, clients keep the response but check it on every request, and see an edit as soon as it is saved. Every response carries an ETag, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes. Once Umbraco has built a response it answers those checks from memory; the first request after a change, and requests for a locale or namespace with no messages, still read the database.
+With `0`, clients keep the response but check it on every request, and see an edit as soon as it is saved. Every response carries an ETag, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes. Once Umbraco has built a response it answers those checks from memory; the first request after a change, and requests for a locale or namespace with no messages, still read the database. Umbraco keeps up to 100 responses for several namespaces at once. Past that, the one it has kept longest makes room, and is read from the database again the next time someone asks for it.
 
 To drop a cached dictionary in your own application the moment it changes, subscribe to the [App translations updated webhook](/syncing#telling-your-application-something-changed).
 

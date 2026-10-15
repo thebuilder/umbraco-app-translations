@@ -1,6 +1,6 @@
 ---
 title: Get custom text
-description: The custom text editors wrote for one language and namespace, to merge over the messages your application bundles.
+description: The custom text editors wrote for one language, in one namespace, several or all of them, to merge over the messages your application bundles.
 api: GET /umbraco/delivery/api/v1/app-translations/overrides
 playground: simple
 seo:
@@ -13,8 +13,8 @@ Returns only the messages an editor changed. Merge them over your application's 
   The Umbraco language code. It has to match exactly: `da` finds nothing on a site that stores `da-DK`.
 </ParamField>
 
-<ParamField query="namespace" type="string" required placeholder="website">
-  The [namespace](/sources#namespaces).
+<ParamField query="namespace" type="string" placeholder="website">
+  The [namespace](/sources#namespaces). Repeat it, as in `namespace=checkout&namespace=website`, for several namespaces, or leave it out for every namespace. Up to 20 at once.
 </ParamField>
 
 <ParamField query="format" type="string" default="next-intl">
@@ -31,15 +31,15 @@ Returns only the messages an editor changed. Merge them over your application's 
 
 ## Response
 
-A JSON object of messages, nested the way your application's own files are. `{}` when the locale or namespace has none.
+A JSON object of messages, nested the way your application's own files are. With one `namespace`, the namespace's messages sit at the top level. With several, or none, each namespace is a top-level key holding its own messages, as [one namespace, several, or all of them](/delivery-api#one-namespace-several-or-all-of-them) shows. `{}` when the locale or namespace has none.
 
 | Status | Meaning |
 | --- | --- |
 | `200` | The messages. |
 | `304` | Nothing changed since the ETag you sent. |
-| `400` | `locale` or `namespace` is missing, or `format` is not one of the two. |
+| `400` | `locale` is missing, `format` is not one of the two, the request names more than 20 namespaces, or `namespace` has a comma in it and no namespace has that name. |
 | `401` | A key is configured, and the request did not send it. |
-| `409` | The namespace mixes ICU and i18next messages, or two sources supply the same key. |
+| `409` | A namespace in the response has messages in the other syntax, or two sources supply the same key. |
 
 <ResponseExample>
 

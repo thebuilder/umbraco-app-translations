@@ -8,7 +8,43 @@ internal readonly record struct DeliveryResponseKey(
     TranslationOutputMode Mode,
     TranslationOutputFormat Format,
     string Locale,
-    string Namespace);
+    DeliveryNamespaces Namespaces);
+
+/// <summary>
+/// The namespaces a request asked for, sorted and without repeats, so the same namespaces asked for
+/// in another order are the same response. None is every namespace.
+/// </summary>
+internal sealed class DeliveryNamespaces : IEquatable<DeliveryNamespaces>
+{
+    private DeliveryNamespaces(string[] names) => Names = names;
+
+    public IReadOnlyList<string> Names { get; }
+
+    /// <summary>One namespace's messages sit at the top level. Any other choice has each namespace under its own name.</summary>
+    public bool KeyedByNamespace => Names.Count != 1;
+
+    /// <summary>A blank value, such as <c>namespace=</c> with nothing after it, names no namespace.</summary>
+    public static DeliveryNamespaces From(IEnumerable<string?>? requested) =>
+        new((requested ?? [])
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Select(name => name!)
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)
+            .ToArray());
+
+    public bool Equals(DeliveryNamespaces? other) =>
+        other is not null && Names.SequenceEqual(other.Names, StringComparer.Ordinal);
+
+    public override bool Equals(object? obj) => Equals(obj as DeliveryNamespaces);
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        foreach (var name in Names)
+            hash.Add(name, StringComparer.Ordinal);
+        return hash.ToHashCode();
+    }
+}
 
 /// <summary>A built response, with the ETag that names it.</summary>
 internal sealed record CachedDeliveryResponse(string Json, string ETag);
@@ -29,14 +65,22 @@ internal sealed record CachedDeliveryResponse(string Json, string ETag);
 /// the translations without this site hearing about it: a restored backup, a row edited by hand, a
 /// lost cache instruction. The lifetime bounds how long that goes unnoticed, at the cost of one
 /// rebuild per response per hour.
+///
+/// Responses for several namespaces are kept only up to <see cref="MaximumNamespaceSets"/> of them.
+/// The namespaces that exist can be combined in more ways than there is memory for, and a client
+/// only ever asks for a few of those. Past the limit, the set stored longest ago makes room. Expired
+/// sets go first that way, and a burst of sets nobody asks for again cannot keep out the ones an
+/// application keeps asking for: those come back on their next request.
 /// </summary>
 public sealed class DeliveryResponseCache(TimeProvider timeProvider)
 {
     internal static readonly TimeSpan Lifetime = TimeSpan.FromHours(1);
+    internal const int MaximumNamespaceSets = 100;
 
     private readonly ConcurrentDictionary<DeliveryResponseKey, (CachedDeliveryResponse Response, DateTimeOffset StoredAt)> _responses = new();
     private readonly Lock _gate = new();
     private long _generation;
+    private int _namespaceSets;
 
     /// <summary>Read before building a response, and handed back to <see cref="Store"/>.</summary>
     internal long Generation => Interlocked.Read(ref _generation);
@@ -56,9 +100,26 @@ public sealed class DeliveryResponseCache(TimeProvider timeProvider)
     {
         lock (_gate)
         {
-            if (generationAtRead == _generation)
-                _responses[key] = (response, timeProvider.GetUtcNow());
+            if (generationAtRead != _generation)
+                return;
+            if (key.Namespaces.Names.Count > 1 && !_responses.ContainsKey(key))
+            {
+                if (_namespaceSets >= MaximumNamespaceSets)
+                    RemoveOldestNamespaceSet();
+                else
+                    _namespaceSets++;
+            }
+            _responses[key] = (response, timeProvider.GetUtcNow());
         }
+    }
+
+    /// <summary>Called under the lock, only when the sets are at their limit.</summary>
+    private void RemoveOldestNamespaceSet()
+    {
+        var oldest = _responses
+            .Where(entry => entry.Key.Namespaces.Names.Count > 1)
+            .MinBy(entry => entry.Value.StoredAt);
+        _responses.TryRemove(oldest.Key, out _);
     }
 
     internal void Clear()
@@ -67,6 +128,7 @@ public sealed class DeliveryResponseCache(TimeProvider timeProvider)
         {
             Interlocked.Increment(ref _generation);
             _responses.Clear();
+            _namespaceSets = 0;
         }
     }
 }

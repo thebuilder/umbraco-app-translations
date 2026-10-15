@@ -41,12 +41,17 @@ internal static class TranslationSql
         return sql.Append("ORDER BY m.Namespace, m.[Key], m.Locale");
     }
 
-    public static Sql OutputMessages(string locale, string messageNamespace)
+    /// <summary>The delivery API's messages for a locale, from the namespaces named, or from every namespace when there are none.</summary>
+    public static Sql OutputMessages(string locale, IReadOnlyCollection<string> namespaces)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(locale);
-        ArgumentException.ThrowIfNullOrWhiteSpace(messageNamespace);
+        ArgumentNullException.ThrowIfNull(namespaces);
+        foreach (var messageNamespace in namespaces)
+            ArgumentException.ThrowIfNullOrWhiteSpace(messageNamespace, nameof(namespaces));
 
-        var sql = new Sql(MessageSelect + " WHERE m.Locale = @0 AND m.Namespace = @1 AND m.State <> @2", locale, messageNamespace, TranslationMessageState.Missing.ToString());
+        var sql = new Sql(MessageSelect + " WHERE m.Locale = @0 AND m.State <> @1", locale, TranslationMessageState.Missing.ToString());
+        if (namespaces.Count > 0)
+            sql.Append("AND m.Namespace IN (@namespaces)", new { namespaces });
         return sql.Append("ORDER BY m.Namespace, m.[Key]");
     }
 }

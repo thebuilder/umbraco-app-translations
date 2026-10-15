@@ -312,7 +312,7 @@ class TranslationsSourceEditorElement extends UmbElementMixin(LitElement) {
               <uui-label slot="label" for="namespace-mode">Namespace handling</uui-label>
               <div class="field-control">
                 <uui-select id="namespace-mode" label="Namespace handling" .options=${namespaceOptions} @change=${(event: Event) => this.#patch({ namespaceMode: parseNamespaceMode(String((event.target as UUISelectElement).value)) })}></uui-select>
-                <span class="help">The namespace becomes part of the output API URL.</span>
+                <span class="help">Applications fetch translations one namespace at a time, or every namespace at once.</span>
               </div>
             </uui-form-layout-item>
 
@@ -323,7 +323,7 @@ class TranslationsSourceEditorElement extends UmbElementMixin(LitElement) {
                 <uui-label slot="label" for="namespace" required>Namespace</uui-label>
                 <div class="field-control">
                   <uui-input id="namespace" label="Namespace" required .value=${this.value.namespace} @input=${(event: Event) => this.#text("namespace", event)}></uui-input>
-                  <span class="help">Every message from this source gets this namespace.</span>
+                  <span class="help">Every message from this source gets this namespace. It is the name your application fetches them by, and is not a key inside them.</span>
                 </div>
               </uui-form-layout-item>
             `
