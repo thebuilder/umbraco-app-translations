@@ -36,6 +36,10 @@ export default defineConfig({
       { label: "Changelog", path: "/changelog", href: "/changelog" },
     ],
   },
+  // The endpoint pages under content/endpoints show request samples against a placeholder site.
+  api: {
+    server: "https://umbraco.example.com",
+  },
   deployment: {
     site: "https://app-translations.thebuilder.dk",
   },

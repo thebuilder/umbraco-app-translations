@@ -1,0 +1,53 @@
+---
+title: Get all messages
+description: Every message for one language and namespace, with custom text in place of the application's text wherever an editor wrote some.
+api: GET /umbraco/delivery/api/v1/app-translations/all
+playground: simple
+seo:
+  image: /og/endpoints/all.png
+---
+
+Returns the complete dictionary, for an application that does not bundle its own text. Wherever an editor wrote custom text, it replaces the application's text.
+
+<ParamField query="locale" type="string" required placeholder="da-DK">
+  The Umbraco language code. It has to match exactly: `da` finds nothing on a site that stores `da-DK`.
+</ParamField>
+
+<ParamField query="namespace" type="string" required placeholder="website">
+  The [namespace](/sources#namespaces).
+</ParamField>
+
+<ParamField query="format" type="string" default="next-intl">
+  `next-intl` for ICU messages, or `i18next-v4` for i18next JSON v4.
+</ParamField>
+
+<ParamField header="Api-Key" type="string">
+  The [delivery key](/delivery-api#access), when one is configured. A bearer token in `Authorization` works too.
+</ParamField>
+
+<ParamField header="If-None-Match" type="string">
+  The ETag of a response you already have. Umbraco answers `304` until something changes.
+</ParamField>
+
+## Response
+
+A JSON object of messages, nested the way your application's own files are. `{}` when the locale or namespace has none.
+
+| Status | Meaning |
+| --- | --- |
+| `200` | The messages. |
+| `304` | Nothing changed since the ETag you sent. |
+| `400` | `locale` or `namespace` is missing, or `format` is not one of the two. |
+| `401` | A key is configured, and the request did not send it. |
+| `409` | The namespace mixes ICU and i18next messages, or two sources supply the same key. |
+
+<ResponseExample>
+
+```json 200
+{
+  "greeting": "Hej {name}, godt at se dig igen!",
+  "farewell": "Vi ses!"
+}
+```
+
+</ResponseExample>

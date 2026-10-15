@@ -31,11 +31,7 @@ GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website
 
 ## Parameters
 
-| Parameter | Value |
-| --- | --- |
-| `locale` | The Umbraco language code, such as `da-DK`. It has to match exactly. |
-| `namespace` | The namespace, such as `website`. |
-| `format` | `next-intl` for ICU messages, or `i18next-v4` for i18next JSON v4. |
+Both endpoints take `locale`, `namespace` and `format`. The API reference lists every parameter and response for [custom text](/endpoints/overrides) and [all messages](/endpoints/all).
 
 :::caution
 The locale is Umbraco's code, not your application's. A request for `da` when the site stores `da-DK` finds nothing and returns `{}`. Map your application's locales to Umbraco's, as the examples below do.
@@ -131,13 +127,3 @@ TheBuilder__AppTranslations__Delivery__ApiKey=replace-with-a-long-random-value
 ```
 
 A request then needs the key in an `Api-Key` header, as Umbraco's own Delivery API expects, or as a bearer token, and gets `401` without it. A response to a keyed request is marked private, so a CDN does not hand it to anyone else. Keep the key on the server side of your application, never in code that runs in the browser.
-
-## Responses
-
-| Status | Meaning |
-| --- | --- |
-| `200` | The messages, as JSON. `{}` when the locale or namespace has none. |
-| `304` | Nothing changed since the ETag you sent. |
-| `400` | `locale` or `namespace` is missing, or `format` is not one of the two. |
-| `401` | A key is configured, and the request did not send it. |
-| `409` | The namespace mixes ICU and i18next messages, or two sources supply the same key. |
