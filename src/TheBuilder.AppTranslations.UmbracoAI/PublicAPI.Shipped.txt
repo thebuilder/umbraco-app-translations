@@ -1,0 +1,8 @@
+#nullable enable
+TheBuilder.AppTranslations.UmbracoAI.UmbracoAiAssistantChat
+TheBuilder.AppTranslations.UmbracoAI.UmbracoAiAssistantChat.CompleteAsync(System.Guid? profileId, System.Collections.Generic.IReadOnlyList<Microsoft.Extensions.AI.ChatMessage!>! messages, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+TheBuilder.AppTranslations.UmbracoAI.UmbracoAiAssistantChat.GetProfilesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Assistant.AssistantProfile!>!>!
+TheBuilder.AppTranslations.UmbracoAI.UmbracoAiAssistantChat.HasDefaultProfileAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+TheBuilder.AppTranslations.UmbracoAI.UmbracoAiAssistantChat.IsInstalled.get -> bool
+TheBuilder.AppTranslations.UmbracoAI.UmbracoAiAssistantChat.ProfileExistsAsync(System.Guid id, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+TheBuilder.AppTranslations.UmbracoAI.UmbracoAiAssistantChat.UmbracoAiAssistantChat(Umbraco.AI.Core.Chat.IAIChatService! chat, Umbraco.AI.Core.Profiles.IAIProfileService! profiles) -> void

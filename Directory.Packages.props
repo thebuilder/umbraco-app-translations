@@ -20,6 +20,9 @@
     <!-- Raised to the floor Umbraco 18 sets, which Umbraco 17 accepts too. -->
     <PackageVersion Include="Microsoft.OpenApi" Version="2.12.2" />
     <PackageVersion Include="MimeKit" Version="4.18.1" />
+    <!-- Build time only: fails the build when the public C# API differs from the PublicAPI.*.txt
+         files beside each shipped project. See AGENTS.md. -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <!-- Umbraco brings both in below 10.0.13, which fixes their advisories (GHSA-7hqp-7c5m-4vq6,
          GHSA-846f-f764-76mx and others), so the package lifts them for every site that installs it. -->

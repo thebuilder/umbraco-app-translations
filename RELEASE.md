@@ -30,6 +30,13 @@ for a temporary NuGet API key, so no long-lived NuGet API key is stored in GitHu
    and the suppressions can go.
 3. Review `pnpm audit --prod`.
 4. Look at the package CI built before approving the `nuget` environment deployment.
+5. Read every `PublicAPI.Unshipped.txt` under `src`. Together they are every change to the public
+   C# API since the last stable release. A `*REMOVED*` line is a breaking change for sites that
+   build against the package, and belongs in the release notes. For a stable release, mark the API
+   shipped in the commit you release:
+   - for each `*REMOVED*` line, delete it and the line it names in `PublicAPI.Shipped.txt`;
+   - move every other line into `PublicAPI.Shipped.txt`, sorted with `LC_ALL=C sort`;
+   - leave `PublicAPI.Unshipped.txt` holding only `#nullable enable`.
 
 GitHub Releases are the changelog. Write the release notes on the release; the NuGet package links
 to it.

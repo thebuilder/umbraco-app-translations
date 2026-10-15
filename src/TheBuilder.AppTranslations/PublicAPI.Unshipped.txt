@@ -1,0 +1,66 @@
+#nullable enable
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.<Clone>$() -> TheBuilder.AppTranslations.Assistant.AssistantBrief!
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.AssistantBrief(TheBuilder.AppTranslations.Assistant.AssistantTask Task, string! Locale, string? FromLocale, string! Text, TheBuilder.AppTranslations.Core.Messages.TranslationMessage! Message) -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Deconstruct(out TheBuilder.AppTranslations.Assistant.AssistantTask Task, out string! Locale, out string? FromLocale, out string! Text, out TheBuilder.AppTranslations.Core.Messages.TranslationMessage! Message) -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Equals(TheBuilder.AppTranslations.Assistant.AssistantBrief? other) -> bool
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.FromLocale.get -> string?
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.FromLocale.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Locale.get -> string!
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Locale.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Message.get -> TheBuilder.AppTranslations.Core.Messages.TranslationMessage!
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Message.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Task.get -> TheBuilder.AppTranslations.Assistant.AssistantTask
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Task.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Text.get -> string!
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantBrief.Text.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantPrompts
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusal
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusal.Failed = 3 -> TheBuilder.AppTranslations.Assistant.AssistantRefusal
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusal.Invalid = 1 -> TheBuilder.AppTranslations.Assistant.AssistantRefusal
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusal.Rejected = 2 -> TheBuilder.AppTranslations.Assistant.AssistantRefusal
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusal.Unavailable = 0 -> TheBuilder.AppTranslations.Assistant.AssistantRefusal
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusedException
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusedException.AssistantRefusedException(TheBuilder.AppTranslations.Assistant.AssistantRefusal refusal, string! message) -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusedException.Refusal.get -> TheBuilder.AppTranslations.Assistant.AssistantRefusal
+*REMOVED*TheBuilder.AppTranslations.Constants.Tables
+*REMOVED*TheBuilder.AppTranslations.Localization.ReferenceLocale
+*REMOVED*TheBuilder.AppTranslations.Localization.TranslationLocales
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.<Clone>$() -> TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse!
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.Code.get -> string!
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.Code.init -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.CurrentValue.get -> string?
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.CurrentValue.init -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.CurrentVersion.get -> long?
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.CurrentVersion.init -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.Deconstruct(out string! Code, out string! Message, out long? CurrentVersion, out string? CurrentValue, out System.DateTimeOffset? UpdatedAt, out string? UpdatedBy) -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.Equals(TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? other) -> bool
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.Message.get -> string!
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.Message.init -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.MessageConflictResponse(string! Code, string! Message, long? CurrentVersion, string? CurrentValue, System.DateTimeOffset? UpdatedAt, string? UpdatedBy) -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.UpdatedAt.get -> System.DateTimeOffset?
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.UpdatedAt.init -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.UpdatedBy.get -> string?
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.UpdatedBy.init -> void
+*REMOVED*const TheBuilder.AppTranslations.Assistant.AssistantPrompts.DefaultInstructions = "You write and edit the interface text of a website or application, one message at a time.\nKeep the meaning of the message. Match how the rest of the interface speaks to its users.\nInterface text is short: a button stays a word or two, a heading stays a heading.\nNever translate or rename placeholders, keys, product names or anything inside braces\nthat names a value the application fills in." -> string!
+*REMOVED*const TheBuilder.AppTranslations.Constants.Tables.Messages = "theBuilderAppTranslationMessage" -> string!
+*REMOVED*const TheBuilder.AppTranslations.Constants.Tables.Overrides = "theBuilderAppTranslationOverride" -> string!
+*REMOVED*const TheBuilder.AppTranslations.Constants.Tables.Sources = "theBuilderAppTranslationSource" -> string!
+*REMOVED*const TheBuilder.AppTranslations.Constants.Tables.Syncs = "theBuilderAppTranslationSync" -> string!
+*REMOVED*const TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.VersionConflict = "version_conflict" -> string!
+*REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantBrief.Equals(object? obj) -> bool
+*REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantBrief.GetHashCode() -> int
+*REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantBrief.ToString() -> string!
+*REMOVED*override TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.Equals(object? obj) -> bool
+*REMOVED*override TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.GetHashCode() -> int
+*REMOVED*override TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.ToString() -> string!
+*REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantBrief.operator !=(TheBuilder.AppTranslations.Assistant.AssistantBrief? left, TheBuilder.AppTranslations.Assistant.AssistantBrief? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantBrief.operator ==(TheBuilder.AppTranslations.Assistant.AssistantBrief? left, TheBuilder.AppTranslations.Assistant.AssistantBrief? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantPrompts.Correction(string! problem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! arguments) -> Microsoft.Extensions.AI.ChatMessage!
+*REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantPrompts.For(TheBuilder.AppTranslations.Assistant.AssistantSettings! settings, TheBuilder.AppTranslations.Assistant.AssistantBrief! brief) -> System.Collections.Generic.IReadOnlyList<Microsoft.Extensions.AI.ChatMessage!>!
+*REMOVED*static TheBuilder.AppTranslations.Localization.ReferenceLocale.Resolve(string? requested, System.Collections.Generic.IReadOnlyCollection<string!>! availableLocales, string? defaultLocale) -> string?
+*REMOVED*static TheBuilder.AppTranslations.Localization.TranslationLocales.DefaultOf(System.Collections.Generic.IEnumerable<TheBuilder.AppTranslations.Localization.TranslationLocale!>! locales) -> string?
+*REMOVED*static TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.From(TheBuilder.AppTranslations.Core.Persistence.TranslationConcurrencyException! exception, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView? current) -> TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse!
+*REMOVED*static TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.operator !=(TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? left, TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.operator ==(TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? left, TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? right) -> bool

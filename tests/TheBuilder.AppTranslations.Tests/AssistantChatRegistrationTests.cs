@@ -1,3 +1,6 @@
+using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using Microsoft.Extensions.DependencyInjection;
 using TheBuilder.AppTranslations.Core.Assistant;
 using TheBuilder.AppTranslations.Assistant;
@@ -28,5 +31,26 @@ public sealed class AssistantChatRegistrationTests
         var chat = scope.ServiceProvider.GetRequiredService<IAssistantChat>();
 
         Assert.False(chat.IsInstalled);
+    }
+
+    [Fact]
+    public void The_adapter_is_found_by_the_name_the_registration_asks_for()
+    {
+        // Read from the adapter's metadata rather than loaded, so the other tests still run as a
+        // site without Umbraco.AI. A rename would otherwise only show as an unavailable assistant.
+        var path = Path.Combine(
+            AppContext.BaseDirectory,
+            AssistantChatRegistration.AdapterAssembly,
+            $"{AssistantChatRegistration.AdapterAssembly}.dll");
+        using var stream = File.OpenRead(path);
+        using var pe = new PEReader(stream);
+        var metadata = pe.GetMetadataReader();
+
+        var publicTypes = metadata.TypeDefinitions
+            .Select(metadata.GetTypeDefinition)
+            .Where(type => (type.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public)
+            .Select(type => $"{metadata.GetString(type.Namespace)}.{metadata.GetString(type.Name)}");
+
+        Assert.Contains(AssistantChatRegistration.AdapterType, publicTypes);
     }
 }
