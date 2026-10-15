@@ -104,7 +104,7 @@ describe("translation source form", () => {
     expect(
       deliveryEndpoint("https://cms.example/umbraco/section/settings", "pt-BR", "website")
     ).toBe(
-      "https://cms.example/umbraco/delivery/api/v1/app-translations/overrides?locale=pt-BR&namespace=website&format=next-intl"
+      "https://cms.example/umbraco/delivery/api/v1/app-translations/overrides?locale=pt-BR&namespace=website&format=icu"
     );
   });
 
@@ -116,7 +116,7 @@ describe("translation source form", () => {
         "shared"
       )
     ).toBe(
-      "https://cms.example/cms/umbraco/delivery/api/v1/app-translations/overrides?locale=da&namespace=shared&format=next-intl"
+      "https://cms.example/cms/umbraco/delivery/api/v1/app-translations/overrides?locale=da&namespace=shared&format=icu"
     );
   });
 
@@ -124,8 +124,14 @@ describe("translation source form", () => {
     expect(
       deliveryEndpoint("https://cms.example/umbraco/section/settings", "en", "website", "all")
     ).toBe(
-      "https://cms.example/umbraco/delivery/api/v1/app-translations/all?locale=en&namespace=website&format=next-intl"
+      "https://cms.example/umbraco/delivery/api/v1/app-translations/all?locale=en&namespace=website&format=icu"
     );
+  });
+
+  it("leaves the namespace out to ask for every namespace", () => {
+    expect(
+      deliveryEndpoint("https://cms.example/umbraco/section/settings", "en", undefined, "all")
+    ).toBe("https://cms.example/umbraco/delivery/api/v1/app-translations/all?locale=en&format=icu");
   });
 
   it("builds an i18next v4 output URL", () => {
@@ -135,10 +141,10 @@ describe("translation source form", () => {
         "en",
         "website",
         "all",
-        "i18next-v4"
+        "i18next"
       )
     ).toBe(
-      "https://cms.example/umbraco/delivery/api/v1/app-translations/all?locale=en&namespace=website&format=i18next-v4"
+      "https://cms.example/umbraco/delivery/api/v1/app-translations/all?locale=en&namespace=website&format=i18next"
     );
   });
 

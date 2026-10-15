@@ -24,9 +24,9 @@ export const messageFormatOptions = (selected: MessageFormat) =>
 
 export const deliveryFormatLabel = (format: TranslationOutputFormat): string => {
   switch (format) {
-    case "next-intl":
-      return "next-intl (ICU)";
-    case "i18next-v4":
+    case "icu":
+      return "ICU MessageFormat";
+    case "i18next":
       return "i18next JSON v4";
     default:
       return format;

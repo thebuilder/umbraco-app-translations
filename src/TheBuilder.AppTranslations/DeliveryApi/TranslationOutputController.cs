@@ -9,6 +9,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using TheBuilder.AppTranslations.Authorization;
 using TheBuilder.AppTranslations.Configuration;
+using TheBuilder.AppTranslations.Core.Messages;
 using TheBuilder.AppTranslations.Core.Output;
 using TheBuilder.AppTranslations.Core.Persistence;
 
@@ -24,28 +25,34 @@ public sealed class TranslationOutputController(
     DeliveryResponseCache cache,
     IOptions<DeliveryOptions> options) : ControllerBase
 {
+    internal const int MaximumNamespacesPerRequest = 20;
+
+    // One namespace returns its messages. Several, or none for every namespace, return each
+    // namespace under its own name. Not [Required]: the attribute answers with the C# parameter
+    // name, which is not the query parameter's. Without a format, the messages are served in
+    // whatever syntax they are written in; with one, anything else is refused.
     [HttpGet("overrides")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public Task<IActionResult> GetOverrides(
         [FromQuery, Required] string? locale,
-        [FromQuery(Name = "namespace"), Required] string? messageNamespace,
-        string format = "next-intl",
+        [FromQuery(Name = "namespace")] string[]? namespaces,
+        string? format = null,
         CancellationToken cancellationToken = default) =>
-        GetOutput(locale, messageNamespace, format, TranslationOutputMode.Overrides, cancellationToken);
+        GetOutput(locale, namespaces, format, TranslationOutputMode.Overrides, cancellationToken);
 
     [HttpGet("all")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public Task<IActionResult> GetAll(
         [FromQuery, Required] string? locale,
-        [FromQuery(Name = "namespace"), Required] string? messageNamespace,
-        string format = "next-intl",
+        [FromQuery(Name = "namespace")] string[]? namespaces,
+        string? format = null,
         CancellationToken cancellationToken = default) =>
-        GetOutput(locale, messageNamespace, format, TranslationOutputMode.All, cancellationToken);
+        GetOutput(locale, namespaces, format, TranslationOutputMode.All, cancellationToken);
 
     private async Task<IActionResult> GetOutput(
         string? locale,
-        string? messageNamespace,
-        string format,
+        string[]? requestedNamespaces,
+        string? format,
         TranslationOutputMode mode,
         CancellationToken cancellationToken)
     {
@@ -58,23 +65,35 @@ public sealed class TranslationOutputController(
 
         if (string.IsNullOrWhiteSpace(locale))
             return BadRequest("The locale query parameter is required.");
-        if (string.IsNullOrWhiteSpace(messageNamespace))
-            return BadRequest("The namespace query parameter is required.");
-        if (!TranslationOutputFormats.TryParse(format, out var outputFormat))
-            return BadRequest($"Unsupported translation output format '{format}'.");
+        TranslationOutputFormat? outputFormat = null;
+        if (!string.IsNullOrWhiteSpace(format))
+        {
+            if (!TranslationOutputFormats.TryParse(format, out var parsed))
+                return BadRequest($"Unsupported translation output format '{format}'. Use icu or i18next, or leave format out.");
+            outputFormat = parsed;
+        }
+        var namespaces = DeliveryNamespaces.From(requestedNamespaces);
+        if (namespaces.Names.Count > MaximumNamespacesPerRequest)
+            return BadRequest($"Ask for at most {MaximumNamespacesPerRequest} namespaces at once, or leave namespace out for every namespace.");
 
-        var key = new DeliveryResponseKey(mode, outputFormat, locale, messageNamespace);
+        var key = new DeliveryResponseKey(mode, outputFormat, locale, namespaces);
         if (!cache.TryGet(key, out var response))
         {
             var generation = cache.Generation;
-            var namespaceMessages = await store.GetOutputMessagesAsync(locale, messageNamespace, cancellationToken);
-            var incompatible = namespaceMessages.FirstOrDefault(message => !TranslationOutputFormats.Supports(outputFormat, message.Message.Format));
-            if (incompatible is not null)
-                return Conflict($"Namespace '{messageNamespace}' contains {incompatible.Message.Format} messages that are incompatible with output format '{format}'. Use a separate namespace for each message syntax.");
+            var namespaceMessages = await store.GetOutputMessagesAsync(locale, namespaces.Names, cancellationToken);
+            // namespace=a,b names one namespace called "a,b". When there is none, the caller
+            // almost certainly meant two, and an empty 200 would hide that.
+            var commaList = namespaces.Names.FirstOrDefault(name =>
+                name.Contains(',', StringComparison.Ordinal) &&
+                !namespaceMessages.Any(message => string.Equals(message.Message.Identity.Namespace, name, StringComparison.OrdinalIgnoreCase)));
+            if (commaList is not null)
+                return BadRequest($"No namespace is called '{commaList}'. To ask for several namespaces, repeat the parameter: namespace=a&namespace=b.");
+            if (SyntaxConflict(namespaceMessages, outputFormat, namespaces) is { } conflict)
+                return Conflict(conflict);
             string json;
             try
             {
-                json = serializer.Serialize(namespaceMessages, mode);
+                json = DeliveryOutput.Serialize(serializer, namespaceMessages, mode, namespaces);
             }
             catch (TranslationOutputCollisionException exception)
             {
@@ -88,7 +107,7 @@ public sealed class TranslationOutputController(
             // built each time.
             if (namespaceMessages.Count > 0 &&
                 string.Equals(namespaceMessages[0].Message.Identity.Locale, locale, StringComparison.Ordinal) &&
-                string.Equals(namespaceMessages[0].Message.Identity.Namespace, messageNamespace, StringComparison.Ordinal))
+                StoredAsAskedFor(namespaces, namespaceMessages))
                 cache.Store(key, response, generation);
         }
 
@@ -98,6 +117,67 @@ public sealed class TranslationOutputController(
         if (Matches(Request.Headers.IfNoneMatch, response.ETag))
             return StatusCode(StatusCodes.Status304NotModified);
         return Content(response.Json, "application/json", Encoding.UTF8);
+    }
+
+    /// <summary>
+    /// Why the messages cannot be served together, or null when they can. With a format, every
+    /// message has to be readable in it. Without one, they only have to share a syntax: an
+    /// application reads one of ICU and i18next, never both. Plain text reads as either.
+    /// </summary>
+    internal static string? SyntaxConflict(
+        IReadOnlyList<TranslationMessageView> messages,
+        TranslationOutputFormat? format,
+        DeliveryNamespaces namespaces)
+    {
+        if (format is { } required)
+        {
+            var unreadable = messages.FirstOrDefault(message => !TranslationOutputFormats.Supports(required, message.Message.Format));
+            if (unreadable is null)
+                return null;
+            var unreadableNamespace = unreadable.Message.Identity.Namespace;
+            // A namespace in one syntax only needs the other format. One that mixes them cannot be
+            // served in either until it is split.
+            var mixes = messages.Any(message =>
+                string.Equals(message.Message.Identity.Namespace, unreadableNamespace, StringComparison.Ordinal) &&
+                message.Message.Format is not MessageFormat.PlainText &&
+                message.Message.Format != unreadable.Message.Format);
+            var advice = mixes
+                ? "Use a separate namespace for each message syntax."
+                : $"Ask for it with format={FormatName(unreadable.Message.Format)}, or leave format out.";
+            return $"Namespace '{unreadableNamespace}' has {SyntaxName(unreadable.Message.Format)} messages, which format={FormatName(required)} does not read. {advice}";
+        }
+
+        var first = messages.FirstOrDefault(message => message.Message.Format is not MessageFormat.PlainText);
+        var other = first is null
+            ? null
+            : messages.FirstOrDefault(message => message.Message.Format is not MessageFormat.PlainText && message.Message.Format != first.Message.Format);
+        if (other is null)
+            return null;
+        return string.Equals(first!.Message.Identity.Namespace, other.Message.Identity.Namespace, StringComparison.Ordinal)
+            ? $"Namespace '{other.Message.Identity.Namespace}' mixes {SyntaxName(first.Message.Format)} and {SyntaxName(other.Message.Format)} messages. Use a separate namespace for each message syntax."
+            : $"Namespace '{first.Message.Identity.Namespace}' has {SyntaxName(first.Message.Format)} messages and namespace '{other.Message.Identity.Namespace}' has {SyntaxName(other.Message.Format)} messages. Ask for them separately.";
+    }
+
+    private static string FormatName(TranslationOutputFormat format) =>
+        format is TranslationOutputFormat.Icu ? "icu" : "i18next";
+
+    private static string FormatName(MessageFormat format) =>
+        format is MessageFormat.I18NextV4 ? "i18next" : "icu";
+
+    private static string SyntaxName(MessageFormat format) => format switch
+    {
+        MessageFormat.Icu => "ICU",
+        MessageFormat.I18NextV4 => "i18next",
+        _ => "plain text",
+    };
+
+    /// <summary>Whether every namespace the request named has messages stored under that exact spelling.</summary>
+    private static bool StoredAsAskedFor(DeliveryNamespaces namespaces, IReadOnlyList<TranslationMessageView> messages)
+    {
+        if (namespaces.Names.Count == 0)
+            return true;
+        var stored = messages.Select(message => message.Message.Identity.Namespace).ToHashSet(StringComparer.Ordinal);
+        return namespaces.Names.All(stored.Contains);
     }
 
     /// <summary>

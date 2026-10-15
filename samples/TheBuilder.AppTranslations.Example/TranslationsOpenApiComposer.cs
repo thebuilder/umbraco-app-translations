@@ -56,8 +56,8 @@ public sealed class TranslationsOpenApiComposer : IComposer
                 return;
 
             schema.Enum?.Clear();
-            schema.Enum?.Add(JsonValue.Create("next-intl"));
-            schema.Enum?.Add(JsonValue.Create("i18next-v4"));
+            schema.Enum?.Add(JsonValue.Create("icu"));
+            schema.Enum?.Add(JsonValue.Create("i18next"));
         }
     }
 

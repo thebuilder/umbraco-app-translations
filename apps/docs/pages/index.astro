@@ -22,7 +22,7 @@ const nugetUrl = appTranslationsPackage.links.nuget;
 const marketplaceUrl = appTranslationsPackage.links.marketplace;
 // The sample site's real answer for Danish after one edit.
 const deliveryRequest =
-  "GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl";
+  "GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website";
 const deliveryResponse = `{
   "greeting": "Hej {name}, godt at se dig igen!"
 }`;
@@ -115,7 +115,7 @@ const features = [
       <div class="status-list reveal" style="--i: 1">
         <div><strong>Sync</strong><span>From the backoffice, or from your deployment once new files are live.</span></div>
         <div><strong>Edit</strong><span>Any message, in any language. Umbraco records who last changed it, and when.</span></div>
-        <div><strong>Deliver</strong><span>The custom text alone, or the complete dictionary, as next-intl or i18next JSON.</span></div>
+        <div><strong>Deliver</strong><span>The custom text alone, or the complete dictionary, as nested JSON in ICU or i18next syntax.</span></div>
       </div>
     </section>
 

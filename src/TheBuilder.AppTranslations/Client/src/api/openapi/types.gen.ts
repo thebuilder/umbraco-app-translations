@@ -270,7 +270,7 @@ export type SourceResponse = {
     lastSync?: TranslationSyncResult | null;
 };
 
-export type TranslationOutputFormat = 'next-intl' | 'i18next-v4';
+export type TranslationOutputFormat = 'icu' | 'i18next';
 
 export type TranslationParserOptions = {
     locales: Array<string>;

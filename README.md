@@ -70,7 +70,7 @@ A source has three more settings.
   text. The editor checks every change against the syntax, so an edit cannot break a placeholder or
   a plural.
 - **Namespace handling.** Use the first key of the JSON as the namespace, or put every message in
-  one namespace you name. The namespace is part of the delivery URL.
+  one namespace you name. Your application fetches one namespace at a time, or all of them at once.
 - **Advanced.** The source identifier for deployment-triggered sync, a request timeout, and the
   largest response the source accepts.
 
@@ -170,15 +170,18 @@ To use the custom text, fetch it for a language and namespace, then merge it ove
 application already bundles.
 
 ```http
-GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl
+GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website
 ```
 
-If your application does not bundle its own text, fetch the complete dictionary instead. It has the
-custom text in place of the application's text wherever an editor wrote some.
+If your application does not bundle its own text, fetch every message instead: the editor's text
+where an editor changed it, and your source's text everywhere else.
 
 ```http
-GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website&format=next-intl
+GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website
 ```
+
+Repeat `namespace` to fetch several namespaces, or leave it out to fetch every namespace. Each is then
+a top-level key holding its own messages.
 
 Umbraco keeps each response in memory until the translations change, on every server. Clients and
 CDNs may keep it for 60 seconds; `TheBuilder:AppTranslations:Delivery:MaxAgeSeconds` changes that,
@@ -189,8 +192,10 @@ The endpoints are public until you set `TheBuilder:AppTranslations:Delivery:ApiK
 a request needs it in an `Api-Key` header or as a bearer token, and gets `401` without it. **Settings > App translations** lists the exact URL for each language and
 namespace.
 
-For i18next, use `format=i18next-v4` and set the source's message syntax to **i18next JSON v4**.
-The output keeps nested keys, `{{variable}}` interpolation, context keys and plural suffixes such as
+Messages are served in the syntax their source declares. Add `format=icu` (next-intl, react-intl,
+Lingui) or `format=i18next` (i18next, react-i18next) to have Umbraco refuse anything your
+application would misread. For i18next, set the source's message syntax to **i18next JSON v4**. The
+output keeps nested keys, `{{variable}}` interpolation, context keys and plural suffixes such as
 `_one`, `_other` and `_ordinal_one`. Umbraco never converts text between ICU and i18next syntax, so
 keep each namespace to one syntax. Umbraco refuses to serve a namespace that mixes them until you
 split it.

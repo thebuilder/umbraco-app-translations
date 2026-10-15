@@ -14,6 +14,7 @@ import type { UmbLanguageDetailModel } from "@umbraco-cms/backoffice/language";
 import { UMB_NOTIFICATION_CONTEXT } from "@umbraco-cms/backoffice/notification";
 import { UmbTextStyles } from "@umbraco-cms/backoffice/style";
 import type { OutputConflict, OutputEndpoint } from "../api/generated/models.js";
+import { allNamespaceFormats, allNamespaces, allNamespacesFormat } from "./app/all-namespaces.js";
 import { deliveryFormatLabel, messageFormatLabel } from "./app/format-options.js";
 import { type DeliveryFormat, type DeliveryMode, deliveryEndpoint } from "./app/source-form.js";
 
@@ -27,6 +28,7 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
 
   @state() private _deliveryMode: DeliveryMode = "overrides";
   @state() private _selectedLocale?: string;
+  /** A namespace, or {@link allNamespaces}. */
   @state() private _selectedNamespace?: string;
   @state() private _selectedFormat?: DeliveryFormat;
 
@@ -40,12 +42,21 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
   }
 
   protected willUpdate(changed: Map<PropertyKey, unknown>): void {
-    if (changed.has("endpoints")) {
+    // A new conflict can take away the format every namespace was being served in.
+    if (changed.has("endpoints") || changed.has("conflicts")) {
       this.#reconcileSelection();
     }
   }
 
   #reconcileSelection(): void {
+    if (
+      this._selectedNamespace === allNamespaces &&
+      this._selectedLocale !== undefined &&
+      this.#allNamespaceFormats(this._selectedLocale).length > 0
+    ) {
+      this.#selectAllNamespaces(this._selectedLocale);
+      return;
+    }
     const selected =
       this.endpoints.find(
         (endpoint) =>
@@ -65,10 +76,31 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
   }
 
   #selectLocale(locale: string): void {
+    if (this._selectedNamespace === allNamespaces && this.#allNamespaceFormats(locale).length > 0) {
+      this.#selectAllNamespaces(locale);
+      return;
+    }
     this.#selectEndpoint(this.endpoints.find((endpoint) => endpoint.locale === locale));
   }
 
+  #allNamespaceFormats(locale: string): DeliveryFormat[] {
+    return allNamespaceFormats(this.endpoints, this.conflicts, locale);
+  }
+
+  #selectAllNamespaces(locale: string): void {
+    this._selectedLocale = locale;
+    this._selectedNamespace = allNamespaces;
+    this._selectedFormat = allNamespacesFormat(
+      this.#allNamespaceFormats(locale),
+      this._selectedFormat
+    );
+  }
+
   #selectNamespace(messageNamespace: string): void {
+    if (messageNamespace === allNamespaces && this._selectedLocale !== undefined) {
+      this.#selectAllNamespaces(this._selectedLocale);
+      return;
+    }
     this.#selectEndpoint(
       this.endpoints.find(
         (endpoint) =>
@@ -78,6 +110,10 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
   }
 
   #selectFormat(format: string): void {
+    if (this._selectedNamespace === allNamespaces) {
+      this._selectedFormat = format as DeliveryFormat;
+      return;
+    }
     this.#selectEndpoint(
       this.endpoints.find(
         (endpoint) =>
@@ -89,6 +125,13 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
   }
 
   #selectedEndpoint(): OutputEndpoint | undefined {
+    if (this._selectedNamespace === allNamespaces) {
+      return this._selectedLocale !== undefined &&
+        this._selectedFormat !== undefined &&
+        this.#allNamespaceFormats(this._selectedLocale).includes(this._selectedFormat)
+        ? { locale: this._selectedLocale, namespace: allNamespaces, format: this._selectedFormat }
+        : undefined;
+    }
     return this.endpoints.find(
       (endpoint) =>
         endpoint.locale === this._selectedLocale &&
@@ -113,13 +156,49 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
     }
   }
 
+  #namespaceOptions() {
+    const canAskForAllNamespaces =
+      this._selectedLocale !== undefined &&
+      this.#allNamespaceFormats(this._selectedLocale).length > 0;
+    return [
+      ...(canAskForAllNamespaces ? [allNamespaces] : []),
+      ...new Set(
+        this.endpoints
+          .filter((endpoint) => endpoint.locale === this._selectedLocale)
+          .map((endpoint) => endpoint.namespace)
+      ),
+    ].map((messageNamespace) => ({
+      name: messageNamespace === allNamespaces ? "All namespaces" : messageNamespace,
+      value: messageNamespace,
+      selected: messageNamespace === this._selectedNamespace,
+    }));
+  }
+
+  #formatOptions() {
+    const formats =
+      this._selectedNamespace === allNamespaces && this._selectedLocale !== undefined
+        ? this.#allNamespaceFormats(this._selectedLocale)
+        : this.endpoints
+            .filter(
+              (endpoint) =>
+                endpoint.locale === this._selectedLocale &&
+                endpoint.namespace === this._selectedNamespace
+            )
+            .map((endpoint) => endpoint.format);
+    return formats.map((format) => ({
+      name: deliveryFormatLabel(format),
+      value: format,
+      selected: format === this._selectedFormat,
+    }));
+  }
+
   render() {
     const selected = this.#selectedEndpoint();
     const outputUrl = selected
       ? deliveryEndpoint(
           location.href,
           selected.locale,
-          selected.namespace,
+          selected.namespace === allNamespaces ? undefined : selected.namespace,
           this._deliveryMode,
           selected.format
         )
@@ -127,27 +206,8 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
     const localeOptions = [...new Set(this.endpoints.map((endpoint) => endpoint.locale))].map(
       (locale) => ({ name: locale, value: locale, selected: locale === this._selectedLocale })
     );
-    const namespaceOptions = [
-      ...new Set(
-        this.endpoints
-          .filter((endpoint) => endpoint.locale === this._selectedLocale)
-          .map((endpoint) => endpoint.namespace)
-      ),
-    ].map((messageNamespace) => ({
-      name: messageNamespace,
-      value: messageNamespace,
-      selected: messageNamespace === this._selectedNamespace,
-    }));
-    const formatOptions = this.endpoints
-      .filter(
-        (endpoint) =>
-          endpoint.locale === this._selectedLocale && endpoint.namespace === this._selectedNamespace
-      )
-      .map((endpoint) => ({
-        name: deliveryFormatLabel(endpoint.format),
-        value: endpoint.format,
-        selected: endpoint.format === this._selectedFormat,
-      }));
+    const namespaceOptions = this.#namespaceOptions();
+    const formatOptions = this.#formatOptions();
     const contentOptions = [
       { name: "Overrides", value: "overrides", selected: this._deliveryMode === "overrides" },
       { name: "All translations", value: "all", selected: this._deliveryMode === "all" },
@@ -191,6 +251,10 @@ class TranslationOutputApiElement extends UmbElementMixin(LitElement) {
               this._deliveryMode === "overrides"
                 ? "Only the editorial overrides. Merge these over the defaults your app already ships."
                 : "Every synced message, with editorial overrides applied."
+            }${
+              this._selectedNamespace === allNamespaces
+                ? " Each namespace is a top-level key holding its own messages."
+                : ""
             }</p>
             <div class="result">
               <code>${outputUrl}</code>

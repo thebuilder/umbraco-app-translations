@@ -56,7 +56,7 @@ Open the **App Translations** section, find a message, and write custom text for
 Point your application at the delivery endpoint for a language and namespace, and merge the custom text over the messages it bundles:
 
 ```http
-GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl
+GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website
 ```
 
 The locale is Umbraco's code, `da-DK`, even if your application calls it `da`. [Delivery API](/delivery-api) has a complete next-intl and i18next example, and covers caching and keys.

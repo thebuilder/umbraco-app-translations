@@ -21,8 +21,8 @@ public sealed class TranslationOutputFormatsTests
 
         var facets = TranslationOutputFormats.CreateFacets(data);
 
-        Assert.Contains(new TranslationOutputEndpoint("da", "website", TranslationOutputFormat.NextIntl), facets.OutputEndpoints);
-        Assert.Contains(new TranslationOutputEndpoint("en", "app", TranslationOutputFormat.I18NextV4), facets.OutputEndpoints);
+        Assert.Contains(new TranslationOutputEndpoint("da", "website", TranslationOutputFormat.Icu), facets.OutputEndpoints);
+        Assert.Contains(new TranslationOutputEndpoint("en", "app", TranslationOutputFormat.I18Next), facets.OutputEndpoints);
         Assert.DoesNotContain(facets.OutputEndpoints, endpoint => endpoint.Namespace == "mixed");
         Assert.Contains(facets.OutputConflicts, conflict => conflict.Namespace == "mixed");
     }

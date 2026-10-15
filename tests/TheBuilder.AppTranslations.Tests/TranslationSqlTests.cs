@@ -33,20 +33,46 @@ public sealed class TranslationSqlTests
     [Fact]
     public void Output_snapshot_includes_overridden_and_inherited_messages_but_excludes_missing_messages()
     {
-        var sql = TranslationSql.OutputMessages("da", "website");
+        var sql = TranslationSql.OutputMessages("da", ["website"]);
 
         Assert.DoesNotContain("o.MessageId IS NOT NULL", sql.SQL, StringComparison.Ordinal);
         Assert.Contains("m.State <>", sql.SQL, StringComparison.Ordinal);
         Assert.Contains(sql.Arguments, argument => Equals(argument, "Missing"));
     }
 
+    [Fact]
+    public void Output_for_a_namespace_filters_on_it()
+    {
+        var sql = TranslationSql.OutputMessages("da", ["website"]);
+
+        Assert.Contains("m.Namespace IN (", sql.SQL, StringComparison.Ordinal);
+        Assert.Contains(sql.Arguments, argument => Equals(argument, "website"));
+    }
+
+    [Fact]
+    public void Output_for_several_namespaces_filters_on_each()
+    {
+        var sql = TranslationSql.OutputMessages("da", ["checkout", "website"]);
+
+        Assert.Contains(sql.Arguments, argument => Equals(argument, "checkout"));
+        Assert.Contains(sql.Arguments, argument => Equals(argument, "website"));
+    }
+
+    [Fact]
+    public void Output_without_a_namespace_reads_every_namespace()
+    {
+        var sql = TranslationSql.OutputMessages("da", []);
+
+        Assert.DoesNotContain("m.Namespace", sql.SQL.Replace("ORDER BY m.Namespace", "", StringComparison.Ordinal), StringComparison.Ordinal);
+        Assert.Contains(sql.Arguments, argument => Equals(argument, "Missing"));
+    }
+
     [Theory]
-    [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Output_requires_a_namespace(string? messageNamespace)
+    public void Output_refuses_a_blank_namespace(string messageNamespace)
     {
         Assert.ThrowsAny<ArgumentException>(() =>
-            TranslationSql.OutputMessages("da", messageNamespace!));
+            TranslationSql.OutputMessages("da", ["website", messageNamespace]));
     }
 }

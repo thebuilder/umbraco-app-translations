@@ -487,11 +487,17 @@ internal sealed class UmbracoTranslationStore(
     public Task<IReadOnlyList<TranslationMessageView>> GetOutputMessagesAsync(
         string locale,
         string messageNamespace,
+        CancellationToken cancellationToken) =>
+        GetOutputMessagesAsync(locale, [messageNamespace], cancellationToken);
+
+    public Task<IReadOnlyList<TranslationMessageView>> GetOutputMessagesAsync(
+        string locale,
+        IReadOnlyCollection<string> namespaces,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         using var scope = scopeProvider.CreateScope(autoComplete: true);
-        var sql = TranslationSql.OutputMessages(locale, messageNamespace);
+        var sql = TranslationSql.OutputMessages(locale, namespaces);
         var rows = scope.Database.Fetch<MessageViewRow>(sql);
         return Task.FromResult<IReadOnlyList<TranslationMessageView>>(rows.Select(TranslationRowMapper.ToDomain).ToArray());
     }

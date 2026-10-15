@@ -8,9 +8,9 @@ namespace TheBuilder.AppTranslations.Core.Tests;
 public sealed class NestedJsonOutputSerializerTests
 {
     [Fact]
-    public void Advertises_next_intl_and_i18next_v4_json_contracts()
+    public void Advertises_formats_by_message_syntax_not_by_library()
     {
-        Assert.Equal("[\"next-intl\",\"i18next-v4\"]", JsonSerializer.Serialize(Enum.GetValues<TranslationOutputFormat>()));
+        Assert.Equal("[\"icu\",\"i18next\"]", JsonSerializer.Serialize(Enum.GetValues<TranslationOutputFormat>()));
     }
 
     [Fact]

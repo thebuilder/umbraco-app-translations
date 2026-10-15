@@ -1,24 +1,24 @@
 ---
 title: Get all messages
-description: Every message for one language and namespace, with custom text in place of the application's text wherever an editor wrote some.
+description: Every message for one language, in one namespace, several or all of them. An editor's text where there is one, your source's text everywhere else.
 api: GET /umbraco/delivery/api/v1/app-translations/all
 playground: simple
 seo:
   image: /og/endpoints/all.png
 ---
 
-Returns the complete dictionary, for an application that does not bundle its own text. Wherever an editor wrote custom text, it replaces the application's text.
+Returns every message, for an application that does not bundle its own text. A message an editor changed has the editor's text. Every other message has the text Umbraco read from your source.
 
 <ParamField query="locale" type="string" required placeholder="da-DK">
   The Umbraco language code. It has to match exactly: `da` finds nothing on a site that stores `da-DK`.
 </ParamField>
 
-<ParamField query="namespace" type="string" required placeholder="website">
-  The [namespace](/sources#namespaces).
+<ParamField query="namespace" type="string" placeholder="website">
+  The [namespace](/sources#namespaces). Repeat it, as in `namespace=checkout&namespace=website`, for several namespaces, or leave it out for every namespace. Up to 20 at once.
 </ParamField>
 
-<ParamField query="format" type="string" default="next-intl">
-  `next-intl` for ICU messages, or `i18next-v4` for i18next JSON v4.
+<ParamField query="format" type="string" placeholder="icu">
+  The [message syntax](/delivery-api#message-syntax) your application reads: `icu` or `i18next`. Leave it out to get the messages in whatever syntax they are written in.
 </ParamField>
 
 <ParamField header="Api-Key" type="string">
@@ -31,15 +31,15 @@ Returns the complete dictionary, for an application that does not bundle its own
 
 ## Response
 
-A JSON object of messages, nested the way your application's own files are. `{}` when the locale or namespace has none.
+A JSON object of messages, nested the way your application's own files are. With one `namespace`, the namespace's messages sit at the top level. With several, or none, each namespace is a top-level key holding its own messages, as [one namespace, several, or all of them](/delivery-api#one-namespace-several-or-all-of-them) shows. `{}` when the locale or namespace has none.
 
 | Status | Meaning |
 | --- | --- |
 | `200` | The messages. |
 | `304` | Nothing changed since the ETag you sent. |
-| `400` | `locale` or `namespace` is missing, or `format` is not one of the two. |
+| `400` | `locale` is missing, `format` is not `icu` or `i18next`, the request names more than 20 namespaces, or `namespace` has a comma in it and no namespace has that name. |
 | `401` | A key is configured, and the request did not send it. |
-| `409` | The namespace mixes ICU and i18next messages, or two sources supply the same key. |
+| `409` | The response would hold messages in a syntax `format` does not read, or, without `format`, both ICU and i18next messages. Or two sources supply the same key. |
 
 <ResponseExample>
 
