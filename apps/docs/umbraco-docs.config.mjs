@@ -1,3 +1,4 @@
+import { DOCS_ACCENT } from "@thebuilder/umbraco-docs";
 import { defineOgConfig } from "@thebuilder/umbraco-docs/og";
 import { fileURLToPath } from "node:url";
 
@@ -6,7 +7,8 @@ export default defineOgConfig({
   publicDir: fileURLToPath(new URL("./public", import.meta.url)),
   prefix: "/og",
   brand: "TheBuilder · App Translations",
-  accent: "#7557e8",
+  // The card is always dark, so its glow takes the shared accent's dark shade.
+  accent: DOCS_ACCENT.dark,
   logo: "/logo-mark.svg",
   root: {
     title: "App Translations for Umbraco",
