@@ -1,0 +1,695 @@
+#nullable enable
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.<Clone>$() -> TheBuilder.AppTranslations.Core.Assistant.AssistantProfile!
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.Alias.get -> string!
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.Alias.init -> void
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.AssistantProfile(System.Guid Id, string! Alias, string! Name) -> void
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.Deconstruct(out System.Guid Id, out string! Alias, out string! Name) -> void
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.Equals(TheBuilder.AppTranslations.Core.Assistant.AssistantProfile? other) -> bool
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.Id.get -> System.Guid
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.Id.init -> void
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.Name.get -> string!
+TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.Name.init -> void
+TheBuilder.AppTranslations.Core.Assistant.IAssistantChat
+TheBuilder.AppTranslations.Core.Assistant.IAssistantChat.CompleteAsync(System.Guid? profileId, System.Collections.Generic.IReadOnlyList<Microsoft.Extensions.AI.ChatMessage!>! messages, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+TheBuilder.AppTranslations.Core.Assistant.IAssistantChat.GetProfilesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Assistant.AssistantProfile!>!>!
+TheBuilder.AppTranslations.Core.Assistant.IAssistantChat.HasDefaultProfileAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+TheBuilder.AppTranslations.Core.Assistant.IAssistantChat.IsInstalled.get -> bool
+TheBuilder.AppTranslations.Core.Assistant.IAssistantChat.ProfileExistsAsync(System.Guid id, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+TheBuilder.AppTranslations.Core.Messages.MessageFormat
+TheBuilder.AppTranslations.Core.Messages.MessageFormat.I18NextV4 = 2 -> TheBuilder.AppTranslations.Core.Messages.MessageFormat
+TheBuilder.AppTranslations.Core.Messages.MessageFormat.Icu = 1 -> TheBuilder.AppTranslations.Core.Messages.MessageFormat
+TheBuilder.AppTranslations.Core.Messages.MessageFormat.PlainText = 0 -> TheBuilder.AppTranslations.Core.Messages.MessageFormat
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.Deconstruct(out System.Guid SourceId, out string! Namespace, out string! Key, out string! Locale) -> void
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.Equals(TheBuilder.AppTranslations.Core.Messages.MessageIdentity other) -> bool
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.Key.get -> string!
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.Key.init -> void
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.Locale.get -> string!
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.Locale.init -> void
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.MessageIdentity() -> void
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.MessageIdentity(System.Guid SourceId, string! Namespace, string! Key, string! Locale) -> void
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.Namespace.get -> string!
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.Namespace.init -> void
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.SourceId.get -> System.Guid
+TheBuilder.AppTranslations.Core.Messages.MessageIdentity.SourceId.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.<Clone>$() -> TheBuilder.AppTranslations.Core.Messages.TranslationMessage!
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Arguments.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Arguments.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Deconstruct(out System.Guid Id, out TheBuilder.AppTranslations.Core.Messages.MessageIdentity Identity, out string! DefaultValue, out TheBuilder.AppTranslations.Core.Messages.MessageFormat Format, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Arguments, out string? Description, out string! SourceRevision, out string! DefaultChecksum, out string? PreviousDefaultChecksum, out System.DateTimeOffset FirstSeenAt, out System.DateTimeOffset LastSeenAt, out TheBuilder.AppTranslations.Core.Messages.TranslationMessageState State) -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.DefaultChecksum.get -> string!
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.DefaultChecksum.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.DefaultValue.get -> string!
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.DefaultValue.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Description.get -> string?
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Description.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Equals(TheBuilder.AppTranslations.Core.Messages.TranslationMessage? other) -> bool
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.FirstSeenAt.get -> System.DateTimeOffset
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.FirstSeenAt.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Format.get -> TheBuilder.AppTranslations.Core.Messages.MessageFormat
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Format.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Id.get -> System.Guid
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Id.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Identity.get -> TheBuilder.AppTranslations.Core.Messages.MessageIdentity
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Identity.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.LastSeenAt.get -> System.DateTimeOffset
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.LastSeenAt.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.PreviousDefaultChecksum.get -> string?
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.PreviousDefaultChecksum.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.SourceRevision.get -> string!
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.SourceRevision.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.State.get -> TheBuilder.AppTranslations.Core.Messages.TranslationMessageState
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.State.init -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessage.TranslationMessage(System.Guid Id, TheBuilder.AppTranslations.Core.Messages.MessageIdentity Identity, string! DefaultValue, TheBuilder.AppTranslations.Core.Messages.MessageFormat Format, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Arguments, string? Description, string! SourceRevision, string! DefaultChecksum, string? PreviousDefaultChecksum, System.DateTimeOffset FirstSeenAt, System.DateTimeOffset LastSeenAt, TheBuilder.AppTranslations.Core.Messages.TranslationMessageState State) -> void
+TheBuilder.AppTranslations.Core.Messages.TranslationMessageState
+TheBuilder.AppTranslations.Core.Messages.TranslationMessageState.Active = 0 -> TheBuilder.AppTranslations.Core.Messages.TranslationMessageState
+TheBuilder.AppTranslations.Core.Messages.TranslationMessageState.Authored = 4 -> TheBuilder.AppTranslations.Core.Messages.TranslationMessageState
+TheBuilder.AppTranslations.Core.Messages.TranslationMessageState.Changed = 1 -> TheBuilder.AppTranslations.Core.Messages.TranslationMessageState
+TheBuilder.AppTranslations.Core.Messages.TranslationMessageState.Invalid = 3 -> TheBuilder.AppTranslations.Core.Messages.TranslationMessageState
+TheBuilder.AppTranslations.Core.Messages.TranslationMessageState.Missing = 2 -> TheBuilder.AppTranslations.Core.Messages.TranslationMessageState
+TheBuilder.AppTranslations.Core.Output.ITranslationOutputSerializer
+TheBuilder.AppTranslations.Core.Output.ITranslationOutputSerializer.Serialize(System.Collections.Generic.IReadOnlyCollection<TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView!>! messages, TheBuilder.AppTranslations.Core.Output.TranslationOutputMode mode) -> string!
+TheBuilder.AppTranslations.Core.Output.TranslationOutputCollisionException
+TheBuilder.AppTranslations.Core.Output.TranslationOutputCollisionException.TranslationOutputCollisionException(string! key) -> void
+TheBuilder.AppTranslations.Core.Output.TranslationOutputFormat
+TheBuilder.AppTranslations.Core.Output.TranslationOutputFormat.I18Next = 1 -> TheBuilder.AppTranslations.Core.Output.TranslationOutputFormat
+TheBuilder.AppTranslations.Core.Output.TranslationOutputFormat.Icu = 0 -> TheBuilder.AppTranslations.Core.Output.TranslationOutputFormat
+TheBuilder.AppTranslations.Core.Output.TranslationOutputMode
+TheBuilder.AppTranslations.Core.Output.TranslationOutputMode.All = 1 -> TheBuilder.AppTranslations.Core.Output.TranslationOutputMode
+TheBuilder.AppTranslations.Core.Output.TranslationOutputMode.Overrides = 0 -> TheBuilder.AppTranslations.Core.Output.TranslationOutputMode
+TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository
+TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository.EnsureMessageAsync(TheBuilder.AppTranslations.Core.Messages.MessageIdentity identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository.FindKeyShapeAsync(TheBuilder.AppTranslations.Core.Messages.MessageIdentity identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Messages.TranslationMessage?>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository.FindMessageAsync(TheBuilder.AppTranslations.Core.Messages.MessageIdentity identity, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView?>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository.GetLocalesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository.QueryKeyReferencesAsync(TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery! query, int limit, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference!>!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository.QueryKeysAsync(TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery! query, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Persistence.Page<TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView!>!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository
+TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository.DeleteOverrideAsync(System.Guid messageId, long? expectedVersion, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository.GetFacetDataAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository.GetMessageAsync(System.Guid messageId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView?>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository.GetOutputMessagesAsync(string! locale, System.Collections.Generic.IReadOnlyCollection<string!>! namespaces, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView!>!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository.GetOutputMessagesAsync(string! locale, string! messageNamespace, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView!>!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository.QueryMessagesAsync(TheBuilder.AppTranslations.Core.Persistence.MessageQuery! query, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Persistence.Page<TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView!>!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository.SaveOverrideAsync(System.Guid messageId, string! value, long? expectedVersion, string! userId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Persistence.TranslationOverride!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository.DeleteSourceAsync(System.Guid sourceId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository.GetSourceAsync(System.Guid sourceId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition?>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository.GetSourceByAliasAsync(string! alias, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition?>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository.GetSourceStatusesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus!>!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository.GetSourcesAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition!>!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository.GetSyncHistoryAsync(System.Guid sourceId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult!>!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository.SaveSourceAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSynchronizationStore
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSynchronizationStore.ApplySynchronizationAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease! lease, System.Collections.Generic.IReadOnlyCollection<TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage!>! messages, string! revision, System.DateTimeOffset startedAt, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult!>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSynchronizationStore.GetSynchronizationSourceAsync(TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease! lease, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition?>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSynchronizationStore.RecordFailedSynchronizationAsync(TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult! result, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSynchronizationStore.ReleaseSynchronizationLeaseAsync(TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease! lease, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSynchronizationStore.RenewSynchronizationLeaseAsync(TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease! lease, System.TimeSpan duration, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+TheBuilder.AppTranslations.Core.Persistence.ITranslationSynchronizationStore.TryAcquireSynchronizationLeaseAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.TimeSpan duration, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease?>!
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery!
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.AdditionalCompareLocales.get -> System.Collections.Generic.IReadOnlyList<string!>!
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.CompareLocales.get -> System.Collections.Generic.IReadOnlyList<string!>?
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.CompareLocales.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Deconstruct(out string! ReferenceLocale, out string! TargetLocale, out System.Collections.Generic.IReadOnlyList<string!>? CompareLocales, out System.Guid? SourceId, out string? Namespace, out string? KeyPrefix, out string? Query, out TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter Status, out TheBuilder.AppTranslations.Core.Persistence.MessageKeySort Sort, out TheBuilder.AppTranslations.Core.Persistence.SortDirection Direction, out int Page, out int PageSize) -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.DetailLocales.get -> System.Collections.Generic.IReadOnlyList<string!>!
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Direction.get -> TheBuilder.AppTranslations.Core.Persistence.SortDirection
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Direction.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Equals(TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.KeyPrefix.get -> string?
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.KeyPrefix.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.KeySetLocales.get -> System.Collections.Generic.IReadOnlyList<string!>!
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.MessageKeyQuery(string! ReferenceLocale, string! TargetLocale, System.Collections.Generic.IReadOnlyList<string!>? CompareLocales = null, System.Guid? SourceId = null, string? Namespace = null, string? KeyPrefix = null, string? Query = null, TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter Status = TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter.All, TheBuilder.AppTranslations.Core.Persistence.MessageKeySort Sort = TheBuilder.AppTranslations.Core.Persistence.MessageKeySort.Key, TheBuilder.AppTranslations.Core.Persistence.SortDirection Direction = TheBuilder.AppTranslations.Core.Persistence.SortDirection.Ascending, int Page = 1, int PageSize = 100) -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Namespace.get -> string?
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Namespace.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Page.get -> int
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Page.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.PageSize.get -> int
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.PageSize.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Query.get -> string?
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Query.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.ReferenceLocale.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Sort.get -> TheBuilder.AppTranslations.Core.Persistence.MessageKeySort
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Sort.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.SourceId.get -> System.Guid?
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.SourceId.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Status.get -> TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Status.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.TargetLocale.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference!
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.Deconstruct(out System.Guid Id, out long? Version) -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.Equals(TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.Id.get -> System.Guid
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.Id.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.MessageKeyReference(System.Guid Id, long? Version) -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.Version.get -> long?
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.Version.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageKeySort
+TheBuilder.AppTranslations.Core.Persistence.MessageKeySort.Key = 0 -> TheBuilder.AppTranslations.Core.Persistence.MessageKeySort
+TheBuilder.AppTranslations.Core.Persistence.MessageKeySort.Status = 2 -> TheBuilder.AppTranslations.Core.Persistence.MessageKeySort
+TheBuilder.AppTranslations.Core.Persistence.MessageKeySort.UpdatedAt = 1 -> TheBuilder.AppTranslations.Core.Persistence.MessageKeySort
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter.Absent = 1 -> TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter.All = 0 -> TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter.Default = 2 -> TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter.NeedsReview = 4 -> TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter.Overridden = 3 -> TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter.Removed = 5 -> TheBuilder.AppTranslations.Core.Persistence.MessageKeyStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState
+TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState.Absent = 4 -> TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState
+TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState.Default = 0 -> TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState
+TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState.NeedsReview = 2 -> TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState
+TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState.Overridden = 1 -> TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState
+TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState.Removed = 3 -> TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.MessageQuery!
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Deconstruct(out string? Locale, out string? Namespace, out string? Query, out TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter Status, out int Page, out int PageSize) -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Equals(TheBuilder.AppTranslations.Core.Persistence.MessageQuery? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Locale.get -> string?
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Locale.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.MessageQuery(string? Locale = null, string? Namespace = null, string? Query = null, TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter Status = TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter.All, int Page = 1, int PageSize = 100) -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Namespace.get -> string?
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Namespace.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Page.get -> int
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Page.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.PageSize.get -> int
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.PageSize.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Query.get -> string?
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Query.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Status.get -> TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Status.init -> void
+TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter.All = 0 -> TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter.Default = 1 -> TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter.Missing = 4 -> TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter.NeedsReview = 3 -> TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter.Overridden = 2 -> TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter
+TheBuilder.AppTranslations.Core.Persistence.Page<T>
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.Page<T>!
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.Deconstruct(out System.Collections.Generic.IReadOnlyList<T>! Items, out int PageNumber, out int PageSize, out int Total) -> void
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.Equals(TheBuilder.AppTranslations.Core.Persistence.Page<T>? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.Items.get -> System.Collections.Generic.IReadOnlyList<T>!
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.Items.init -> void
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.Page(System.Collections.Generic.IReadOnlyList<T>! Items, int PageNumber, int PageSize, int Total) -> void
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.PageNumber.get -> int
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.PageNumber.init -> void
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.PageSize.get -> int
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.PageSize.init -> void
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.Total.get -> int
+TheBuilder.AppTranslations.Core.Persistence.Page<T>.Total.init -> void
+TheBuilder.AppTranslations.Core.Persistence.SortDirection
+TheBuilder.AppTranslations.Core.Persistence.SortDirection.Ascending = 0 -> TheBuilder.AppTranslations.Core.Persistence.SortDirection
+TheBuilder.AppTranslations.Core.Persistence.SortDirection.Descending = 1 -> TheBuilder.AppTranslations.Core.Persistence.SortDirection
+TheBuilder.AppTranslations.Core.Persistence.TranslationConcurrencyException
+TheBuilder.AppTranslations.Core.Persistence.TranslationConcurrencyException.TranslationConcurrencyException(string! message) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData!
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.Deconstruct(out System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup!>! OutputGroups, out System.Collections.Generic.IReadOnlyDictionary<TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter, int>! StatusCounts, out System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage!>! Locales, out int TotalKeys) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.Equals(TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.Locales.get -> System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage!>!
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.Locales.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.OutputGroups.get -> System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup!>!
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.OutputGroups.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.StatusCounts.get -> System.Collections.Generic.IReadOnlyDictionary<TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter, int>!
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.StatusCounts.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.TotalKeys.get -> int
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.TotalKeys.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.TranslationFacetData(System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup!>! OutputGroups, System.Collections.Generic.IReadOnlyDictionary<TheBuilder.AppTranslations.Core.Persistence.MessageStatusFilter, int>! StatusCounts, System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage!>! Locales, int TotalKeys) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage!
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.AbsentKeyCount(int totalKeys) -> int
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.Deconstruct(out string! Locale, out int MessageCount, out int OverriddenCount, out int NeedsReviewCount) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.Equals(TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.Locale.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.Locale.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.MessageCount.get -> int
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.MessageCount.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.NeedsReviewCount.get -> int
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.NeedsReviewCount.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.OverriddenCount.get -> int
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.OverriddenCount.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.TranslationLocaleUsage(string! Locale, int MessageCount, int OverriddenCount, int NeedsReviewCount) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Arguments.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Arguments.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Coverage.get -> System.Collections.Generic.IReadOnlyDictionary<string!, TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState>!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Coverage.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Deconstruct(out System.Guid SourceId, out string! Namespace, out string! Key, out TheBuilder.AppTranslations.Core.Messages.MessageFormat Format, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Arguments, out System.Collections.Generic.IReadOnlyDictionary<string!, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView!>! Locales, out System.Collections.Generic.IReadOnlyDictionary<string!, TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState>! Coverage, out System.Collections.Generic.IReadOnlyList<string!>! MatchedLocales) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Equals(TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Format.get -> TheBuilder.AppTranslations.Core.Messages.MessageFormat
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Format.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Key.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Key.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Locales.get -> System.Collections.Generic.IReadOnlyDictionary<string!, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView!>!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Locales.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.MatchedLocales.get -> System.Collections.Generic.IReadOnlyList<string!>!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.MatchedLocales.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Namespace.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Namespace.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.SourceId.get -> System.Guid
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.SourceId.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.StateOf(string! locale) -> TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.TranslationMessageKeyView(System.Guid SourceId, string! Namespace, string! Key, TheBuilder.AppTranslations.Core.Messages.MessageFormat Format, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Arguments, System.Collections.Generic.IReadOnlyDictionary<string!, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView!>! Locales, System.Collections.Generic.IReadOnlyDictionary<string!, TheBuilder.AppTranslations.Core.Persistence.MessageLocaleState>! Coverage, System.Collections.Generic.IReadOnlyList<string!>! MatchedLocales) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.Deconstruct(out System.Guid Id, out string! Locale, out string! DefaultValue, out string? OverrideValue, out bool NeedsReview, out TheBuilder.AppTranslations.Core.Messages.TranslationMessageState State, out long? Version, out System.DateTimeOffset? UpdatedAt, out string? UpdatedBy) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.DefaultValue.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.DefaultValue.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.EffectiveValue.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.Equals(TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.HasOverride.get -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.Id.get -> System.Guid
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.Id.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.Locale.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.Locale.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.NeedsReview.get -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.NeedsReview.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.OverrideValue.get -> string?
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.OverrideValue.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.State.get -> TheBuilder.AppTranslations.Core.Messages.TranslationMessageState
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.State.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.TranslationMessageLocaleView(System.Guid Id, string! Locale, string! DefaultValue, string? OverrideValue, bool NeedsReview, TheBuilder.AppTranslations.Core.Messages.TranslationMessageState State, long? Version, System.DateTimeOffset? UpdatedAt, string? UpdatedBy) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.UpdatedAt.get -> System.DateTimeOffset?
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.UpdatedAt.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.UpdatedBy.get -> string?
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.UpdatedBy.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.Version.get -> long?
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.Version.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.Deconstruct(out TheBuilder.AppTranslations.Core.Messages.TranslationMessage! Message, out TheBuilder.AppTranslations.Core.Persistence.TranslationOverride? Override) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.Equals(TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.Message.get -> TheBuilder.AppTranslations.Core.Messages.TranslationMessage!
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.Message.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.NeedsReview.get -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.Override.get -> TheBuilder.AppTranslations.Core.Persistence.TranslationOverride?
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.Override.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.TranslationMessageView(TheBuilder.AppTranslations.Core.Messages.TranslationMessage! Message, TheBuilder.AppTranslations.Core.Persistence.TranslationOverride? Override) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup!
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.Deconstruct(out string! Locale, out string! Namespace, out System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Messages.MessageFormat>! MessageFormats) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.Equals(TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.Locale.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.Locale.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.MessageFormats.get -> System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Messages.MessageFormat>!
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.MessageFormats.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.Namespace.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.Namespace.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.TranslationOutputGroup(string! Locale, string! Namespace, System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Messages.MessageFormat>! MessageFormats) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.TranslationOverride!
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.CreatedAt.get -> System.DateTimeOffset
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.CreatedAt.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.CreatedBy.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.CreatedBy.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.Deconstruct(out System.Guid MessageId, out string! Value, out string! SourceChecksumAtEdit, out long Version, out System.DateTimeOffset CreatedAt, out string! CreatedBy, out System.DateTimeOffset UpdatedAt, out string! UpdatedBy) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.Equals(TheBuilder.AppTranslations.Core.Persistence.TranslationOverride? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.MessageId.get -> System.Guid
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.MessageId.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.SourceChecksumAtEdit.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.SourceChecksumAtEdit.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.TranslationOverride(System.Guid MessageId, string! Value, string! SourceChecksumAtEdit, long Version, System.DateTimeOffset CreatedAt, string! CreatedBy, System.DateTimeOffset UpdatedAt, string! UpdatedBy) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.UpdatedAt.get -> System.DateTimeOffset
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.UpdatedAt.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.UpdatedBy.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.UpdatedBy.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.Value.get -> string!
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.Value.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.Version.get -> long
+TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.Version.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus!
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.Deconstruct(out System.Guid SourceId, out bool SyncInProgress, out System.DateTimeOffset? SyncLeaseExpiresAt, out TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult? LastSync) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.Equals(TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.LastSync.get -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult?
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.LastSync.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.SourceId.get -> System.Guid
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.SourceId.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.SyncInProgress.get -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.SyncInProgress.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.SyncLeaseExpiresAt.get -> System.DateTimeOffset?
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.SyncLeaseExpiresAt.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.TranslationSourceStatus(System.Guid SourceId, bool SyncInProgress, System.DateTimeOffset? SyncLeaseExpiresAt, TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult? LastSync) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease
+TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.<Clone>$() -> TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease!
+TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.Deconstruct(out System.Guid SourceId, out System.Guid LeaseId) -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.Equals(TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease? other) -> bool
+TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.LeaseId.get -> System.Guid
+TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.LeaseId.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.SourceId.get -> System.Guid
+TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.SourceId.init -> void
+TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.TranslationSynchronizationLease(System.Guid SourceId, System.Guid LeaseId) -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.<Clone>$() -> TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions!
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.Deconstruct(out string! Name, out string? ValueConfigurationKey, out string? Value) -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.Equals(TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions? other) -> bool
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.HttpTranslationHeaderOptions(string! Name, string? ValueConfigurationKey = null, string? Value = null) -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.IsLiteral.get -> bool
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.Name.get -> string!
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.Name.init -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.Value.get -> string?
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.Value.init -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.ValueConfigurationKey.get -> string?
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.ValueConfigurationKey.init -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.<Clone>$() -> TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions!
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.Deconstruct(out string! EndpointTemplate, out string? SecretName, out int TimeoutSeconds, out int MaximumResponseBytes) -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.EndpointTemplate.get -> string!
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.EndpointTemplate.init -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.Equals(TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions? other) -> bool
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.Headers.get -> System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions!>!
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.Headers.init -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.HttpTranslationTransportOptions(string! EndpointTemplate, string? SecretName = null, int TimeoutSeconds = 10, int MaximumResponseBytes = 10000000) -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.MaximumResponseBytes.get -> int
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.MaximumResponseBytes.init -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.SecretName.get -> string?
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.SecretName.init -> void
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.TimeoutSeconds.get -> int
+TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.TimeoutSeconds.init -> void
+TheBuilder.AppTranslations.Core.Sources.ITranslationSourceParser
+TheBuilder.AppTranslations.Core.Sources.ITranslationSourceParser.ParseAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload! payload, TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions! options, System.Threading.CancellationToken cancellationToken) -> System.Collections.Generic.IAsyncEnumerable<TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage!>!
+TheBuilder.AppTranslations.Core.Sources.ITranslationSourceTransport
+TheBuilder.AppTranslations.Core.Sources.ITranslationSourceTransport.FetchAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload!>!
+TheBuilder.AppTranslations.Core.Sources.ITranslationSourceTransport.Kind.get -> string!
+TheBuilder.AppTranslations.Core.Sources.NamespaceMode
+TheBuilder.AppTranslations.Core.Sources.NamespaceMode.FirstSegment = 1 -> TheBuilder.AppTranslations.Core.Sources.NamespaceMode
+TheBuilder.AppTranslations.Core.Sources.NamespaceMode.Fixed = 0 -> TheBuilder.AppTranslations.Core.Sources.NamespaceMode
+TheBuilder.AppTranslations.Core.Sources.SourceFormat
+TheBuilder.AppTranslations.Core.Sources.SourceFormat.NestedJson = 0 -> TheBuilder.AppTranslations.Core.Sources.SourceFormat
+TheBuilder.AppTranslations.Core.Sources.SourceFormat.Po = 1 -> TheBuilder.AppTranslations.Core.Sources.SourceFormat
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.<Clone>$() -> TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext!
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.Deconstruct(out string! Locale, out string? ETag, out System.DateTimeOffset? LastModified) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.ETag.get -> string?
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.ETag.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.Equals(TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext? other) -> bool
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.LastModified.get -> System.DateTimeOffset?
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.LastModified.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.Locale.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.Locale.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.TranslationFetchContext(string! Locale, string? ETag = null, System.DateTimeOffset? LastModified = null) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.<Clone>$() -> TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions!
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! Locales, out string! Namespace, out TheBuilder.AppTranslations.Core.Sources.NamespaceMode NamespaceMode, out TheBuilder.AppTranslations.Core.Messages.MessageFormat MessageFormat, out TheBuilder.AppTranslations.Core.Sources.SourceFormat SourceFormat) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.Equals(TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions? other) -> bool
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.Locales.get -> System.Collections.Generic.IReadOnlyList<string!>!
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.Locales.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.MessageFormat.get -> TheBuilder.AppTranslations.Core.Messages.MessageFormat
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.MessageFormat.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.Namespace.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.Namespace.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.NamespaceMode.get -> TheBuilder.AppTranslations.Core.Sources.NamespaceMode
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.NamespaceMode.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.SourceFormat.get -> TheBuilder.AppTranslations.Core.Sources.SourceFormat
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.SourceFormat.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.TranslationParserOptions(System.Collections.Generic.IReadOnlyList<string!>! Locales, string! Namespace, TheBuilder.AppTranslations.Core.Sources.NamespaceMode NamespaceMode = TheBuilder.AppTranslations.Core.Sources.NamespaceMode.FirstSegment, TheBuilder.AppTranslations.Core.Messages.MessageFormat MessageFormat = TheBuilder.AppTranslations.Core.Messages.MessageFormat.Icu, TheBuilder.AppTranslations.Core.Sources.SourceFormat SourceFormat = TheBuilder.AppTranslations.Core.Sources.SourceFormat.NestedJson) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.<Clone>$() -> TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Alias.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Alias.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Deconstruct(out System.Guid Id, out string! Alias, out string! DisplayName, out bool Enabled, out TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions! Transport, out TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions! Parser, out string? LastSuccessfulRevision, out System.DateTimeOffset? LastSuccessfulSync) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.DisplayName.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.DisplayName.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Enabled.get -> bool
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Enabled.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Equals(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition? other) -> bool
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Id.get -> System.Guid
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Id.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.LastSuccessfulRevision.get -> string?
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.LastSuccessfulRevision.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.LastSuccessfulSync.get -> System.DateTimeOffset?
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.LastSuccessfulSync.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Parser.get -> TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Parser.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.TranslationSourceDefinition(System.Guid Id, string! Alias, string! DisplayName, bool Enabled, TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions! Transport, TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions! Parser, string? LastSuccessfulRevision = null, System.DateTimeOffset? LastSuccessfulSync = null) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Transport.get -> TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Transport.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceFetchException
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceFetchException.Alias.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceFetchException.Locale.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceFetchException.TranslationSourceFetchException(string! alias, string! locale, System.Exception! inner) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceFormatException
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceFormatException.TranslationSourceFormatException(string! message) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.<Clone>$() -> TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Arguments.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Arguments.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Checksum.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Checksum.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Deconstruct(out string! Namespace, out string! Key, out string! Locale, out string! Value, out TheBuilder.AppTranslations.Core.Messages.MessageFormat Format, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Arguments, out string! Checksum) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Equals(TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage? other) -> bool
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Format.get -> TheBuilder.AppTranslations.Core.Messages.MessageFormat
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Format.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Key.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Key.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Locale.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Locale.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Namespace.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Namespace.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.TranslationSourceMessage(string! Namespace, string! Key, string! Locale, string! Value, TheBuilder.AppTranslations.Core.Messages.MessageFormat Format, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Arguments, string! Checksum) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Value.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Value.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceNotModifiedException
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceNotModifiedException.TranslationSourceNotModifiedException() -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.<Clone>$() -> TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.Content.get -> System.IO.Stream!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.Content.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.ContentType.get -> string?
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.ContentType.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.Deconstruct(out System.IO.Stream! Content, out string! Locale, out string? ContentType, out string? ETag, out System.DateTimeOffset? LastModified, out string! Revision) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.DisposeAsync() -> System.Threading.Tasks.ValueTask
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.ETag.get -> string?
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.ETag.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.Equals(TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload? other) -> bool
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.LastModified.get -> System.DateTimeOffset?
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.LastModified.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.Locale.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.Locale.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.Revision.get -> string!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.Revision.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.TranslationSourcePayload(System.IO.Stream! Content, string! Locale, string? ContentType, string? ETag, System.DateTimeOffset? LastModified, string! Revision) -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceSecurityOptions
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceSecurityOptions.AllowPrivateNetworkEndpoints.get -> bool
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceSecurityOptions.AllowPrivateNetworkEndpoints.init -> void
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceSecurityOptions.TranslationSourceSecurityOptions() -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.<Clone>$() -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Deconstruct(out bool Success, out string! Revision, out System.Collections.Generic.IReadOnlyList<string!>! Locales, out int MessageCount, out System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage!>! Sample, out System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Equals(TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult? other) -> bool
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Locales.get -> System.Collections.Generic.IReadOnlyList<string!>!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Locales.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.MessageCount.get -> int
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.MessageCount.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Revision.get -> string!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Revision.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Sample.get -> System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage!>!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Sample.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Success.get -> bool
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Success.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.TranslationSourceTestResult(bool Success, string! Revision, System.Collections.Generic.IReadOnlyList<string!>! Locales, int MessageCount, System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage!>! Sample, System.Collections.Generic.IReadOnlyList<string!>! Warnings) -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Warnings.get -> System.Collections.Generic.IReadOnlyList<string!>!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Warnings.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine.SynchronizeAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult!>!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine.TestAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult!>!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine.TranslationSyncEngine(TheBuilder.AppTranslations.Core.Sources.ITranslationSourceTransport! transport, TheBuilder.AppTranslations.Core.Sources.ITranslationSourceParser! parser, TheBuilder.AppTranslations.Core.Persistence.ITranslationSynchronizationStore! store, System.TimeProvider! timeProvider, TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? leasePolicy = null) -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.<Clone>$() -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.AddedCount.get -> int
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.AddedCount.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.ChangedCount.get -> int
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.ChangedCount.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.CompletedAt.get -> System.DateTimeOffset
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.CompletedAt.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.Deconstruct(out System.Guid SyncId, out System.Guid SourceId, out string! Revision, out System.DateTimeOffset StartedAt, out System.DateTimeOffset CompletedAt, out TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus Status, out int AddedCount, out int ChangedCount, out int MissingCount, out int InvalidCount, out string? Error) -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.Equals(TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult? other) -> bool
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.Error.get -> string?
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.Error.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.InvalidCount.get -> int
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.InvalidCount.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.MissingCount.get -> int
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.MissingCount.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.Revision.get -> string!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.Revision.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.SourceId.get -> System.Guid
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.SourceId.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.StartedAt.get -> System.DateTimeOffset
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.StartedAt.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.Status.get -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.Status.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.SyncId.get -> System.Guid
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.SyncId.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.TranslationSyncResult(System.Guid SyncId, System.Guid SourceId, string! Revision, System.DateTimeOffset StartedAt, System.DateTimeOffset CompletedAt, TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus Status, int AddedCount, int ChangedCount, int MissingCount, int InvalidCount, string? Error = null) -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus.Failed = 2 -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus.NotModified = 3 -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus.Running = 0 -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus.Succeeded = 1 -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncStatus
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationInProgressException
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationInProgressException.TranslationSynchronizationInProgressException(string! sourceAlias) -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.<Clone>$() -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy!
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Deconstruct(out System.TimeSpan Duration, out System.TimeSpan RenewalInterval) -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Duration.get -> System.TimeSpan
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Duration.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Equals(TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? other) -> bool
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.RenewalInterval.get -> System.TimeSpan
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.RenewalInterval.init -> void
+TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.TranslationSynchronizationLeasePolicy(System.TimeSpan Duration, System.TimeSpan RenewalInterval) -> void
+TheBuilder.AppTranslations.Core.Validation.IMessageFormatValidator
+TheBuilder.AppTranslations.Core.Validation.IMessageFormatValidator.Validate(string! message, TheBuilder.AppTranslations.Core.Messages.MessageFormat format) -> TheBuilder.AppTranslations.Core.Validation.MessageValidationResult!
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.<Clone>$() -> TheBuilder.AppTranslations.Core.Validation.MessageValidationResult!
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.Arguments.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.Arguments.init -> void
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.Deconstruct(out bool IsValid, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Arguments, out string? Error) -> void
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.Equals(TheBuilder.AppTranslations.Core.Validation.MessageValidationResult? other) -> bool
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.Error.get -> string?
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.Error.init -> void
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.IsValid.get -> bool
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.IsValid.init -> void
+TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.MessageValidationResult(bool IsValid, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Arguments, string? Error) -> void
+const TheBuilder.AppTranslations.Core.Sources.TranslationSourceSecurityOptions.SectionName = "TheBuilder:AppTranslations:SourceSecurity" -> string!
+override TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Messages.MessageIdentity.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Messages.MessageIdentity.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Messages.TranslationMessage.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Messages.TranslationMessage.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Messages.TranslationMessage.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.MessageQuery.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.MessageQuery.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.MessageQuery.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.Page<T>.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.Page<T>.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.Page<T>.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.ToString() -> string!
+override TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.Equals(object? obj) -> bool
+override TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.GetHashCode() -> int
+override TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.ToString() -> string!
+static TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.operator !=(TheBuilder.AppTranslations.Core.Assistant.AssistantProfile? left, TheBuilder.AppTranslations.Core.Assistant.AssistantProfile? right) -> bool
+static TheBuilder.AppTranslations.Core.Assistant.AssistantProfile.operator ==(TheBuilder.AppTranslations.Core.Assistant.AssistantProfile? left, TheBuilder.AppTranslations.Core.Assistant.AssistantProfile? right) -> bool
+static TheBuilder.AppTranslations.Core.Messages.MessageIdentity.operator !=(TheBuilder.AppTranslations.Core.Messages.MessageIdentity left, TheBuilder.AppTranslations.Core.Messages.MessageIdentity right) -> bool
+static TheBuilder.AppTranslations.Core.Messages.MessageIdentity.operator ==(TheBuilder.AppTranslations.Core.Messages.MessageIdentity left, TheBuilder.AppTranslations.Core.Messages.MessageIdentity right) -> bool
+static TheBuilder.AppTranslations.Core.Messages.TranslationMessage.operator !=(TheBuilder.AppTranslations.Core.Messages.TranslationMessage? left, TheBuilder.AppTranslations.Core.Messages.TranslationMessage? right) -> bool
+static TheBuilder.AppTranslations.Core.Messages.TranslationMessage.operator ==(TheBuilder.AppTranslations.Core.Messages.TranslationMessage? left, TheBuilder.AppTranslations.Core.Messages.TranslationMessage? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.operator !=(TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery? left, TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery.operator ==(TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery? left, TheBuilder.AppTranslations.Core.Persistence.MessageKeyQuery? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.operator !=(TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference? left, TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference.operator ==(TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference? left, TheBuilder.AppTranslations.Core.Persistence.MessageKeyReference? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.MessageQuery.operator !=(TheBuilder.AppTranslations.Core.Persistence.MessageQuery? left, TheBuilder.AppTranslations.Core.Persistence.MessageQuery? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.MessageQuery.operator ==(TheBuilder.AppTranslations.Core.Persistence.MessageQuery? left, TheBuilder.AppTranslations.Core.Persistence.MessageQuery? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.Page<T>.operator !=(TheBuilder.AppTranslations.Core.Persistence.Page<T>? left, TheBuilder.AppTranslations.Core.Persistence.Page<T>? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.Page<T>.operator ==(TheBuilder.AppTranslations.Core.Persistence.Page<T>? left, TheBuilder.AppTranslations.Core.Persistence.Page<T>? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.operator !=(TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData? left, TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData.operator ==(TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData? left, TheBuilder.AppTranslations.Core.Persistence.TranslationFacetData? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.operator !=(TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage? left, TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage.operator ==(TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage? left, TheBuilder.AppTranslations.Core.Persistence.TranslationLocaleUsage? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.operator !=(TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView? left, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView.operator ==(TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView? left, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageKeyView? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.operator !=(TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView? left, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView.operator ==(TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView? left, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageLocaleView? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.operator !=(TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView? left, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView.operator ==(TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView? left, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.operator !=(TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup? left, TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup.operator ==(TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup? left, TheBuilder.AppTranslations.Core.Persistence.TranslationOutputGroup? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.operator !=(TheBuilder.AppTranslations.Core.Persistence.TranslationOverride? left, TheBuilder.AppTranslations.Core.Persistence.TranslationOverride? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationOverride.operator ==(TheBuilder.AppTranslations.Core.Persistence.TranslationOverride? left, TheBuilder.AppTranslations.Core.Persistence.TranslationOverride? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.operator !=(TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus? left, TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus.operator ==(TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus? left, TheBuilder.AppTranslations.Core.Persistence.TranslationSourceStatus? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.operator !=(TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease? left, TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease? right) -> bool
+static TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease.operator ==(TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease? left, TheBuilder.AppTranslations.Core.Persistence.TranslationSynchronizationLease? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.operator !=(TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions? left, TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions.operator ==(TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions? left, TheBuilder.AppTranslations.Core.Sources.HttpTranslationHeaderOptions? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.operator !=(TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions? left, TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions.operator ==(TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions? left, TheBuilder.AppTranslations.Core.Sources.HttpTranslationTransportOptions? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.operator !=(TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext? left, TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext.operator ==(TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext? left, TheBuilder.AppTranslations.Core.Sources.TranslationFetchContext? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.operator !=(TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions? left, TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions.operator ==(TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions? left, TheBuilder.AppTranslations.Core.Sources.TranslationParserOptions? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.operator !=(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition? left, TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.operator ==(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition? left, TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.operator !=(TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage? left, TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage.operator ==(TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage? left, TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.operator !=(TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload? left, TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload? right) -> bool
+static TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload.operator ==(TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload? left, TheBuilder.AppTranslations.Core.Sources.TranslationSourcePayload? right) -> bool
+static TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.operator !=(TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult? right) -> bool
+static TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult.operator ==(TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult? right) -> bool
+static TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.operator !=(TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult? right) -> bool
+static TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult.operator ==(TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult? right) -> bool
+static TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Default.get -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy!
+static TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.operator !=(TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? right) -> bool
+static TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.operator ==(TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? right) -> bool
+static TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.Invalid(string! error) -> TheBuilder.AppTranslations.Core.Validation.MessageValidationResult!
+static TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.Valid(System.Collections.Generic.IReadOnlyDictionary<string!, string!>? arguments = null) -> TheBuilder.AppTranslations.Core.Validation.MessageValidationResult!
+static TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.operator !=(TheBuilder.AppTranslations.Core.Validation.MessageValidationResult? left, TheBuilder.AppTranslations.Core.Validation.MessageValidationResult? right) -> bool
+static TheBuilder.AppTranslations.Core.Validation.MessageValidationResult.operator ==(TheBuilder.AppTranslations.Core.Validation.MessageValidationResult? left, TheBuilder.AppTranslations.Core.Validation.MessageValidationResult? right) -> bool
+~override TheBuilder.AppTranslations.Core.Messages.MessageIdentity.Equals(object obj) -> bool
