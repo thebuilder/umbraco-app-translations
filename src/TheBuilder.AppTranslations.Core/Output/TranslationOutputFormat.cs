@@ -4,14 +4,20 @@ using TheBuilder.AppTranslations.Core.Persistence;
 
 namespace TheBuilder.AppTranslations.Core.Output;
 
+/// <summary>
+/// The message syntax an application can read, named for the syntax rather than for a library:
+/// next-intl, react-intl and Lingui all read ICU, and react-i18next reads what i18next does. The
+/// JSON is the same either way. A format only makes sure a response holds nothing the application
+/// would misread.
+/// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter<TranslationOutputFormat>))]
 public enum TranslationOutputFormat
 {
-    [JsonStringEnumMemberName("next-intl")]
-    NextIntl,
+    [JsonStringEnumMemberName("icu")]
+    Icu,
 
-    [JsonStringEnumMemberName("i18next-v4")]
-    I18NextV4,
+    [JsonStringEnumMemberName("i18next")]
+    I18Next,
 }
 
 public static class TranslationOutputFormats
@@ -20,11 +26,11 @@ public static class TranslationOutputFormats
     {
         switch (value.ToLowerInvariant())
         {
-            case "next-intl":
-                format = TranslationOutputFormat.NextIntl;
+            case "icu":
+                format = TranslationOutputFormat.Icu;
                 return true;
-            case "i18next-v4":
-                format = TranslationOutputFormat.I18NextV4;
+            case "i18next":
+                format = TranslationOutputFormat.I18Next;
                 return true;
             default:
                 format = default;
@@ -34,8 +40,8 @@ public static class TranslationOutputFormats
 
     public static bool Supports(TranslationOutputFormat format, MessageFormat messageFormat) => format switch
     {
-        TranslationOutputFormat.NextIntl => messageFormat is MessageFormat.Icu or MessageFormat.PlainText,
-        TranslationOutputFormat.I18NextV4 => messageFormat is MessageFormat.I18NextV4 or MessageFormat.PlainText,
+        TranslationOutputFormat.Icu => messageFormat is MessageFormat.Icu or MessageFormat.PlainText,
+        TranslationOutputFormat.I18Next => messageFormat is MessageFormat.I18NextV4 or MessageFormat.PlainText,
         _ => false,
     };
 

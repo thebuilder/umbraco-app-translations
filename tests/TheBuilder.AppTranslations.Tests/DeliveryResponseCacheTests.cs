@@ -10,7 +10,7 @@ namespace TheBuilder.AppTranslations.Tests;
 
 public sealed class DeliveryResponseCacheTests
 {
-    private static readonly DeliveryResponseKey Key = new(TranslationOutputMode.All, TranslationOutputFormat.NextIntl, "da-DK", DeliveryNamespaces.From(["website"]));
+    private static readonly DeliveryResponseKey Key = new(TranslationOutputMode.All, TranslationOutputFormat.Icu, "da-DK", DeliveryNamespaces.From(["website"]));
     private static readonly CachedDeliveryResponse Response = new("{}", "\"etag\"");
 
     [Fact]
@@ -32,7 +32,7 @@ public sealed class DeliveryResponseCacheTests
         var clock = new Clock();
         var cache = new DeliveryResponseCache(clock);
         DeliveryResponseKey Set(int index) =>
-            new(TranslationOutputMode.All, TranslationOutputFormat.NextIntl, "da-DK", DeliveryNamespaces.From(["website", $"ns{index}"]));
+            new(TranslationOutputMode.All, TranslationOutputFormat.Icu, "da-DK", DeliveryNamespaces.From(["website", $"ns{index}"]));
         void StoreAt(DeliveryResponseKey key)
         {
             clock.Now += TimeSpan.FromSeconds(1);

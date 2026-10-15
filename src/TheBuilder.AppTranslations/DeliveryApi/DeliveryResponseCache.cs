@@ -3,10 +3,14 @@ using TheBuilder.AppTranslations.Core.Output;
 
 namespace TheBuilder.AppTranslations.DeliveryApi;
 
-/// <summary>Which response: the same four values always build the same JSON.</summary>
+/// <summary>
+/// Which response: the same four values always build the same JSON. The format does not change the
+/// JSON, only whether it may be served, so it is part of the key to keep a response checked for one
+/// format from being handed to a request for another.
+/// </summary>
 internal readonly record struct DeliveryResponseKey(
     TranslationOutputMode Mode,
-    TranslationOutputFormat Format,
+    TranslationOutputFormat? Format,
     string Locale,
     DeliveryNamespaces Namespaces);
 

@@ -128,10 +128,10 @@ public sealed class TranslationOutputControllerTests
     [Fact]
     public async Task Output_without_a_namespace_names_the_namespace_that_does_not_suit_the_format()
     {
-        var result = await Create(new IcuRepository()).GetAll("en", null, "i18next-v4", CancellationToken.None);
+        var result = await Create(new IcuRepository()).GetAll("en", null, "i18next", CancellationToken.None);
 
         var conflict = Assert.IsType<ConflictObjectResult>(result);
-        Assert.StartsWith("Namespace 'website' contains Icu messages", Assert.IsType<string>(conflict.Value), StringComparison.Ordinal);
+        Assert.Equal("Namespace 'website' has ICU messages, which format=i18next does not read. Ask for it with format=icu, or leave format out.", Assert.IsType<string>(conflict.Value));
     }
 
     [Fact]
@@ -162,11 +162,11 @@ public sealed class TranslationOutputControllerTests
     }
 
     [Fact]
-    public async Task All_output_accepts_i18next_v4_json_format()
+    public async Task All_output_accepts_the_i18next_format()
     {
         var controller = Create(new EmptyRepository());
 
-        var result = await controller.GetAll("en", ["website"], "i18next-v4", CancellationToken.None);
+        var result = await controller.GetAll("en", ["website"], "i18next", CancellationToken.None);
 
         var content = Assert.IsType<ContentResult>(result);
         Assert.Equal("{}", content.Content);
@@ -178,10 +178,10 @@ public sealed class TranslationOutputControllerTests
     {
         var controller = Create(new IcuRepository());
 
-        var result = await controller.GetAll("en", ["website"], "i18next-v4", CancellationToken.None);
+        var result = await controller.GetAll("en", ["website"], "i18next", CancellationToken.None);
 
         var conflict = Assert.IsType<ConflictObjectResult>(result);
-        Assert.Contains("Icu messages", Assert.IsType<string>(conflict.Value), StringComparison.Ordinal);
+        Assert.Contains("ICU messages", Assert.IsType<string>(conflict.Value), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -189,9 +189,71 @@ public sealed class TranslationOutputControllerTests
     {
         var controller = Create(new MixedRepository());
 
-        var result = await controller.GetOverrides("en", ["website"], "i18next-v4", CancellationToken.None);
+        var result = await controller.GetOverrides("en", ["website"], "i18next", CancellationToken.None);
 
-        Assert.IsType<ConflictObjectResult>(result);
+        var conflict = Assert.IsType<ConflictObjectResult>(result);
+        Assert.EndsWith("Use a separate namespace for each message syntax.", Assert.IsType<string>(conflict.Value), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Without_a_format_the_messages_are_served_in_their_own_syntax()
+    {
+        var result = await Create(new IcuRepository()).GetAll("en", ["website"], null, CancellationToken.None);
+
+        Assert.Equal("{\"greeting\":\"Hello {name}\"}", Assert.IsType<ContentResult>(result).Content);
+    }
+
+    [Fact]
+    public async Task Without_a_format_a_namespace_that_mixes_syntaxes_is_refused()
+    {
+        var result = await Create(new MixedRepository()).GetOverrides("en", ["website"], null, CancellationToken.None);
+
+        var conflict = Assert.IsType<ConflictObjectResult>(result);
+        Assert.StartsWith("Namespace 'website' mixes ICU and i18next messages.", Assert.IsType<string>(conflict.Value), StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("next-intl")]
+    [InlineData("i18next-v4")]
+    [InlineData("json")]
+    public async Task A_format_that_is_not_a_message_syntax_is_refused(string format)
+    {
+        var result = await Create(new UnusedRepository()).GetAll("en", ["website"], format, CancellationToken.None);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Use icu or i18next", Assert.IsType<string>(badRequest.Value), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Without_a_format_namespaces_in_different_syntaxes_are_named()
+    {
+        TranslationMessageView[] messages =
+        [
+            View("app", "title", MessageFormat.I18NextV4),
+            View("labels", "title", MessageFormat.PlainText),
+            View("website", "title", MessageFormat.Icu),
+        ];
+
+        var conflict = TranslationOutputController.SyntaxConflict(messages, null, DeliveryNamespaces.From(null));
+
+        Assert.Equal("Namespace 'app' has i18next messages and namespace 'website' has ICU messages. Ask for them separately.", conflict);
+    }
+
+    [Fact]
+    public void Plain_text_goes_with_either_syntax()
+    {
+        TranslationMessageView[] messages = [View("labels", "title", MessageFormat.PlainText), View("website", "title", MessageFormat.Icu)];
+
+        Assert.Null(TranslationOutputController.SyntaxConflict(messages, null, DeliveryNamespaces.From(null)));
+        Assert.Null(TranslationOutputController.SyntaxConflict(messages, TranslationOutputFormat.Icu, DeliveryNamespaces.From(null)));
+        Assert.NotNull(TranslationOutputController.SyntaxConflict(messages, TranslationOutputFormat.I18Next, DeliveryNamespaces.From(null)));
+    }
+
+    private static TranslationMessageView View(string messageNamespace, string key, MessageFormat format)
+    {
+        var now = DateTimeOffset.UtcNow;
+        return new(new TranslationMessage(Guid.NewGuid(), new(Guid.NewGuid(), messageNamespace, key, "en"), "Hello", format,
+            new Dictionary<string, string>(), null, "revision", "checksum", null, now, now, TranslationMessageState.Active), null);
     }
 
     [Fact]

@@ -122,7 +122,7 @@ export const deliveryEndpoint = (
   /** Leave it out for every namespace, each under its own name. */
   namespace: string | undefined,
   mode: DeliveryMode = "overrides",
-  format: DeliveryFormat = "next-intl"
+  format: DeliveryFormat = "icu"
 ): string => {
   const endpoint = new URL(backofficeUrl);
   const umbracoPath = endpoint.pathname.toLowerCase().indexOf("/umbraco/");

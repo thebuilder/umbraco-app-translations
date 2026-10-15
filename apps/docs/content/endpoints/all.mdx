@@ -17,8 +17,8 @@ Returns every message, for an application that does not bundle its own text. A m
   The [namespace](/sources#namespaces). Repeat it, as in `namespace=checkout&namespace=website`, for several namespaces, or leave it out for every namespace. Up to 20 at once.
 </ParamField>
 
-<ParamField query="format" type="string" default="next-intl">
-  `next-intl` for ICU messages, or `i18next-v4` for i18next JSON v4.
+<ParamField query="format" type="string" placeholder="icu">
+  The [message syntax](/delivery-api#message-syntax) your application reads: `icu` or `i18next`. Leave it out to get the messages in whatever syntax they are written in.
 </ParamField>
 
 <ParamField header="Api-Key" type="string">
@@ -37,9 +37,9 @@ A JSON object of messages, nested the way your application's own files are. With
 | --- | --- |
 | `200` | The messages. |
 | `304` | Nothing changed since the ETag you sent. |
-| `400` | `locale` is missing, `format` is not one of the two, the request names more than 20 namespaces, or `namespace` has a comma in it and no namespace has that name. |
+| `400` | `locale` is missing, `format` is not `icu` or `i18next`, the request names more than 20 namespaces, or `namespace` has a comma in it and no namespace has that name. |
 | `401` | A key is configured, and the request did not send it. |
-| `409` | A namespace in the response has messages in the other syntax, or two sources supply the same key. |
+| `409` | The response would hold messages in a syntax `format` does not read, or, without `format`, both ICU and i18next messages. Or two sources supply the same key. |
 
 <ResponseExample>
 

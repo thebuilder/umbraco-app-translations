@@ -1,6 +1,6 @@
 ---
 title: Delivery API
-description: Fetch the text editors changed, or every message, for one namespace or all of them, and merge it into next-intl or i18next.
+description: Fetch the text editors changed, or every message, for one namespace or all of them, and merge it into your application, with next-intl and i18next examples.
 seo:
   image: /og/delivery-api.png
 ---
@@ -15,7 +15,7 @@ Your application fetches translations one language per request, from one of two 
 ## Overrides
 
 ```http
-GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl
+GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website
 ```
 
 ```json
@@ -29,7 +29,7 @@ Only `greeting` is here, because it is the only message an editor changed. Merge
 ## All messages
 
 ```http
-GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website&format=next-intl
+GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=website
 ```
 
 ```json
@@ -48,7 +48,7 @@ With one `namespace`, the response holds that namespace's messages, without the 
 Repeat `namespace` to fetch several at once, or leave it out to fetch every namespace in the language. Each namespace is then a top-level key:
 
 ```http
-GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&format=next-intl
+GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK
 ```
 
 ```json
@@ -61,7 +61,7 @@ GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&format=next-intl
 Naming both namespaces returns the same response, and leaves out any other namespace:
 
 ```http
-GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=checkout&namespace=website&format=next-intl
+GET /umbraco/delivery/api/v1/app-translations/all?locale=da-DK&namespace=checkout&namespace=website
 ```
 
 The order you name them in does not matter, and each namespace comes back under the name you used for it. A namespace that does not exist is left out of the response, and you can name up to 20 at once.
@@ -70,9 +70,22 @@ Repeat the parameter rather than separating names with commas: `namespace=checko
 
 A source that takes its namespaces from the first key of its file comes back in the same shape as that file. A source that puts every message in one namespace comes back under that namespace's name, so ask for the namespace by name if you want the shape of the file. From `overrides`, a namespace no editor has changed is left out.
 
+## Message syntax
+
+The JSON is the same whichever library reads it. What differs is the syntax inside a message: ICU's `{name}` and `{count, plural, ...}`, or i18next's `{{name}}` and `_one`/`_other` keys. Each source declares the syntax its messages are written in, and Umbraco serves them as written.
+
+Add `format` to make sure a response holds nothing your application would misread. Umbraco then answers `409` rather than send a message in the other syntax.
+
+| `format` | Syntax | Read by, for example |
+| --- | --- | --- |
+| `icu` | ICU MessageFormat | next-intl, react-intl and FormatJS, Lingui, messageformat |
+| `i18next` | i18next JSON v4 | i18next, react-i18next, next-i18next |
+
+Plain-text messages go with either. Without `format`, one response cannot mix ICU and i18next messages, so ask for namespaces in different syntaxes separately.
+
 ## Parameters
 
-Both endpoints take `locale`, `format` and an optional `namespace`, which you can repeat or leave out. The API reference lists every parameter and response for [custom text](/endpoints/overrides) and [all messages](/endpoints/all).
+Both endpoints take `locale`, and optionally `namespace`, which you can repeat or leave out, and `format`. The API reference lists every parameter and response for [custom text](/endpoints/overrides) and [all messages](/endpoints/all).
 
 :::caution
 The locale is Umbraco's code, not your application's. A request for `da` when the site stores `da-DK` finds nothing and returns `{}`. Map your application's locales to Umbraco's, as the examples below do.
@@ -113,7 +126,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   url.search = new URLSearchParams({
     locale: umbracoLocales[locale],
     namespace: "website",
-    format: "next-intl",
+    format: "icu",
   }).toString();
 
   // If Umbraco cannot be reached, the application still has its own text.
@@ -130,7 +143,7 @@ When a source takes its namespaces from the first key of its file, they are the 
 
 ```ts
 const url = new URL("/umbraco/delivery/api/v1/app-translations/overrides", UMBRACO_URL);
-url.search = new URLSearchParams({ locale: "da-DK", format: "i18next-v4" }).toString();
+url.search = new URLSearchParams({ locale: "da-DK", format: "i18next" }).toString();
 
 const response = await fetch(url);
 if (response.ok) {
@@ -144,7 +157,7 @@ if (response.ok) {
 
 With a source that puts every message in one namespace, ask for that namespace by name instead, and add the response to the i18next namespace your application uses, such as `translation`.
 
-Use `format=i18next-v4` and set the source's message syntax to **i18next JSON v4**. The output keeps nested keys, `{{variable}}` interpolation, context keys and plural suffixes such as `_one`, `_other` and `_ordinal_one`.
+Use `format=i18next` and set the source's message syntax to **i18next JSON v4**. The output keeps nested keys, `{{variable}}` interpolation, context keys and plural suffixes such as `_one`, `_other` and `_ordinal_one`.
 
 :::note
 Umbraco never converts text between ICU and i18next syntax, so keep each namespace to one syntax. Umbraco refuses to serve a namespace that mixes them until you split it. If a language has ICU namespaces and i18next namespaces, fetch each namespace on its own, in the format that suits it.

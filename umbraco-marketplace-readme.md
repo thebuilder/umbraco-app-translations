@@ -32,7 +32,7 @@ The package creates its tables and opens its section on the first start, so ther
 4. Point your application at the delivery endpoint, and merge the custom text over its own:
 
    ```http
-   GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website&format=next-intl
+   GET /umbraco/delivery/api/v1/app-translations/overrides?locale=da-DK&namespace=website
    ```
 
 ## Documentation

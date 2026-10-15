@@ -11,20 +11,17 @@ const endpoint = (
 describe("allNamespaceFormats", () => {
   it("offers the formats every namespace in the language can be served in", () => {
     const endpoints = [
-      endpoint("da-DK", "website", "next-intl"),
-      endpoint("da-DK", "labels", "next-intl"),
-      endpoint("da-DK", "labels", "i18next-v4"),
-      endpoint("en-US", "website", "i18next-v4"),
+      endpoint("da-DK", "website", "icu"),
+      endpoint("da-DK", "labels", "icu"),
+      endpoint("da-DK", "labels", "i18next"),
+      endpoint("en-US", "website", "i18next"),
     ];
 
-    expect(allNamespaceFormats(endpoints, [], "da-DK")).toEqual(["next-intl"]);
+    expect(allNamespaceFormats(endpoints, [], "da-DK")).toEqual(["icu"]);
   });
 
   it("offers none when the namespaces need different formats", () => {
-    const endpoints = [
-      endpoint("da-DK", "website", "next-intl"),
-      endpoint("da-DK", "app", "i18next-v4"),
-    ];
+    const endpoints = [endpoint("da-DK", "website", "icu"), endpoint("da-DK", "app", "i18next")];
 
     expect(allNamespaceFormats(endpoints, [], "da-DK")).toEqual([]);
   });
@@ -32,7 +29,7 @@ describe("allNamespaceFormats", () => {
   it("offers none when a namespace in the language mixes syntaxes", () => {
     // The mixed namespace has no endpoint, only a conflict, and the API refuses any request
     // that includes it.
-    const endpoints = [endpoint("da-DK", "website", "next-intl")];
+    const endpoints = [endpoint("da-DK", "website", "icu")];
     const conflicts: OutputConflict[] = [
       { locale: "da-DK", namespace: "legacy", messageFormats: ["Icu", "I18NextV4"] },
     ];
@@ -43,28 +40,26 @@ describe("allNamespaceFormats", () => {
 
   it("is not thrown by the same endpoint listed twice", () => {
     const endpoints = [
-      endpoint("da-DK", "website", "next-intl"),
-      endpoint("da-DK", "website", "next-intl"),
-      endpoint("da-DK", "labels", "i18next-v4"),
+      endpoint("da-DK", "website", "icu"),
+      endpoint("da-DK", "website", "icu"),
+      endpoint("da-DK", "labels", "i18next"),
     ];
 
     expect(allNamespaceFormats(endpoints, [], "da-DK")).toEqual([]);
   });
 
   it("offers none for a language with no endpoints", () => {
-    expect(allNamespaceFormats([endpoint("da-DK", "website", "next-intl")], [], "sv-SE")).toEqual(
-      []
-    );
+    expect(allNamespaceFormats([endpoint("da-DK", "website", "icu")], [], "sv-SE")).toEqual([]);
   });
 });
 
 describe("allNamespacesFormat", () => {
   it("keeps the chosen format when it still serves every namespace", () => {
-    expect(allNamespacesFormat(["next-intl", "i18next-v4"], "i18next-v4")).toBe("i18next-v4");
+    expect(allNamespacesFormat(["icu", "i18next"], "i18next")).toBe("i18next");
   });
 
   it("falls back to the first format otherwise", () => {
-    expect(allNamespacesFormat(["next-intl"], "i18next-v4")).toBe("next-intl");
+    expect(allNamespacesFormat(["icu"], "i18next")).toBe("icu");
     expect(allNamespacesFormat([], undefined)).toBeUndefined();
   });
 });
