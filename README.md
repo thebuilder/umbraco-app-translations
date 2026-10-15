@@ -1,7 +1,18 @@
-# TheBuilder.AppTranslations
+<p align="center">
+  <img src="https://raw.githubusercontent.com/thebuilder/umbraco-app-translations/refs/heads/main/apps/docs/public/logo-mark.svg" width="112" height="112" alt="App Translations logo" />
+</p>
 
-Let editors change the text in your application from the Umbraco backoffice, without a code change
-or a deploy.
+<h1 align="center">App Translations for Umbraco</h1>
+
+<p align="center">
+  Let editors change the text in your application from the Umbraco backoffice,<br />
+  without a code change or a deploy.
+</p>
+
+[![NuGet version](https://img.shields.io/nuget/v/TheBuilder.AppTranslations)](https://www.nuget.org/packages/TheBuilder.AppTranslations)
+[![NuGet downloads](https://img.shields.io/nuget/dt/TheBuilder.AppTranslations)](https://www.nuget.org/packages/TheBuilder.AppTranslations)
+[![Umbraco Marketplace](https://img.shields.io/badge/Umbraco-Marketplace-3544b1)](https://marketplace.umbraco.com/package/thebuilder.apptranslations)
+[![License](https://img.shields.io/github/license/thebuilder/umbraco-app-translations)](https://github.com/thebuilder/umbraco-app-translations/blob/main/LICENSE)
 
 Your application keeps its own translation files. Umbraco reads them, editors change the messages
 that need changing, and your application fetches those changes and lays them over its own text.
@@ -267,6 +278,17 @@ load-balanced setup, Umbraco sends webhooks only from the Single or SchedulingPu
 | `TheBuilder:AppTranslations:Delivery:MaxAgeSeconds`                | `60`    | How long clients and CDNs may keep a delivery response. `0` makes them check every time. |
 
 Source headers read their values from the setting names you give them.
+
+## Documentation
+
+The full documentation is at [app-translations.thebuilder.dk](https://app-translations.thebuilder.dk/).
+
+- [Quickstart](https://app-translations.thebuilder.dk/quickstart): install the package and serve the first edit to your application.
+- [Sources](https://app-translations.thebuilder.dk/sources): connect Umbraco to your translation files.
+- [Editing translations](https://app-translations.thebuilder.dk/editing): find, change and review messages.
+- [Delivery API](https://app-translations.thebuilder.dk/delivery-api): fetch the custom text and merge it into next-intl or i18next.
+- [Syncing](https://app-translations.thebuilder.dk/syncing): sync from a deployment and react to changes with a webhook.
+- [Troubleshooting](https://app-translations.thebuilder.dk/troubleshooting): the problems people run into first.
 
 ## Development
 
