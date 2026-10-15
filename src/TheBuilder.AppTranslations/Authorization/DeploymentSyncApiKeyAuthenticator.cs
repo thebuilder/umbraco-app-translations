@@ -4,9 +4,23 @@ using TheBuilder.AppTranslations.Configuration;
 
 namespace TheBuilder.AppTranslations.Authorization;
 
-public sealed class DeploymentSyncApiKeyAuthenticator(IOptions<DeploymentSyncOptions> options)
+/// <summary>
+/// Checks the bearer token the deployment sync endpoint asks for, against
+/// <see cref="DeploymentSyncOptions.ApiKey"/>.
+/// </summary>
+/// <remarks>
+/// Public only because the public <see cref="AutomationApi.DeploymentSyncController"/> takes it in
+/// its constructor, and ASP.NET only calls public constructors. Its members are internal, so it is
+/// not an extension point: configure <see cref="DeploymentSyncOptions.ApiKey"/> instead.
+/// </remarks>
+public interface IDeploymentSyncApiKeyAuthenticator
 {
-    internal DeploymentSyncAuthenticationResult Authenticate(string? authorizationHeader)
+    internal DeploymentSyncAuthenticationResult Authenticate(string? authorizationHeader);
+}
+
+internal sealed class DeploymentSyncApiKeyAuthenticator(IOptions<DeploymentSyncOptions> options) : IDeploymentSyncApiKeyAuthenticator
+{
+    public DeploymentSyncAuthenticationResult Authenticate(string? authorizationHeader)
     {
         var configuredKey = options.Value.ApiKey;
         if (string.IsNullOrWhiteSpace(configuredKey))

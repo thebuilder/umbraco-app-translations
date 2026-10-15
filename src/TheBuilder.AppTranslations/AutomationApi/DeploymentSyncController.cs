@@ -19,8 +19,8 @@ namespace TheBuilder.AppTranslations.AutomationApi;
 [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
 public sealed class DeploymentSyncController(
     ITranslationSourceRepository sources,
-    TranslationSyncEngine syncEngine,
-    DeploymentSyncApiKeyAuthenticator authenticator,
+    ITranslationSyncEngine syncEngine,
+    IDeploymentSyncApiKeyAuthenticator authenticator,
     ILogger<DeploymentSyncController> logger) : ControllerBase
 {
     [HttpPost("sources/{alias}/sync")]

@@ -11,7 +11,7 @@ namespace TheBuilder.AppTranslations.ManagementApi;
 
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = Constants.PackageName)]
-public sealed class SourcesController(ITranslationSourceRepository store, TranslationSyncEngine syncEngine) : TranslationsApiControllerBase
+public sealed class SourcesController(ITranslationSourceRepository store, ITranslationSyncEngine syncEngine) : TranslationsApiControllerBase
 {
     [HttpGet("sources")]
     public async Task<IReadOnlyList<SourceResponse>> ListSources(CancellationToken cancellationToken)

@@ -10,7 +10,7 @@ namespace TheBuilder.AppTranslations.Assistant;
 /// <summary>What was asked of the assistant: a task, the translation it is for, and the text to work on.</summary>
 /// <param name="Text">The text to rewrite. Unused when translating, which works from the reference.</param>
 /// <param name="ReferenceLocale">The language to translate from. Required when translating.</param>
-public sealed record AssistantRequest(
+internal sealed record AssistantRequest(
     MessageIdentity Target,
     AssistantTask Task,
     string? Text,
@@ -38,6 +38,24 @@ internal sealed class AssistantRefusedException(AssistantRefusal refusal, string
     public AssistantRefusal Refusal { get; } = refusal;
 }
 
+/// <summary>The translation assistant behind the backoffice's AI suggestions, and its settings.</summary>
+/// <remarks>
+/// Public only because the public <see cref="ManagementApi.AssistantController"/> takes it in its
+/// constructor, and ASP.NET only calls public constructors. Its members are internal, so it is not an
+/// extension point. The model, provider and guardrails come from Umbraco.AI, through
+/// <see cref="IAssistantChat"/>.
+/// </remarks>
+public interface ITranslationAssistant
+{
+    internal AssistantSettings GetSettings();
+
+    internal Task<bool> IsAvailableAsync(CancellationToken cancellationToken);
+
+    internal Task<string?> SaveSettingsAsync(AssistantSettings next, CancellationToken cancellationToken);
+
+    internal Task<string> SuggestAsync(AssistantRequest request, CancellationToken cancellationToken);
+}
+
 /// <summary>
 /// Suggests text for one translation. Never saves anything: the suggestion goes into the editor's
 /// field as unsaved text, and the editor saves it, or does not, like anything else they typed.
@@ -47,12 +65,12 @@ internal sealed class AssistantRefusedException(AssistantRefusal refusal, string
 /// once with the reason; a second failure is reported rather than retried, because a model that
 /// cannot keep a placeholder after being told which one is not going to on the third try either.
 /// </summary>
-public sealed class TranslationAssistant(
+internal sealed class TranslationAssistant(
     IAssistantChat chat,
     AssistantSettingsStore settings,
     ITranslationEditorRepository editor,
     IMessageFormatValidator validator,
-    ILogger<TranslationAssistant> logger)
+    ILogger<TranslationAssistant> logger) : ITranslationAssistant
 {
     /// <summary>
     /// Far longer than any instructions need to be, and short enough that the settings cannot be used
@@ -65,6 +83,9 @@ public sealed class TranslationAssistant(
 
     /// <summary>The first reply, and the one correction it is allowed.</summary>
     private const int MaximumAttempts = 2;
+
+    /// <summary>The settings as saved, or the defaults when nothing usable is.</summary>
+    public AssistantSettings GetSettings() => settings.Get();
 
     /// <summary>Whether an editor should be offered the assistant: it is turned on here and has a profile to use.</summary>
     public async Task<bool> IsAvailableAsync(CancellationToken cancellationToken) =>

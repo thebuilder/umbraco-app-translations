@@ -39,9 +39,12 @@ public sealed class TranslationsComposer : IComposer
         builder.Services.AddOptions<TranslationSourceSecurityOptions>()
             .Bind(builder.Config.GetSection(TranslationSourceSecurityOptions.SectionName));
         builder.Services.AddAuthorization(ConfigurePolicies);
-        builder.Services.AddSingleton<DeploymentSyncApiKeyAuthenticator>();
-        builder.Services.AddSingleton<DeliveryApiKeyAuthenticator>();
+        builder.Services.AddSingleton<IDeploymentSyncApiKeyAuthenticator, DeploymentSyncApiKeyAuthenticator>();
+        builder.Services.AddSingleton<IDeliveryApiKeyAuthenticator, DeliveryApiKeyAuthenticator>();
+        // One instance under both names: the controller reads it through the interface, and the cache
+        // refresher clears it through the class.
         builder.Services.AddSingleton<DeliveryResponseCache>();
+        builder.Services.AddSingleton<IDeliveryResponseCache>(services => services.GetRequiredService<DeliveryResponseCache>());
         builder.CacheRefreshers().Add<DeliveryResponseCacheRefresher>();
         builder.AddNotificationHandler<TranslationsUpdatedNotification, DeliveryResponseCacheInvalidator>();
         builder.Services.AddSingleton<IAuthorizationHandler, BackofficeAdministratorHandler>();
@@ -63,7 +66,7 @@ public sealed class TranslationsComposer : IComposer
         builder.Services.AddScoped<ITranslationSynchronizationStore>(services => services.GetRequiredService<UmbracoTranslationStore>());
         builder.Services.AddScoped<ITranslationMessageRepository>(services => services.GetRequiredService<UmbracoTranslationStore>());
         builder.Services.AddScoped<ITranslationEditorRepository>(services => services.GetRequiredService<UmbracoTranslationStore>());
-        builder.Services.AddScoped<TranslationSyncEngine>();
+        builder.Services.AddScoped<ITranslationSyncEngine, TranslationSyncEngine>();
         builder.Services.AddSingleton<ITranslationOutputSerializer, NestedJsonOutputSerializer>();
         // No caching wrapper: ILanguageService is already cached inside Umbraco, and a second layer
         // would only introduce staleness after a language is added or the default one changes.
@@ -71,9 +74,9 @@ public sealed class TranslationsComposer : IComposer
         // The assistant runs on Umbraco.AI when the site has it; the package does not depend on it.
         builder.Services.AddAssistantChat();
         builder.Services.AddScoped<AssistantSettingsStore>();
-        builder.Services.AddScoped<TranslationAssistant>();
-        builder.Services.AddScoped<TranslationSectionSettingsStore>();
-        builder.Services.AddScoped<DictionaryPresence>();
+        builder.Services.AddScoped<ITranslationAssistant, TranslationAssistant>();
+        builder.Services.AddScoped<ITranslationSectionSettingsStore, TranslationSectionSettingsStore>();
+        builder.Services.AddScoped<IDictionaryPresence, DictionaryPresence>();
         builder.AddNotificationHandler<DictionaryCacheRefresherNotification, DictionaryPresenceInvalidator>();
     }
 
