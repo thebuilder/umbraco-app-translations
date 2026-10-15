@@ -39,14 +39,7 @@ curl --fail-with-body \
 
 Replace `website` with the source identifier from the source's **Advanced** settings. The request waits for the sync to finish and returns how many messages it added, changed and removed.
 
-| Response | Meaning |
-| --- | --- |
-| `200` | Synced. |
-| `401` | The secret is missing or wrong. |
-| `404` | No source has that identifier. |
-| `409` | The source is turned off, or already syncing. |
-| `502` | Umbraco could not fetch or read the translation files. |
-| `503` | No secret is configured, so the endpoint is off. |
+The [API reference](/endpoints/sync) lists what it returns, and every status code.
 
 :::caution
 Use HTTPS, and keep the secret in the secret stores on both sides.

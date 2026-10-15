@@ -13,6 +13,7 @@ export default defineMeta({
     "configuration",
     "operations",
     "troubleshooting",
+    "endpoints",
     "license",
   ],
 });

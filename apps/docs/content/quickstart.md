@@ -17,7 +17,7 @@ Start the site. On the first start, the package creates its tables and opens its
 
 Umbraco reads your application's translation files over HTTP, one file per language. Serve them from your application, a CDN or any URL your Umbraco site can reach. A next-intl application's `messages/en-US.json` might look like this:
 
-```json
+```json messages/en-US.json
 {
   "navigation": { "home": "Home", "contact": "Contact" },
   "greeting": "Welcome, {name}!"

@@ -5,6 +5,7 @@ import data from "blume:data";
 import { loadUmbracoPackages } from "@thebuilder/umbraco-docs";
 import { EcosystemSection, InstallCommand, LandingHero, LandingRoot } from "@thebuilder/umbraco-docs/astro";
 import HeroParticles from "@thebuilder/umbraco-docs/components/HeroParticles";
+import CodeBlock from "blume/components/content/CodeBlock.astro";
 
 import "./_home/home.css";
 
@@ -125,10 +126,10 @@ const features = [
         <p>Fetch the custom text for a language and namespace and lay it over what your application bundles. Only what an editor changed comes back.</p>
         <a class="button button--secondary" href="/delivery-api">Read the API guide</a>
       </div>
-      <figure class="code-preview reveal" style="--i: 1">
-        <figcaption>Custom text for Danish <span>HTTP</span></figcaption>
-        <pre tabindex="0"><code>{`${deliveryRequest}\n\n${deliveryResponse}`}</code></pre>
-      </figure>
+      <div class="code-preview reveal" style="--i: 1">
+        <CodeBlock lang="http" title="Custom text for Danish" code={deliveryRequest} />
+        <CodeBlock lang="json" title="Response" code={deliveryResponse} />
+      </div>
     </section>
 
     <section class="shell closing reveal">

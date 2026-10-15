@@ -1,0 +1,74 @@
+---
+title: Sync a source
+description: Read a source's translation files from a deployment pipeline, without a backoffice login.
+api: POST /umbraco/app-translations/api/v1/sources/{alias}/sync
+authMethod: bearer
+playground: simple
+seo:
+  image: /og/endpoints/sync.png
+---
+
+Syncs one source and waits for it to finish. The endpoint is off until you configure a [deployment sync key](/syncing#syncing-from-a-deployment).
+
+<ParamField path="alias" type="string" required placeholder="website">
+  The source identifier, from the source's **Advanced** settings.
+</ParamField>
+
+<ParamField header="Authorization" type="string" required placeholder="Bearer replace-with-a-long-random-value">
+  The deployment sync key, as a bearer token.
+</ParamField>
+
+## Response
+
+<ResponseField name="syncId" type="string" required>
+  The sync's identifier, as **History** lists it.
+</ResponseField>
+
+<ResponseField name="sourceId" type="string" required>
+  The source's identifier.
+</ResponseField>
+
+<ResponseField name="revision" type="string" required>
+  A fingerprint of the files the sync read.
+</ResponseField>
+
+<ResponseField name="startedAt" type="string" required>
+  When the sync started, as an ISO 8601 timestamp.
+</ResponseField>
+
+<ResponseField name="completedAt" type="string" required>
+  When it finished.
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+  How the sync ended.
+</ResponseField>
+
+<ResponseField name="addedCount" type="integer" required>
+  New keys.
+</ResponseField>
+
+<ResponseField name="changedCount" type="integer" required>
+  Keys whose default text changed.
+</ResponseField>
+
+<ResponseField name="missingCount" type="integer" required>
+  Keys the files no longer have, deleted or kept as **No longer used**.
+</ResponseField>
+
+<ResponseField name="invalidCount" type="integer" required>
+  Not `0` when the files could not be read as messages.
+</ResponseField>
+
+<ResponseField name="error" type="string">
+  What went wrong, when something did.
+</ResponseField>
+
+| Status | Meaning |
+| --- | --- |
+| `200` | Synced. |
+| `401` | The key is missing or wrong. |
+| `404` | No source has that identifier. |
+| `409` | The source is turned off, or already syncing. |
+| `502` | Umbraco could not fetch or read the translation files. |
+| `503` | No key is configured, so the endpoint is off. |
