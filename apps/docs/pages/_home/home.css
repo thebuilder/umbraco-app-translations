@@ -56,10 +56,9 @@
 .home .status-list div:not(:last-child) { border-bottom: 1px solid var(--line); }
 .home .status-list strong { color: var(--purple); font-size: .87rem; }
 .home .status-list span { color: var(--muted); }
-.home .code-preview { overflow: hidden; margin: 0; border: 1px solid var(--line); border-radius: calc(var(--blume-radius) * 1.4); background: var(--blume-code-background); color: var(--ink); box-shadow: 0 1.875rem 3.75rem -1.5625rem color-mix(in oklab, var(--blume-accent) 30%, transparent), 0 .75rem 1.875rem -1.25rem rgb(0 0 0 / .35); }
-.home .code-preview figcaption { display: flex; justify-content: space-between; padding: .8rem 1.125rem; border-bottom: 1px solid var(--line); background: color-mix(in oklab, var(--blume-muted) 70%, var(--blume-background)); color: var(--muted); font-size: .75rem; }
-.home .code-preview pre { margin: 0; padding: 1.5rem; overflow: auto; }
-.home .code-preview code { font-size: .85rem; line-height: 1.8; }
+/* Blume's CodeBlock draws the blocks, highlighted like the docs' own; this only stacks them and adds the glow. */
+.home .code-preview { display: grid; gap: .75rem; min-width: 0; }
+.home .code-preview > .prose > * { margin: 0; box-shadow: 0 1.875rem 3.75rem -1.5625rem color-mix(in oklab, var(--blume-accent) 30%, transparent), 0 .75rem 1.875rem -1.25rem rgb(0 0 0 / .35); }
 .home .closing { margin-top: clamp(4rem, 9vw, 7rem); padding: 4rem 2rem; border: 1px solid color-mix(in oklab, var(--blume-accent) 30%, var(--line)); border-radius: calc(var(--blume-radius) * 1.6); background: linear-gradient(155deg, color-mix(in oklab, #9b83ec 12%, var(--blume-background)), var(--blume-background) 72%); color: var(--ink); text-align: center; }
 .home .closing p { max-width: 38rem; margin: 1rem auto 1.5rem; color: var(--muted); }
 .home .udocs-ecosystem { margin-block: clamp(4rem, 9vw, 7rem) 0; }
