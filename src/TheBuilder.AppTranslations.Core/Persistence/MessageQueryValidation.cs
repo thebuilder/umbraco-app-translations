@@ -4,7 +4,7 @@ namespace TheBuilder.AppTranslations.Core.Persistence;
 /// Shared paging rules. Controllers call <see cref="Describe"/> to turn a violation into a 400;
 /// the repository keeps throwing so a bad query cannot reach the database through another path.
 /// </summary>
-public static class MessageQueryValidation
+internal static class MessageQueryValidation
 {
     public static readonly IReadOnlyList<int> AllowedPageSizes = [50, 100, 200];
 

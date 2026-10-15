@@ -37,7 +37,7 @@ public enum MessageStatusFilter
 
 public sealed record Page<T>(IReadOnlyList<T> Items, int PageNumber, int PageSize, int Total);
 
-public sealed record TranslationFacets(
+internal sealed record TranslationFacets(
     IReadOnlyList<TranslationLocaleUsage> Locales,
     IReadOnlyList<string> Namespaces,
     IReadOnlyList<TranslationOutputEndpoint> OutputEndpoints,
@@ -70,5 +70,5 @@ public sealed record TranslationOutputGroup(
     string Namespace,
     IReadOnlyList<MessageFormat> MessageFormats);
 
-public sealed record TranslationOutputEndpoint(string Locale, string Namespace, TranslationOutputFormat Format);
-public sealed record TranslationOutputConflict(string Locale, string Namespace, IReadOnlyList<MessageFormat> MessageFormats);
+internal sealed record TranslationOutputEndpoint(string Locale, string Namespace, TranslationOutputFormat Format);
+internal sealed record TranslationOutputConflict(string Locale, string Namespace, IReadOnlyList<MessageFormat> MessageFormats);

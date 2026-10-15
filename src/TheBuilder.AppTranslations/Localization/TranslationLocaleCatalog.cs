@@ -25,7 +25,7 @@ public interface ITranslationLocaleCatalog
     Task<IReadOnlyList<TranslationLocale>> GetLocalesAsync(CancellationToken cancellationToken);
 }
 
-public static class TranslationLocales
+internal static class TranslationLocales
 {
     public static string? DefaultOf(IEnumerable<TranslationLocale> locales) =>
         locales.FirstOrDefault(locale => locale.IsDefault)?.Code;
@@ -36,7 +36,7 @@ public static class TranslationLocales
 /// method, because it is a policy decision rather than a lookup: every input is already in hand at
 /// the call site, and keeping it separate makes it testable without stubbing Umbraco.
 /// </summary>
-public static class ReferenceLocale
+internal static class ReferenceLocale
 {
     /// <summary>
     /// An explicit request wins, then the site's default language, then whichever locale the

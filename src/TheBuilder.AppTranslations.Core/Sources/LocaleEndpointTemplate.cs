@@ -18,7 +18,7 @@ namespace TheBuilder.AppTranslations.Core.Sources;
 /// cannot. Messages are still stored under the full Umbraco code whichever token is used, so
 /// regional variants never collapse into one another and the delivery contract is unaffected.
 /// </summary>
-public static class LocaleEndpointTemplate
+internal static class LocaleEndpointTemplate
 {
     public const string LocaleToken = "{locale}";
     public const string LanguageToken = "{language}";

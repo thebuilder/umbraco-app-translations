@@ -7,7 +7,7 @@ namespace TheBuilder.AppTranslations.Core.Validation;
 /// find-and-replace previews all go through here, so a value a preview reports as valid cannot be
 /// rejected when it is applied.
 /// </summary>
-public static class MessageOverrideValidation
+internal static class MessageOverrideValidation
 {
     /// <summary>
     /// The override column is unbounded in the database, so the limit is enforced here instead.

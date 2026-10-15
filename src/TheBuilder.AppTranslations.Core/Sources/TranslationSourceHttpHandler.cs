@@ -3,7 +3,7 @@ using System.Net.Sockets;
 
 namespace TheBuilder.AppTranslations.Core.Sources;
 
-public static class TranslationSourceHttpHandler
+internal static class TranslationSourceHttpHandler
 {
     public static SocketsHttpHandler Create(TranslationSourceSecurityOptions options) => new()
     {
@@ -48,7 +48,7 @@ public static class TranslationSourceHttpHandler
     }
 }
 
-public static class TranslationSourceNetworkPolicy
+internal static class TranslationSourceNetworkPolicy
 {
     private static readonly byte[] Ipv4CompatiblePrefix = new byte[12];
     private static readonly byte[] Nat64Prefix = [0x00, 0x64, 0xff, 0x9b, 0, 0, 0, 0, 0, 0, 0, 0];

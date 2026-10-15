@@ -4,7 +4,7 @@ using TheBuilder.AppTranslations.Core.Validation;
 
 namespace TheBuilder.AppTranslations.Core.Sources;
 
-public sealed class NestedJsonParser(IMessageFormatValidator validator) : ITranslationSourceParser
+internal sealed class NestedJsonParser(IMessageFormatValidator validator) : ITranslationSourceParser
 {
     public async IAsyncEnumerable<TranslationSourceMessage> ParseAsync(
         TranslationSourcePayload payload,

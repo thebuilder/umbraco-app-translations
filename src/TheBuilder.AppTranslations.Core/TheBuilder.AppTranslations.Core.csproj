@@ -8,4 +8,9 @@
     <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Http" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="TheBuilder.AppTranslations" />
+    <InternalsVisibleTo Include="TheBuilder.AppTranslations.Core.Tests" />
+    <InternalsVisibleTo Include="TheBuilder.AppTranslations.Tests" />
+  </ItemGroup>
 </Project>

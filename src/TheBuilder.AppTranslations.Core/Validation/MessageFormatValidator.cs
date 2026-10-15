@@ -2,7 +2,7 @@ using TheBuilder.AppTranslations.Core.Messages;
 
 namespace TheBuilder.AppTranslations.Core.Validation;
 
-public sealed class MessageFormatValidator : IMessageFormatValidator
+internal sealed class MessageFormatValidator : IMessageFormatValidator
 {
     public MessageValidationResult Validate(string message, MessageFormat format)
     {

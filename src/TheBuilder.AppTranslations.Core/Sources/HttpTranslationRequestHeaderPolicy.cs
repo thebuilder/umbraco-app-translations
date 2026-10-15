@@ -1,6 +1,6 @@
 namespace TheBuilder.AppTranslations.Core.Sources;
 
-public static class HttpTranslationRequestHeaderPolicy
+internal static class HttpTranslationRequestHeaderPolicy
 {
     private static readonly HashSet<string> TransportManagedNames = new(StringComparer.OrdinalIgnoreCase)
     {

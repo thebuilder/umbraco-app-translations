@@ -17,7 +17,7 @@ public sealed record AssistantRequest(
     string? ReferenceLocale);
 
 /// <summary>Why the assistant gave no suggestion, which decides how the request is answered.</summary>
-public enum AssistantRefusal
+internal enum AssistantRefusal
 {
     /// <summary>Not set up: turned off here, or no profile to use.</summary>
     Unavailable,
@@ -33,7 +33,7 @@ public enum AssistantRefusal
 }
 
 /// <summary>The assistant gave no suggestion. The message is written for the editor.</summary>
-public sealed class AssistantRefusedException(AssistantRefusal refusal, string message) : Exception(message)
+internal sealed class AssistantRefusedException(AssistantRefusal refusal, string message) : Exception(message)
 {
     public AssistantRefusal Refusal { get; } = refusal;
 }
