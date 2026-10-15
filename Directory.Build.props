@@ -5,6 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <!-- Each project that ships in the package declares its public C# API in PublicAPI.Shipped.txt and
+       PublicAPI.Unshipped.txt beside it, and the build fails when the code disagrees. Having the files
+       is what opts a project in. See AGENTS.md. -->
+  <ItemGroup Condition="Exists('$(MSBuildProjectDirectory)/PublicAPI.Shipped.txt')">
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)/PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="$(MSBuildProjectDirectory)/PublicAPI.Unshipped.txt" />
+  </ItemGroup>
   <!-- SixLabors.ImageSharp 3.1.12 advisories, fixed only in 4.1.2. Umbraco 17 and 18 themselves
        depend on 3.1.12 (Umbraco.Cms.Imaging.ImageSharp), and Umbraco.AI caps it below 4, so this
        repository cannot lift it the way it lifts SQLitePCLRaw: every Umbraco 17 and 18 site has

@@ -20,8 +20,8 @@ namespace TheBuilder.AppTranslations.Assistant;
 internal static class AssistantChatRegistration
 {
     private const string ChatServiceType = "Umbraco.AI.Core.Chat.IAIChatService, Umbraco.AI.Core";
-    private const string AdapterAssembly = "TheBuilder.AppTranslations.UmbracoAI";
-    private const string AdapterType = "TheBuilder.AppTranslations.UmbracoAI.UmbracoAiAssistantChat";
+    internal const string AdapterAssembly = "TheBuilder.AppTranslations.UmbracoAI";
+    internal const string AdapterType = "TheBuilder.AppTranslations.UmbracoAI.UmbracoAiAssistantChat";
 
     /// <summary>The oldest Umbraco.AI with the members the assistant calls.</summary>
     internal static readonly Version Minimum = new(17, 5);

@@ -43,9 +43,6 @@
     <ProjectReference Include="../TheBuilder.AppTranslations.UmbracoAI/TheBuilder.AppTranslations.UmbracoAI.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="UmbracoAIAdapterAssembly" />
     <!-- Core's dependency too, but Core is private to the package, so the package declares it. -->
     <PackageReference Include="Microsoft.Extensions.AI.Abstractions" />
-    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
-    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
-    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
     <PackageReference Include="Umbraco.Cms.Web.Website" />
     <PackageReference Include="Umbraco.Cms.Web.Common" />
     <PackageReference Include="Umbraco.Cms.Api.Common" />

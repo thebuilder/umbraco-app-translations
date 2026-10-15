@@ -11,17 +11,30 @@ Before editing files for a substantial task:
 
 ## Public C# API
 
-`TheBuilder.AppTranslations` and `TheBuilder.AppTranslations.Core` both ship in the package, so
-their public types and members are the package's API. Each project declares that API in
-`PublicAPI.Shipped.txt` (what a stable release has shipped) and `PublicAPI.Unshipped.txt` (changes
-since then), and Microsoft.CodeAnalysis.PublicApiAnalyzers fails the build when the code and the
-files disagree.
+The package ships `TheBuilder.AppTranslations`, `TheBuilder.AppTranslations.Core` and the
+`TheBuilder.AppTranslations.UmbracoAI` adapter, so their public types and members are its API. Each
+of those projects declares that API in `PublicAPI.Shipped.txt` (what the last stable release
+shipped) and `PublicAPI.Unshipped.txt` (changes since then). Microsoft.CodeAnalysis.PublicApiAnalyzers
+fails the build when the code and the files disagree. `Directory.Build.props` turns it on for every
+project that has the files.
 
 - Make new types `internal` unless a site is meant to implement, replace, configure or consume
-  them. Both test projects can see internals.
+  them. Core's internals are visible to the main assembly and to both test projects. The main
+  assembly's internals are visible to `TheBuilder.AppTranslations.Tests` only.
 - Adding public API: the RS0016 error quotes the exact line to add to `PublicAPI.Unshipped.txt`,
   and IDEs offer it as a code fix.
-- Removing or changing public API: delete the line from `PublicAPI.Unshipped.txt`, or, when it is in
-  `PublicAPI.Shipped.txt`, add it to `PublicAPI.Unshipped.txt` with a `*REMOVED*` prefix. Either way
-  it is a breaking change, so say so in the pull request.
-- Keep both files sorted, with `#nullable enable` on the first line.
+- Removing public API: when the line is in `PublicAPI.Unshipped.txt`, delete it. It never shipped,
+  so nothing breaks. When the line is in `PublicAPI.Shipped.txt`, leave it there and add it to
+  `PublicAPI.Unshipped.txt` with a `*REMOVED*` prefix. RS0017 names the line. This is a breaking
+  change, so say so in the pull request.
+- Changing a member's signature removes the old line and adds a new one. Follow both rules above.
+- Keep both files in ordinal order (`LC_ALL=C sort`), with `#nullable enable` on the first line.
+- Many lines at once: `dotnet format analyzers` does not apply this analyzer's fix, but each RS0016
+  message is the line itself, so the build output can be collected. Build Core first, because the
+  main assembly does not compile while Core fails:
+
+  ```bash
+  dotnet build src/TheBuilder.AppTranslations.Core --no-incremental 2>&1 | grep 'error RS0016' | sed -E "s/^.*Symbol '//; s/' is not part of the declared public API.*//" | LC_ALL=C sort -u
+  ```
+
+  Add the output to `PublicAPI.Unshipped.txt`, then sort the lines below `#nullable enable`.
