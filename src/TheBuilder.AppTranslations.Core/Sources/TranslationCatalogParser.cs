@@ -10,7 +10,7 @@ namespace TheBuilder.AppTranslations.Core.Sources;
 /// A pair rather than a registry keyed by format. Two implementations named in one line can be
 /// read at a glance, and a registry would only earn its indirection with more of them than that.
 /// </summary>
-public sealed class TranslationCatalogParser(NestedJsonParser json, PoParser po) : ITranslationSourceParser
+internal sealed class TranslationCatalogParser(NestedJsonParser json, PoParser po) : ITranslationSourceParser
 {
     public IAsyncEnumerable<TranslationSourceMessage> ParseAsync(
         TranslationSourcePayload payload,

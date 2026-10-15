@@ -1,6 +1,6 @@
 namespace TheBuilder.AppTranslations.Core.Sources;
 
-public static class TranslationSourceValidator
+internal static class TranslationSourceValidator
 {
     private const int MaximumHeaderCount = 20;
     private const string HeaderNameSymbols = "!#$%&'*+-.^_`|~";

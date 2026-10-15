@@ -4,7 +4,7 @@ using TheBuilder.AppTranslations.Core.Persistence;
 
 namespace TheBuilder.AppTranslations.Core.Output;
 
-public sealed class NestedJsonOutputSerializer : ITranslationOutputSerializer
+internal sealed class NestedJsonOutputSerializer : ITranslationOutputSerializer
 {
     public string Serialize(IReadOnlyCollection<TranslationMessageView> messages, TranslationOutputMode mode)
     {

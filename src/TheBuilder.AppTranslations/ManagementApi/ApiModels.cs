@@ -88,7 +88,7 @@ public sealed record ResetOverrideRequest(
 /// The body of a 409. Carries the value that actually landed so the editor can show "yours" beside
 /// "theirs" without a follow-up request.
 /// </summary>
-public sealed record MessageConflictResponse(
+internal sealed record MessageConflictResponse(
     string Code,
     string Message,
     long? CurrentVersion,

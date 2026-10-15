@@ -25,7 +25,7 @@ public enum AssistantTask
 /// Only about translating. Tone of voice and brand come from the contexts on the Umbraco.AI profile,
 /// which are added to every request through it, so nothing here competes with them.
 /// </summary>
-public static class AssistantPrompts
+internal static class AssistantPrompts
 {
     public const string DefaultInstructions =
         """
@@ -130,7 +130,7 @@ public static class AssistantPrompts
 /// <summary>Everything about one request that goes into the prompt.</summary>
 /// <param name="FromLocale">The language <paramref name="Text"/> is in when translating; null for a rewrite.</param>
 /// <param name="Message">The key as the application ships it: its format, placeholders and description.</param>
-public sealed record AssistantBrief(
+internal sealed record AssistantBrief(
     AssistantTask Task,
     string Locale,
     string? FromLocale,

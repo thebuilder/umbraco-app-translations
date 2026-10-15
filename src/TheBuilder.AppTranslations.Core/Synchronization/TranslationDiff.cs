@@ -3,7 +3,7 @@ using TheBuilder.AppTranslations.Core.Sources;
 
 namespace TheBuilder.AppTranslations.Core.Synchronization;
 
-public sealed record TranslationDiff(
+internal sealed record TranslationDiff(
     IReadOnlyList<TranslationSourceMessage> Added,
     IReadOnlyList<TranslationSourceMessage> Changed,
     IReadOnlyList<TranslationMessage> Missing)

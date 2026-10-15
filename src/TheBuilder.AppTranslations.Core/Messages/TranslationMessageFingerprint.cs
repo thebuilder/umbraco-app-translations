@@ -3,7 +3,7 @@ using System.Text;
 
 namespace TheBuilder.AppTranslations.Core.Messages;
 
-public static class TranslationMessageFingerprint
+internal static class TranslationMessageFingerprint
 {
     public static string Compute(string value, MessageFormat format, IReadOnlyDictionary<string, string> arguments)
     {

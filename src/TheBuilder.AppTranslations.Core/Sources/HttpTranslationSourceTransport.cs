@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace TheBuilder.AppTranslations.Core.Sources;
 
-public sealed class HttpTranslationSourceTransport(HttpClient httpClient, IConfiguration configuration)
+internal sealed class HttpTranslationSourceTransport(HttpClient httpClient, IConfiguration configuration)
     : ITranslationSourceTransport
 {
     public string Kind => "http";
@@ -111,7 +111,7 @@ public sealed class HttpTranslationSourceTransport(HttpClient httpClient, IConfi
 }
 
 public sealed class TranslationSourceNotModifiedException : Exception;
-public sealed class TranslationSourceTooLargeException(int maximumBytes)
+internal sealed class TranslationSourceTooLargeException(int maximumBytes)
     : Exception($"The translation source exceeded the {maximumBytes} byte limit.");
 
 /// <summary>
@@ -126,7 +126,7 @@ public sealed class TranslationSourceTooLargeException(int maximumBytes)
 /// path is half of what makes a 404 a 404. Then it says what the status means for a translation
 /// source, which the number alone does not.
 /// </summary>
-public sealed class TranslationSourceResponseException(
+internal sealed class TranslationSourceResponseException(
     string endpoint,
     HttpStatusCode status,
     string? reason,

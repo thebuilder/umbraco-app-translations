@@ -22,7 +22,7 @@ namespace TheBuilder.AppTranslations.Core.Sources;
 /// file references. There is nowhere to keep those, so they are read and dropped rather than
 /// mistaken for content.
 /// </summary>
-public sealed class PoParser(IMessageFormatValidator validator) : ITranslationSourceParser
+internal sealed class PoParser(IMessageFormatValidator validator) : ITranslationSourceParser
 {
     public async IAsyncEnumerable<TranslationSourceMessage> ParseAsync(
         TranslationSourcePayload payload,

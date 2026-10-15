@@ -20,7 +20,7 @@ public enum TranslationOutputFormat
     I18Next,
 }
 
-public static class TranslationOutputFormats
+internal static class TranslationOutputFormats
 {
     public static bool TryParse(string value, out TranslationOutputFormat format)
     {

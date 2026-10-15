@@ -10,7 +10,7 @@ public static class Constants
     public const string DeliveryApiRoot = "umbraco/delivery/api/v{version:apiVersion}/app-translations";
     public const string AutomationApiRoot = "umbraco/app-translations/api/v{version:apiVersion}";
 
-    public static class Tables
+    internal static class Tables
     {
         public const string Sources = "theBuilderAppTranslationSource";
         public const string Messages = "theBuilderAppTranslationMessage";
