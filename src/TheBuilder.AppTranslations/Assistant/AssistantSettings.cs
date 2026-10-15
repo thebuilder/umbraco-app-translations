@@ -10,7 +10,7 @@ namespace TheBuilder.AppTranslations.Assistant;
 /// The profile is where the model, the brand voice and the guardrails come from; the instructions
 /// are only about translating, and are left empty to use <see cref="AssistantPrompts.DefaultInstructions"/>.
 /// </summary>
-public sealed record AssistantSettings(bool Enabled, Guid? ProfileId, string? Instructions)
+internal sealed record AssistantSettings(bool Enabled, Guid? ProfileId, string? Instructions)
 {
     /// <summary>
     /// Off until an administrator turns it on: it sends the site's text to an AI provider, and
@@ -26,5 +26,5 @@ public sealed record AssistantSettings(bool Enabled, Guid? ProfileId, string? In
 }
 
 /// <summary>An unset or unreadable value turns the assistant off, the safe way to be wrong.</summary>
-public sealed class AssistantSettingsStore(IKeyValueService keyValues)
+internal sealed class AssistantSettingsStore(IKeyValueService keyValues)
     : KeyValueSettingsStore<AssistantSettings>(keyValues, Constants.PackageName + ".Assistant", AssistantSettings.Default);

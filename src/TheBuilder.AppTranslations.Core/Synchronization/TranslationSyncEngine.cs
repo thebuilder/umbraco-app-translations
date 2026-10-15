@@ -5,12 +5,12 @@ using TheBuilder.AppTranslations.Core.Sources;
 
 namespace TheBuilder.AppTranslations.Core.Synchronization;
 
-public sealed class TranslationSyncEngine(
+internal sealed class TranslationSyncEngine(
     ITranslationSourceTransport transport,
     ITranslationSourceParser parser,
     ITranslationSynchronizationStore store,
     TimeProvider timeProvider,
-    TranslationSynchronizationLeasePolicy? leasePolicy = null)
+    TranslationSynchronizationLeasePolicy? leasePolicy = null) : ITranslationSyncEngine
 {
     private readonly TranslationSynchronizationLeasePolicy _leasePolicy = leasePolicy ?? TranslationSynchronizationLeasePolicy.Default;
 
@@ -186,7 +186,7 @@ public sealed class TranslationSyncEngine(
     private sealed record LocaleAttempt(LocaleResult? Result, string? Failure);
 }
 
-public sealed record TranslationSynchronizationLeasePolicy(TimeSpan Duration, TimeSpan RenewalInterval)
+internal sealed record TranslationSynchronizationLeasePolicy(TimeSpan Duration, TimeSpan RenewalInterval)
 {
     public static TranslationSynchronizationLeasePolicy Default { get; } = new(TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(1));
 }

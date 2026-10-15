@@ -5,11 +5,22 @@ using Umbraco.Cms.Core.Services;
 
 namespace TheBuilder.AppTranslations.Configuration;
 
+/// <summary>Whether the site has any Dictionary items.</summary>
+/// <remarks>
+/// Public only because the public <see cref="ManagementApi.TranslationSectionController"/> takes it
+/// in its constructor, and ASP.NET only calls public constructors. Its members are internal, so it is
+/// not an extension point.
+/// </remarks>
+public interface IDictionaryPresence
+{
+    internal Task<bool> HasItemsAsync();
+}
+
 /// <summary>
 /// Whether the site has any Dictionary items, which every backoffice load asks to decide whether
 /// Umbraco's Translation section shows. Cached until the Dictionary changes, since it rarely does.
 /// </summary>
-public sealed class DictionaryPresence(IDictionaryItemService dictionaryItems, AppCaches appCaches)
+internal sealed class DictionaryPresence(IDictionaryItemService dictionaryItems, AppCaches appCaches) : IDictionaryPresence
 {
     internal const string CacheKey = Constants.PackageName + ".HasDictionaryItems";
 

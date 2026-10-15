@@ -22,8 +22,8 @@ public sealed record TranslationSectionRequest(bool HideWhileDictionaryIsEmpty);
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = Constants.PackageName)]
 public sealed class TranslationSectionController(
-    TranslationSectionSettingsStore settings,
-    DictionaryPresence dictionary) : TranslationsApiControllerBase
+    ITranslationSectionSettingsStore settings,
+    IDictionaryPresence dictionary) : TranslationsApiControllerBase
 {
     [HttpGet("translation-section")]
     [ProducesResponseType(typeof(TranslationSectionResponse), StatusCodes.Status200OK)]

@@ -18,7 +18,7 @@ public sealed class MessagesController(
     ITranslationEditorRepository editor,
     IMessageFormatValidator validator,
     ITranslationLocaleCatalog locales,
-    DeliveryApiKeyAuthenticator deliveryAccess) : TranslationsApiControllerBase
+    IDeliveryApiKeyAuthenticator deliveryAccess) : TranslationsApiControllerBase
 {
     [HttpGet("messages")]
     public async Task<ActionResult<MessageListResponse>> ListMessages(

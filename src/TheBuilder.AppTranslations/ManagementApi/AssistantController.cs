@@ -37,7 +37,7 @@ public sealed record AssistantSuggestionRequest(
     string? Text,
     string? ReferenceLocale)
 {
-    public AssistantRequest ToRequest() =>
+    internal AssistantRequest ToRequest() =>
         new(new MessageIdentity(SourceId, Namespace, Key, Locale), Task, Text, ReferenceLocale);
 }
 
@@ -46,8 +46,7 @@ public sealed record AssistantSuggestionResponse(string Value);
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = Constants.PackageName)]
 public sealed class AssistantController(
-    TranslationAssistant assistant,
-    AssistantSettingsStore settings,
+    ITranslationAssistant assistant,
     IAssistantChat chat) : TranslationsApiControllerBase
 {
     [HttpGet("assistant")]
@@ -57,7 +56,7 @@ public sealed class AssistantController(
     [HttpGet("assistant/settings")]
     [Authorize(Policy = TranslationPolicies.ManageSources)]
     public async Task<AssistantSettingsResponse> GetSettings(CancellationToken cancellationToken) =>
-        await SettingsResponseAsync(settings.Get(), cancellationToken);
+        await SettingsResponseAsync(assistant.GetSettings(), cancellationToken);
 
     [HttpPut("assistant/settings")]
     [Authorize(Policy = TranslationPolicies.ManageSources)]

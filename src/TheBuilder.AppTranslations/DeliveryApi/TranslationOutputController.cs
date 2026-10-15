@@ -21,8 +21,8 @@ namespace TheBuilder.AppTranslations.DeliveryApi;
 public sealed class TranslationOutputController(
     ITranslationMessageRepository store,
     ITranslationOutputSerializer serializer,
-    DeliveryApiKeyAuthenticator authenticator,
-    DeliveryResponseCache cache,
+    IDeliveryApiKeyAuthenticator authenticator,
+    IDeliveryResponseCache cache,
     IOptions<DeliveryOptions> options) : ControllerBase
 {
     internal const int MaximumNamespacesPerRequest = 20;

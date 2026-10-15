@@ -23,9 +23,69 @@
 *REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusedException
 *REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusedException.AssistantRefusedException(TheBuilder.AppTranslations.Assistant.AssistantRefusal refusal, string! message) -> void
 *REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRefusedException.Refusal.get -> TheBuilder.AppTranslations.Assistant.AssistantRefusal
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.<Clone>$() -> TheBuilder.AppTranslations.Assistant.AssistantRequest!
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.AssistantRequest(TheBuilder.AppTranslations.Core.Messages.MessageIdentity Target, TheBuilder.AppTranslations.Assistant.AssistantTask Task, string? Text, string? ReferenceLocale) -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.Deconstruct(out TheBuilder.AppTranslations.Core.Messages.MessageIdentity Target, out TheBuilder.AppTranslations.Assistant.AssistantTask Task, out string? Text, out string? ReferenceLocale) -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.Equals(TheBuilder.AppTranslations.Assistant.AssistantRequest? other) -> bool
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.ReferenceLocale.get -> string?
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.ReferenceLocale.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.Target.get -> TheBuilder.AppTranslations.Core.Messages.MessageIdentity
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.Target.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.Task.get -> TheBuilder.AppTranslations.Assistant.AssistantTask
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.Task.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.Text.get -> string?
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantRequest.Text.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.<Clone>$() -> TheBuilder.AppTranslations.Assistant.AssistantSettings!
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.AssistantSettings(bool Enabled, System.Guid? ProfileId, string? Instructions) -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.Deconstruct(out bool Enabled, out System.Guid? ProfileId, out string? Instructions) -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.EffectiveInstructions.get -> string!
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.Enabled.get -> bool
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.Enabled.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.Equals(TheBuilder.AppTranslations.Assistant.AssistantSettings? other) -> bool
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.Instructions.get -> string?
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.Instructions.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.ProfileId.get -> System.Guid?
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettings.ProfileId.init -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettingsStore
+*REMOVED*TheBuilder.AppTranslations.Assistant.AssistantSettingsStore.AssistantSettingsStore(Umbraco.Cms.Core.Services.IKeyValueService! keyValues) -> void
+*REMOVED*TheBuilder.AppTranslations.Assistant.TranslationAssistant
+*REMOVED*TheBuilder.AppTranslations.Assistant.TranslationAssistant.IsAvailableAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+*REMOVED*TheBuilder.AppTranslations.Assistant.TranslationAssistant.SaveSettingsAsync(TheBuilder.AppTranslations.Assistant.AssistantSettings! next, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+*REMOVED*TheBuilder.AppTranslations.Assistant.TranslationAssistant.SuggestAsync(TheBuilder.AppTranslations.Assistant.AssistantRequest! request, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+*REMOVED*TheBuilder.AppTranslations.Assistant.TranslationAssistant.TranslationAssistant(TheBuilder.AppTranslations.Core.Assistant.IAssistantChat! chat, TheBuilder.AppTranslations.Assistant.AssistantSettingsStore! settings, TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository! editor, TheBuilder.AppTranslations.Core.Validation.IMessageFormatValidator! validator, Microsoft.Extensions.Logging.ILogger<TheBuilder.AppTranslations.Assistant.TranslationAssistant!>! logger) -> void
+*REMOVED*TheBuilder.AppTranslations.Authorization.DeliveryApiKeyAuthenticator
+*REMOVED*TheBuilder.AppTranslations.Authorization.DeliveryApiKeyAuthenticator.DeliveryApiKeyAuthenticator(Microsoft.Extensions.Options.IOptions<TheBuilder.AppTranslations.Configuration.DeliveryOptions!>! options) -> void
+*REMOVED*TheBuilder.AppTranslations.Authorization.DeliveryApiKeyAuthenticator.KeyRequired.get -> bool
+*REMOVED*TheBuilder.AppTranslations.Authorization.DeploymentSyncApiKeyAuthenticator
+*REMOVED*TheBuilder.AppTranslations.Authorization.DeploymentSyncApiKeyAuthenticator.DeploymentSyncApiKeyAuthenticator(Microsoft.Extensions.Options.IOptions<TheBuilder.AppTranslations.Configuration.DeploymentSyncOptions!>! options) -> void
+*REMOVED*TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController.DeploymentSyncController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! sources, TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine! syncEngine, TheBuilder.AppTranslations.Authorization.DeploymentSyncApiKeyAuthenticator! authenticator, Microsoft.Extensions.Logging.ILogger<TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController!>! logger) -> void
+*REMOVED*TheBuilder.AppTranslations.Configuration.DictionaryPresence
+*REMOVED*TheBuilder.AppTranslations.Configuration.DictionaryPresence.DictionaryPresence(Umbraco.Cms.Core.Services.IDictionaryItemService! dictionaryItems, Umbraco.Cms.Core.Cache.AppCaches! appCaches) -> void
+*REMOVED*TheBuilder.AppTranslations.Configuration.DictionaryPresence.HasItemsAsync() -> System.Threading.Tasks.Task<bool>!
+*REMOVED*TheBuilder.AppTranslations.Configuration.KeyValueSettingsStore<T>
+*REMOVED*TheBuilder.AppTranslations.Configuration.KeyValueSettingsStore<T>.Get() -> T!
+*REMOVED*TheBuilder.AppTranslations.Configuration.KeyValueSettingsStore<T>.KeyValueSettingsStore(Umbraco.Cms.Core.Services.IKeyValueService! keyValues, string! key, T! fallback) -> void
+*REMOVED*TheBuilder.AppTranslations.Configuration.KeyValueSettingsStore<T>.Save(T! settings) -> void
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettings
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.<Clone>$() -> TheBuilder.AppTranslations.Configuration.TranslationSectionSettings!
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.Deconstruct(out bool HideWhileDictionaryIsEmpty) -> void
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.Equals(TheBuilder.AppTranslations.Configuration.TranslationSectionSettings? other) -> bool
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.HideWhileDictionaryIsEmpty.get -> bool
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.HideWhileDictionaryIsEmpty.init -> void
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.HidesSection(bool hasDictionaryItems) -> bool
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.TranslationSectionSettings(bool HideWhileDictionaryIsEmpty) -> void
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettingsStore
+*REMOVED*TheBuilder.AppTranslations.Configuration.TranslationSectionSettingsStore.TranslationSectionSettingsStore(Umbraco.Cms.Core.Services.IKeyValueService! keyValues) -> void
 *REMOVED*TheBuilder.AppTranslations.Constants.Tables
+*REMOVED*TheBuilder.AppTranslations.DeliveryApi.DeliveryResponseCache
+*REMOVED*TheBuilder.AppTranslations.DeliveryApi.DeliveryResponseCache.DeliveryResponseCache(System.TimeProvider! timeProvider) -> void
+*REMOVED*TheBuilder.AppTranslations.DeliveryApi.TranslationOutputController.TranslationOutputController(TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository! store, TheBuilder.AppTranslations.Core.Output.ITranslationOutputSerializer! serializer, TheBuilder.AppTranslations.Authorization.DeliveryApiKeyAuthenticator! authenticator, TheBuilder.AppTranslations.DeliveryApi.DeliveryResponseCache! cache, Microsoft.Extensions.Options.IOptions<TheBuilder.AppTranslations.Configuration.DeliveryOptions!>! options) -> void
 *REMOVED*TheBuilder.AppTranslations.Localization.ReferenceLocale
 *REMOVED*TheBuilder.AppTranslations.Localization.TranslationLocales
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.AssistantController.AssistantController(TheBuilder.AppTranslations.Assistant.TranslationAssistant! assistant, TheBuilder.AppTranslations.Assistant.AssistantSettingsStore! settings, TheBuilder.AppTranslations.Core.Assistant.IAssistantChat! chat) -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.AssistantSuggestionRequest.ToRequest() -> TheBuilder.AppTranslations.Assistant.AssistantRequest!
 *REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse
 *REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.<Clone>$() -> TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse!
 *REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.Code.get -> string!
@@ -43,7 +103,13 @@
 *REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.UpdatedAt.init -> void
 *REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.UpdatedBy.get -> string?
 *REMOVED*TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.UpdatedBy.init -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.MessagesController.MessagesController(TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository! store, TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository! editor, TheBuilder.AppTranslations.Core.Validation.IMessageFormatValidator! validator, TheBuilder.AppTranslations.Localization.ITranslationLocaleCatalog! locales, TheBuilder.AppTranslations.Authorization.DeliveryApiKeyAuthenticator! deliveryAccess) -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.SourcesController.SourcesController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! store, TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine! syncEngine) -> void
+*REMOVED*TheBuilder.AppTranslations.ManagementApi.TranslationSectionController.TranslationSectionController(TheBuilder.AppTranslations.Configuration.TranslationSectionSettingsStore! settings, TheBuilder.AppTranslations.Configuration.DictionaryPresence! dictionary) -> void
 *REMOVED*const TheBuilder.AppTranslations.Assistant.AssistantPrompts.DefaultInstructions = "You write and edit the interface text of a website or application, one message at a time.\nKeep the meaning of the message. Match how the rest of the interface speaks to its users.\nInterface text is short: a button stays a word or two, a heading stays a heading.\nNever translate or rename placeholders, keys, product names or anything inside braces\nthat names a value the application fills in." -> string!
+*REMOVED*const TheBuilder.AppTranslations.Assistant.TranslationAssistant.MaximumInstructionsLength = 4000 -> int
+*REMOVED*const TheBuilder.AppTranslations.Assistant.TranslationAssistant.MaximumTextLength = 10000 -> int
+*REMOVED*const TheBuilder.AppTranslations.Authorization.DeliveryApiKeyAuthenticator.HeaderName = "Api-Key" -> string!
 *REMOVED*const TheBuilder.AppTranslations.Constants.Tables.Messages = "theBuilderAppTranslationMessage" -> string!
 *REMOVED*const TheBuilder.AppTranslations.Constants.Tables.Overrides = "theBuilderAppTranslationOverride" -> string!
 *REMOVED*const TheBuilder.AppTranslations.Constants.Tables.Sources = "theBuilderAppTranslationSource" -> string!
@@ -52,6 +118,15 @@
 *REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantBrief.Equals(object? obj) -> bool
 *REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantBrief.GetHashCode() -> int
 *REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantBrief.ToString() -> string!
+*REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantRequest.Equals(object? obj) -> bool
+*REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantRequest.GetHashCode() -> int
+*REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantRequest.ToString() -> string!
+*REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantSettings.Equals(object? obj) -> bool
+*REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantSettings.GetHashCode() -> int
+*REMOVED*override TheBuilder.AppTranslations.Assistant.AssistantSettings.ToString() -> string!
+*REMOVED*override TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.Equals(object? obj) -> bool
+*REMOVED*override TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.GetHashCode() -> int
+*REMOVED*override TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.ToString() -> string!
 *REMOVED*override TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.Equals(object? obj) -> bool
 *REMOVED*override TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.GetHashCode() -> int
 *REMOVED*override TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.ToString() -> string!
@@ -59,8 +134,28 @@
 *REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantBrief.operator ==(TheBuilder.AppTranslations.Assistant.AssistantBrief? left, TheBuilder.AppTranslations.Assistant.AssistantBrief? right) -> bool
 *REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantPrompts.Correction(string! problem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! arguments) -> Microsoft.Extensions.AI.ChatMessage!
 *REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantPrompts.For(TheBuilder.AppTranslations.Assistant.AssistantSettings! settings, TheBuilder.AppTranslations.Assistant.AssistantBrief! brief) -> System.Collections.Generic.IReadOnlyList<Microsoft.Extensions.AI.ChatMessage!>!
+*REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantRequest.operator !=(TheBuilder.AppTranslations.Assistant.AssistantRequest? left, TheBuilder.AppTranslations.Assistant.AssistantRequest? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantRequest.operator ==(TheBuilder.AppTranslations.Assistant.AssistantRequest? left, TheBuilder.AppTranslations.Assistant.AssistantRequest? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantSettings.Default.get -> TheBuilder.AppTranslations.Assistant.AssistantSettings!
+*REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantSettings.operator !=(TheBuilder.AppTranslations.Assistant.AssistantSettings? left, TheBuilder.AppTranslations.Assistant.AssistantSettings? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.Assistant.AssistantSettings.operator ==(TheBuilder.AppTranslations.Assistant.AssistantSettings? left, TheBuilder.AppTranslations.Assistant.AssistantSettings? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.Default.get -> TheBuilder.AppTranslations.Configuration.TranslationSectionSettings!
+*REMOVED*static TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.operator !=(TheBuilder.AppTranslations.Configuration.TranslationSectionSettings? left, TheBuilder.AppTranslations.Configuration.TranslationSectionSettings? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.Configuration.TranslationSectionSettings.operator ==(TheBuilder.AppTranslations.Configuration.TranslationSectionSettings? left, TheBuilder.AppTranslations.Configuration.TranslationSectionSettings? right) -> bool
 *REMOVED*static TheBuilder.AppTranslations.Localization.ReferenceLocale.Resolve(string? requested, System.Collections.Generic.IReadOnlyCollection<string!>! availableLocales, string? defaultLocale) -> string?
 *REMOVED*static TheBuilder.AppTranslations.Localization.TranslationLocales.DefaultOf(System.Collections.Generic.IEnumerable<TheBuilder.AppTranslations.Localization.TranslationLocale!>! locales) -> string?
 *REMOVED*static TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.From(TheBuilder.AppTranslations.Core.Persistence.TranslationConcurrencyException! exception, TheBuilder.AppTranslations.Core.Persistence.TranslationMessageView? current) -> TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse!
 *REMOVED*static TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.operator !=(TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? left, TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? right) -> bool
 *REMOVED*static TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.operator ==(TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? left, TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? right) -> bool
+TheBuilder.AppTranslations.Assistant.ITranslationAssistant
+TheBuilder.AppTranslations.Authorization.IDeliveryApiKeyAuthenticator
+TheBuilder.AppTranslations.Authorization.IDeploymentSyncApiKeyAuthenticator
+TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController.DeploymentSyncController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! sources, TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine! syncEngine, TheBuilder.AppTranslations.Authorization.IDeploymentSyncApiKeyAuthenticator! authenticator, Microsoft.Extensions.Logging.ILogger<TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController!>! logger) -> void
+TheBuilder.AppTranslations.Configuration.IDictionaryPresence
+TheBuilder.AppTranslations.Configuration.ITranslationSectionSettingsStore
+TheBuilder.AppTranslations.DeliveryApi.IDeliveryResponseCache
+TheBuilder.AppTranslations.DeliveryApi.TranslationOutputController.TranslationOutputController(TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository! store, TheBuilder.AppTranslations.Core.Output.ITranslationOutputSerializer! serializer, TheBuilder.AppTranslations.Authorization.IDeliveryApiKeyAuthenticator! authenticator, TheBuilder.AppTranslations.DeliveryApi.IDeliveryResponseCache! cache, Microsoft.Extensions.Options.IOptions<TheBuilder.AppTranslations.Configuration.DeliveryOptions!>! options) -> void
+TheBuilder.AppTranslations.ManagementApi.AssistantController.AssistantController(TheBuilder.AppTranslations.Assistant.ITranslationAssistant! assistant, TheBuilder.AppTranslations.Core.Assistant.IAssistantChat! chat) -> void
+TheBuilder.AppTranslations.ManagementApi.MessagesController.MessagesController(TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository! store, TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository! editor, TheBuilder.AppTranslations.Core.Validation.IMessageFormatValidator! validator, TheBuilder.AppTranslations.Localization.ITranslationLocaleCatalog! locales, TheBuilder.AppTranslations.Authorization.IDeliveryApiKeyAuthenticator! deliveryAccess) -> void
+TheBuilder.AppTranslations.ManagementApi.SourcesController.SourcesController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! store, TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine! syncEngine) -> void
+TheBuilder.AppTranslations.ManagementApi.TranslationSectionController.TranslationSectionController(TheBuilder.AppTranslations.Configuration.ITranslationSectionSettingsStore! settings, TheBuilder.AppTranslations.Configuration.IDictionaryPresence! dictionary) -> void

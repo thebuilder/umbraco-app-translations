@@ -53,6 +53,22 @@ internal sealed class DeliveryNamespaces : IEquatable<DeliveryNamespaces>
 /// <summary>A built response, with the ETag that names it.</summary>
 internal sealed record CachedDeliveryResponse(string Json, string ETag);
 
+/// <summary>The delivery endpoints' responses, kept until the translations change.</summary>
+/// <remarks>
+/// Public only because the public <see cref="TranslationOutputController"/> takes it in its
+/// constructor, and ASP.NET only calls public constructors. Its members are internal, so it is not an
+/// extension point.
+/// </remarks>
+public interface IDeliveryResponseCache
+{
+    /// <summary>Read before building a response, and handed back to <see cref="Store"/>.</summary>
+    internal long Generation { get; }
+
+    internal bool TryGet(DeliveryResponseKey key, out CachedDeliveryResponse response);
+
+    internal void Store(DeliveryResponseKey key, CachedDeliveryResponse response, long generationAtRead);
+}
+
 /// <summary>
 /// The delivery endpoints' responses, kept until the translations change.
 ///
@@ -76,7 +92,7 @@ internal sealed record CachedDeliveryResponse(string Json, string ETag);
 /// sets go first that way, and a burst of sets nobody asks for again cannot keep out the ones an
 /// application keeps asking for: those come back on their next request.
 /// </summary>
-public sealed class DeliveryResponseCache(TimeProvider timeProvider)
+internal sealed class DeliveryResponseCache(TimeProvider timeProvider) : IDeliveryResponseCache
 {
     internal static readonly TimeSpan Lifetime = TimeSpan.FromHours(1);
     internal const int MaximumNamespaceSets = 100;
@@ -87,9 +103,9 @@ public sealed class DeliveryResponseCache(TimeProvider timeProvider)
     private int _namespaceSets;
 
     /// <summary>Read before building a response, and handed back to <see cref="Store"/>.</summary>
-    internal long Generation => Interlocked.Read(ref _generation);
+    public long Generation => Interlocked.Read(ref _generation);
 
-    internal bool TryGet(DeliveryResponseKey key, out CachedDeliveryResponse response)
+    public bool TryGet(DeliveryResponseKey key, out CachedDeliveryResponse response)
     {
         if (_responses.TryGetValue(key, out var entry) && timeProvider.GetUtcNow() - entry.StoredAt < Lifetime)
         {
@@ -100,7 +116,7 @@ public sealed class DeliveryResponseCache(TimeProvider timeProvider)
         return false;
     }
 
-    internal void Store(DeliveryResponseKey key, CachedDeliveryResponse response, long generationAtRead)
+    public void Store(DeliveryResponseKey key, CachedDeliveryResponse response, long generationAtRead)
     {
         lock (_gate)
         {

@@ -80,6 +80,19 @@
 *REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff.Missing.get -> System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Messages.TranslationMessage!>!
 *REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff.Missing.init -> void
 *REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff.TranslationDiff(System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage!>! Added, System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage!>! Changed, System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Messages.TranslationMessage!>! Missing) -> void
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine.SynchronizeAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult!>!
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine.TestAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult!>!
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncEngine.TranslationSyncEngine(TheBuilder.AppTranslations.Core.Sources.ITranslationSourceTransport! transport, TheBuilder.AppTranslations.Core.Sources.ITranslationSourceParser! parser, TheBuilder.AppTranslations.Core.Persistence.ITranslationSynchronizationStore! store, System.TimeProvider! timeProvider, TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? leasePolicy = null) -> void
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.<Clone>$() -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy!
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Deconstruct(out System.TimeSpan Duration, out System.TimeSpan RenewalInterval) -> void
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Duration.get -> System.TimeSpan
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Duration.init -> void
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Equals(TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? other) -> bool
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.RenewalInterval.get -> System.TimeSpan
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.RenewalInterval.init -> void
+*REMOVED*TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.TranslationSynchronizationLeasePolicy(System.TimeSpan Duration, System.TimeSpan RenewalInterval) -> void
 *REMOVED*TheBuilder.AppTranslations.Core.Validation.MessageFormatValidator
 *REMOVED*TheBuilder.AppTranslations.Core.Validation.MessageFormatValidator.MessageFormatValidator() -> void
 *REMOVED*TheBuilder.AppTranslations.Core.Validation.MessageFormatValidator.Validate(string! message, TheBuilder.AppTranslations.Core.Messages.MessageFormat format) -> TheBuilder.AppTranslations.Core.Validation.MessageValidationResult!
@@ -105,6 +118,9 @@
 *REMOVED*override TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff.Equals(object? obj) -> bool
 *REMOVED*override TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff.GetHashCode() -> int
 *REMOVED*override TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff.ToString() -> string!
+*REMOVED*override TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Equals(object? obj) -> bool
+*REMOVED*override TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.GetHashCode() -> int
+*REMOVED*override TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.ToString() -> string!
 *REMOVED*static TheBuilder.AppTranslations.Core.Messages.TranslationMessageFingerprint.Compute(string! value, TheBuilder.AppTranslations.Core.Messages.MessageFormat format, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! arguments) -> string!
 *REMOVED*static TheBuilder.AppTranslations.Core.Messages.TranslationMessageFingerprint.LegacyValueOnly(string! value) -> string!
 *REMOVED*static TheBuilder.AppTranslations.Core.Output.TranslationOutputFormats.CompatibleWith(System.Collections.Generic.IEnumerable<TheBuilder.AppTranslations.Core.Messages.MessageFormat>! messageFormats) -> System.Collections.Generic.IReadOnlyList<TheBuilder.AppTranslations.Core.Output.TranslationOutputFormat>!
@@ -134,6 +150,12 @@
 *REMOVED*static TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff.Between(System.Guid sourceId, System.Collections.Generic.IReadOnlyCollection<TheBuilder.AppTranslations.Core.Messages.TranslationMessage!>! current, System.Collections.Generic.IReadOnlyCollection<TheBuilder.AppTranslations.Core.Sources.TranslationSourceMessage!>! incoming) -> TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff!
 *REMOVED*static TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff.operator !=(TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff? right) -> bool
 *REMOVED*static TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff.operator ==(TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationDiff? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.Default.get -> TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy!
+*REMOVED*static TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.operator !=(TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? right) -> bool
+*REMOVED*static TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy.operator ==(TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? left, TheBuilder.AppTranslations.Core.Synchronization.TranslationSynchronizationLeasePolicy? right) -> bool
 *REMOVED*static TheBuilder.AppTranslations.Core.Validation.MessageOverrideValidation.ArgumentsMatch(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! expected, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! actual) -> bool
 *REMOVED*static TheBuilder.AppTranslations.Core.Validation.MessageOverrideValidation.Describe(string! value, TheBuilder.AppTranslations.Core.Messages.TranslationMessage! message, TheBuilder.AppTranslations.Core.Validation.IMessageFormatValidator! validator) -> string?
 *REMOVED*static readonly TheBuilder.AppTranslations.Core.Persistence.MessageQueryValidation.AllowedPageSizes -> System.Collections.Generic.IReadOnlyList<int>!
+TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine
+TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine.SynchronizeAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult!>!
+TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine.TestAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult!>!

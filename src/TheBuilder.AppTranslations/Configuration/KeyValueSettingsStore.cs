@@ -9,7 +9,7 @@ namespace TheBuilder.AppTranslations.Configuration;
 /// rest of the site uses.
 /// </summary>
 /// <param name="fallback">What an unset or unreadable value means, which each store chooses to be safe.</param>
-public abstract class KeyValueSettingsStore<T>(IKeyValueService keyValues, string key, T fallback)
+internal abstract class KeyValueSettingsStore<T>(IKeyValueService keyValues, string key, T fallback)
     where T : class
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);

@@ -21,6 +21,11 @@ project that has the files.
 - Make new types `internal` unless a site is meant to implement, replace, configure or consume
   them. Core's internals are visible to the main assembly and to both test projects. The main
   assembly's internals are visible to `TheBuilder.AppTranslations.Tests` only.
+- Controllers are public and ASP.NET only calls public constructors, so every type a controller's
+  constructor takes is public. When that type is not meant for sites, put a public interface with
+  only `internal` members in front of an internal class, as `IDeliveryResponseCache` does. Nothing
+  outside the assembly can implement or call it, so its members can change without breaking anyone.
+  The implementing members must be `public` on the internal class.
 - Adding public API: the RS0016 error quotes the exact line to add to `PublicAPI.Unshipped.txt`,
   and IDEs offer it as a code fix.
 - Removing public API: when the line is in `PublicAPI.Unshipped.txt`, delete it. It never shipped,
