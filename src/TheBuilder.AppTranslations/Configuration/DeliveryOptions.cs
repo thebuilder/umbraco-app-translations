@@ -7,7 +7,7 @@ namespace TheBuilder.AppTranslations.Configuration;
 /// </summary>
 public sealed class DeliveryOptions
 {
-    public const string SectionName = "TheBuilder:AppTranslations:Delivery";
+    public const string SectionName = "AppTranslations:Delivery";
     public const string ApiKeyConfigurationName = $"{SectionName}:ApiKey";
     public const string MaxAgeSecondsConfigurationName = $"{SectionName}:MaxAgeSeconds";
 

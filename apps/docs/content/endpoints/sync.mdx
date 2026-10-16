@@ -72,7 +72,7 @@ Syncs one source and waits for it to finish. The endpoint is off until you confi
 | --- | --- |
 | `200` | Synced. |
 | `401` | The key or token is missing or wrong. |
-| `403` | The token is valid, but the policy turns it down. |
+| `403` | The token is valid, but the policy doesn't let it in. |
 | `404` | No source has that identifier. |
 | `409` | The source is turned off, or already syncing. |
 | `502` | Umbraco could not fetch or read the translation files. |

@@ -6,7 +6,7 @@ namespace TheBuilder.AppTranslations.Configuration;
 /// </summary>
 public sealed class DeploymentSyncOptions
 {
-    public const string SectionName = "TheBuilder:AppTranslations:DeploymentSync";
+    public const string SectionName = "AppTranslations:DeploymentSync";
     public const string ApiKeyConfigurationName = $"{SectionName}:ApiKey";
     public const string AuthorizationPolicyConfigurationName = $"{SectionName}:AuthorizationPolicy";
 

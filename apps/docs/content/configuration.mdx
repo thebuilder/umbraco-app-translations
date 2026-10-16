@@ -5,7 +5,7 @@ seo:
   image: /og/configuration.png
 ---
 
-App Translations reads its settings from the `TheBuilder:AppTranslations` section of your site's configuration. Every setting is optional.
+App Translations reads its settings from the `AppTranslations` section of your site's configuration. Every setting is optional.
 
 | Setting | Default | Purpose |
 | --- | --- | --- |
@@ -21,18 +21,16 @@ Set them in `appsettings.json`, or as environment variables, where the separator
 
 ```json appsettings.json
 {
-  "TheBuilder": {
-    "AppTranslations": {
-      "DeploymentSync": { "ApiKey": "replace-with-a-long-random-value" },
-      "Delivery": { "MaxAgeSeconds": 60 }
-    }
+  "AppTranslations": {
+    "DeploymentSync": { "ApiKey": "replace-with-a-long-random-value" },
+    "Delivery": { "MaxAgeSeconds": 60 }
   }
 }
 ```
 
 ```sh Environment variables
-TheBuilder__AppTranslations__DeploymentSync__ApiKey=replace-with-a-long-random-value
-TheBuilder__AppTranslations__Delivery__MaxAgeSeconds=60
+AppTranslations__DeploymentSync__ApiKey=replace-with-a-long-random-value
+AppTranslations__Delivery__MaxAgeSeconds=60
 ```
 
 </CodeGroup>
