@@ -55,7 +55,7 @@ GitHub Actions, GitLab CI and the big cloud platforms can give a job a short-liv
 
 App Translations doesn't check the token itself. Instead, you register an ASP.NET Core authorization policy under the name `TranslationPolicies.DeploymentSync`, and any request that passes the policy can start a sync. [API OIDC](https://api-oidc.thebuilder.dk/), a separate package, checks the tokens. To set it up for GitHub Actions:
 
-1. Install API OIDC and trust your repository's tokens, as its [Issuers](https://api-oidc.thebuilder.dk/issuers) page describes:
+1. Install API OIDC, version 0.2.3 or later, and trust your repository's tokens, as its [Issuers](https://api-oidc.thebuilder.dk/issuers) page describes:
 
    ```json appsettings.json
    {
@@ -67,15 +67,14 @@ App Translations doesn't check the token itself. Instead, you register an ASP.NE
    }
    ```
 
-2. Register the policy in `Program.cs`. This one lets in a token that API OIDC accepted from its `GitHubActions` issuer:
+2. Register the policy in `Program.cs`. API OIDC's `RequireOidcToken` lets in a token it accepted from the issuers you name:
 
    ```csharp Program.cs
    using TheBuilder.ApiOidc.Authentication;
    using TheBuilder.AppTranslations.Authorization;
 
-   builder.Services.AddAuthorization(options => options.AddPolicy(TranslationPolicies.DeploymentSync, policy => policy
-       .AddAuthenticationSchemes(OidcAuthenticationDefaults.AuthenticationScheme)
-       .RequireClaim(OidcAuthenticationDefaults.IssuerNameClaimType, "GitHubActions")));
+   builder.Services.AddAuthorization(options => options.AddPolicy(
+       TranslationPolicies.DeploymentSync, policy => policy.RequireOidcToken("GitHubActions")));
    ```
 
    `GitHubActions` is the issuer's `Name` in API OIDC, which is the preset's name unless you set another. Checking it matters when API OIDC also trusts your frontends: their tokens are valid too, and get a `403` here.
@@ -107,7 +106,7 @@ App Translations doesn't check the token itself. Instead, you register an ASP.NE
 
 #### Writing your own policy
 
-The policy can check anything ASP.NET Core can, as long as it names the authentication scheme that reads the token, the way `AddAuthenticationSchemes` does above. Without one, ASP.NET Core checks the policy against whoever is signed in to the browser, and a web page an editor opens could start a sync. The site won't start with a policy like that.
+The policy can check anything ASP.NET Core can, as long as it names the authentication scheme that reads the token. `RequireOidcToken` does that for you; with `AddAuthenticationSchemes` you name it yourself. Without one, ASP.NET Core checks the policy against whoever is signed in to the browser, and a web page an editor opens could start a sync. The site won't start with a policy like that.
 
 ## Telling your application something changed
 

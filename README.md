@@ -236,16 +236,15 @@ Instead of a secret, a pipeline on GitHub Actions, GitLab CI or a cloud platform
 short-lived OIDC token its platform gives it. App Translations doesn't check the token itself: you
 register an ASP.NET Core authorization policy under the name `TranslationPolicies.DeploymentSync`,
 and any request that passes it can start a sync. [API OIDC](https://api-oidc.thebuilder.dk/), a
-separate package, checks the tokens. Install it, trust your pipeline's issuer, and register the
-policy in `Program.cs`:
+separate package, checks the tokens. Install version 0.2.3 or later, trust your pipeline's issuer,
+and register the policy in `Program.cs`:
 
 ```csharp
 using TheBuilder.ApiOidc.Authentication;
 using TheBuilder.AppTranslations.Authorization;
 
-builder.Services.AddAuthorization(options => options.AddPolicy(TranslationPolicies.DeploymentSync, policy => policy
-    .AddAuthenticationSchemes(OidcAuthenticationDefaults.AuthenticationScheme)
-    .RequireClaim(OidcAuthenticationDefaults.IssuerNameClaimType, "GitHubActions")));
+builder.Services.AddAuthorization(options => options.AddPolicy(
+    TranslationPolicies.DeploymentSync, policy => policy.RequireOidcToken("GitHubActions")));
 ```
 
 The pipeline sends the token in the `X-Oidc-Token` header. See
