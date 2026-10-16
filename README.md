@@ -210,7 +210,10 @@ keeps the history of every sync. To sync as part of a deployment, use the endpoi
 ### Syncing from a deployment
 
 A deployment can sync a source by its identifier, without a backoffice login. The endpoint is off
-until you configure a secret. Use a long random value; anyone who has it can start a sync.
+until you give your pipeline a way in: a secret, or the OIDC token its platform already issues. You
+can set up both and move pipelines over one at a time.
+
+With a secret, use a long random value; anyone who has it can start a sync.
 
 ```sh
 AppTranslations__DeploymentSync__ApiKey=replace-with-a-long-random-value
@@ -229,14 +232,34 @@ curl --fail-with-body \
 Replace `website` with the source identifier from the source's **Advanced** settings. The request
 waits for the sync to finish and returns how many messages it added, changed and removed.
 
-| Response | Meaning                                                  |
-| -------- | -------------------------------------------------------- |
-| `200`    | Synced.                                                  |
-| `401`    | The secret is missing or wrong.                          |
-| `404`    | No source has that identifier.                           |
-| `409`    | The source is turned off, or already syncing.            |
-| `502`    | Umbraco could not fetch or read the translation files.   |
-| `503`    | No secret is configured, so the endpoint is off.         |
+Instead of a secret, a pipeline on GitHub Actions, GitLab CI or a cloud platform can send the
+short-lived OIDC token its platform gives it. App Translations doesn't check the token itself: you
+register an ASP.NET Core authorization policy under the name `TranslationPolicies.DeploymentSync`,
+and any request that passes it can start a sync. [API OIDC](https://api-oidc.thebuilder.dk/), a
+separate package, checks the tokens. Install version 0.2.3 or later, trust your pipeline's issuer,
+and register the policy in `Program.cs`:
+
+```csharp
+using TheBuilder.ApiOidc.Authentication;
+using TheBuilder.AppTranslations.Authorization;
+
+builder.Services.AddAuthorization(options => options.AddPolicy(
+    TranslationPolicies.DeploymentSync, policy => policy.RequireOidcToken("GitHubActions")));
+```
+
+The pipeline sends the token in the `X-Oidc-Token` header. See
+[With an OIDC token](https://app-translations.thebuilder.dk/syncing#with-an-oidc-token) for the
+API OIDC settings and a GitHub Actions workflow.
+
+| Response | Meaning                                                                    |
+| -------- | -------------------------------------------------------------------------- |
+| `200`    | Synced.                                                                    |
+| `401`    | The secret or token is missing or wrong.                                   |
+| `403`    | The token is valid, but the policy doesn't let it in.                      |
+| `404`    | No source has that identifier.                                             |
+| `409`    | The source is turned off, or already syncing.                              |
+| `502`    | Umbraco could not fetch or read the translation files.                     |
+| `503`    | No secret is configured and no deployment sync policy is registered.       |
 
 Use HTTPS, and keep the secret in the secret stores on both sides.
 
@@ -275,12 +298,12 @@ load-balanced setup, Umbraco sends webhooks only from the Single or SchedulingPu
 
 ## Configuration
 
-| Setting                                                       | Default | Purpose                                                                                  |
-| ------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------- |
-| `AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`.                                  |
-| `AppTranslations:DeploymentSync:ApiKey`                       | none    | Turns on deployment-triggered sync. A long random value, without spaces.                 |
-| `AppTranslations:Delivery:ApiKey`                             | none    | Requires a key for the delivery endpoints, which are public without one.                 |
-| `AppTranslations:Delivery:MaxAgeSeconds`                      | `60`    | How long clients and CDNs may keep a delivery response. `0` makes them check every time. |
+| Setting                                                       | Default | Purpose                                                                                              |
+| ------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------- |
+| `AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`.                                              |
+| `AppTranslations:DeploymentSync:ApiKey`                       | none    | Turns on deployment-triggered sync with a secret. A long random value, without spaces.               |
+| `AppTranslations:Delivery:ApiKey`                             | none    | Requires a key for the delivery endpoints, which are public without one.                             |
+| `AppTranslations:Delivery:MaxAgeSeconds`                      | `60`    | How long clients and CDNs may keep a delivery response. `0` makes them check every time.             |
 
 Source headers read their values from the setting names you give them.
 

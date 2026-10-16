@@ -22,13 +22,21 @@ A sync that reads exactly what Umbraco already has changes nothing, and is not a
 
 ## Syncing from a deployment
 
-A deployment can sync a source by its identifier, without a backoffice login. The endpoint is off until you configure a secret. Use a long random value; anyone who has it can start a sync.
+A deployment can sync a source by its identifier, without a backoffice login. The endpoint is off until you give your pipeline a way in: a secret, or the OIDC token its platform already issues. You can set up both and move pipelines over one at a time.
+
+Have the pipeline call the endpoint once the new translation files are live. Replace `website` with the source identifier from the source's **Advanced** settings. The request waits for the sync to finish and returns how many messages it added, changed and removed.
+
+The [API reference](/endpoints/sync) lists what it returns, and every status code.
+
+### With a secret
+
+Configure a long random value. Anyone who has it can start a sync.
 
 ```sh
 AppTranslations__DeploymentSync__ApiKey=replace-with-a-long-random-value
 ```
 
-Give your deployment pipeline the same secret, and have it call the endpoint once the new translation files are live.
+Give your deployment pipeline the same secret, and send it as a bearer token.
 
 ```sh
 curl --fail-with-body \
@@ -37,13 +45,71 @@ curl --fail-with-body \
   "$UMBRACO_URL/umbraco/app-translations/api/v1/sources/website/sync"
 ```
 
-Replace `website` with the source identifier from the source's **Advanced** settings. The request waits for the sync to finish and returns how many messages it added, changed and removed.
-
-The [API reference](/endpoints/sync) lists what it returns, and every status code.
-
 :::caution
 Use HTTPS, and keep the secret in the secret stores on both sides.
 :::
+
+### With an OIDC token
+
+GitHub Actions, GitLab CI and the big cloud platforms can give a job a short-lived token that proves which repository or workload it came from. Send that token instead of a secret, and there is nothing to store or rotate.
+
+App Translations doesn't check the token itself. Instead, you register an ASP.NET Core authorization policy under the name `TranslationPolicies.DeploymentSync`, and any request that passes the policy can start a sync. [API OIDC](https://api-oidc.thebuilder.dk/), a separate package, checks the tokens. To set it up for GitHub Actions:
+
+1. Install API OIDC, version 0.2.3 or later, and trust your repository's tokens, as its [Issuers](https://api-oidc.thebuilder.dk/issuers) page describes:
+
+   ```json appsettings.json
+   {
+     "ApiOidc": {
+       "Issuers": [
+         { "Preset": "GitHubActions", "Owner": "acme", "Repositories": ["acme/site"] }
+       ]
+     }
+   }
+   ```
+
+2. Register the policy in `Program.cs`. API OIDC's `RequireOidcToken` lets in a token it accepted from the issuers you name:
+
+   ```csharp Program.cs
+   using TheBuilder.ApiOidc.Authentication;
+   using TheBuilder.AppTranslations.Authorization;
+
+   builder.Services.AddAuthorization(options => options.AddPolicy(
+       TranslationPolicies.DeploymentSync, policy => policy.RequireOidcToken("GitHubActions")));
+   ```
+
+   `GitHubActions` is the issuer's `Name` in API OIDC, which is the preset's name unless you set another. Checking it matters when API OIDC also trusts your frontends: their tokens are valid too, and get a `403` here.
+
+3. In the workflow, get a token and send it in the `X-Oidc-Token` header:
+
+   ```yaml .github/workflows/deploy.yml
+   jobs:
+     deploy:
+       runs-on: ubuntu-latest
+       permissions:
+         id-token: write
+       env:
+         UMBRACO_URL: ${{ vars.UMBRACO_URL }}
+       steps:
+         # Deploy the new translation files first.
+         - name: Sync translations
+           run: |
+             token=$(curl --silent --fail \
+               --header "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+               "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq --raw-output .value)
+             curl --fail-with-body \
+               --request POST \
+               --header "X-Oidc-Token: $token" \
+               "$UMBRACO_URL/umbraco/app-translations/api/v1/sources/website/sync"
+   ```
+
+   The token is made for GitHub's default audience, which is what the `GitHubActions` preset expects. If you gave the issuer your own `Audience`, add it to the token request: `"$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://cms.example.com"`.
+
+#### Writing your own policy
+
+The policy can check anything ASP.NET Core can. Two rules keep it safe:
+
+- **It must read a token the caller sends.** Name the authentication scheme that reads it: `RequireOidcToken` does that for you, and with `AddAuthenticationSchemes` you name it yourself. A policy with no scheme, or with a cookie scheme, would let in whoever is signed in to the browser, so a web page an editor opens could start a sync. The site won't start with a policy like that.
+- **It alone decides who gets in.** If it lets anonymous requests through, anyone can start a sync. For example, don't build it from API OIDC's `TheBuilder.Oidc.DeliveryApiAccess` policy: while the Delivery API is public, that lets everyone in.
 
 ## Telling your application something changed
 

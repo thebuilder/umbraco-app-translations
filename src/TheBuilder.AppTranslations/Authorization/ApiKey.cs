@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -18,6 +19,13 @@ internal static class ApiKey
         var suppliedHash = SHA256.HashData(Encoding.UTF8.GetBytes(suppliedKey));
         return CryptographicOperations.FixedTimeEquals(configuredHash, suppliedHash);
     }
+
+    /// <summary>The token in an <c>Authorization: Bearer</c> header, or null when there is none.</summary>
+    public static string? FromBearerHeader(string? authorizationHeader) =>
+        AuthenticationHeaderValue.TryParse(authorizationHeader, out var authorization) &&
+        authorization.Scheme.Equals("Bearer", StringComparison.OrdinalIgnoreCase)
+            ? authorization.Parameter
+            : null;
 
     /// <summary>
     /// No minimum length: how strong the secret is, is the site's call. Whitespace is refused because

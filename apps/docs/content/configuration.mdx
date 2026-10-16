@@ -10,7 +10,7 @@ App Translations reads its settings from the `AppTranslations` section of your s
 | Setting | Default | Purpose |
 | --- | --- | --- |
 | `SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`. |
-| `DeploymentSync:ApiKey` | none | Turns on [deployment-triggered sync](/syncing#syncing-from-a-deployment). A long random value, without spaces. |
+| `DeploymentSync:ApiKey` | none | Turns on [deployment-triggered sync](/syncing#with-a-secret) with a secret. A long random value, without spaces. To use an OIDC token instead, [register a policy](/syncing#with-an-oidc-token) in code. |
 | `Delivery:ApiKey` | none | Requires a key for the [delivery endpoints](/delivery-api#access), which are public without one. A long random value, without spaces. |
 | `Delivery:MaxAgeSeconds` | `60` | How long clients and CDNs may keep a [delivery response](/delivery-api#caching). `0` makes them check every time. |
 

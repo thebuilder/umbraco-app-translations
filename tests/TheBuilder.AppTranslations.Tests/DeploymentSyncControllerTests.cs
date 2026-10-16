@@ -1,6 +1,12 @@
+using System.Security.Claims;
 using System.Text;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging.Abstractions;
 using TheBuilder.AppTranslations.Authorization;
@@ -17,6 +23,8 @@ namespace TheBuilder.AppTranslations.Tests;
 public sealed class DeploymentSyncControllerTests
 {
     private const string ApiKey = "test-deployment-sync-key-32-characters";
+    private const string TokenHeader = "X-Test-Token";
+    private const string TokenScheme = "TestToken";
 
     [Fact]
     public async Task Rejects_requests_when_deployment_sync_is_not_configured()
@@ -39,6 +47,77 @@ public sealed class DeploymentSyncControllerTests
 
         Assert.IsType<UnauthorizedResult>(response.Result);
         Assert.Equal("Bearer", controller.Response.Headers.WWWAuthenticate);
+    }
+
+    [Fact]
+    public async Task Accepts_a_request_that_satisfies_the_policy_without_a_key()
+    {
+        var source = Source(enabled: true);
+        var controller = CreateController(apiKey: null, registerPolicy: true, source: source);
+        controller.Request.Headers[TokenHeader] = "GitHubActions";
+
+        var response = await controller.SyncSource(source.Alias, CancellationToken.None);
+
+        Assert.IsType<OkObjectResult>(response.Result);
+    }
+
+    [Fact]
+    public async Task Asks_for_a_token_rather_than_a_key_when_only_the_policy_is_accepted()
+    {
+        var controller = CreateController(apiKey: null, registerPolicy: true);
+
+        var response = await controller.SyncSource("sample", CancellationToken.None);
+
+        // Not 503: the endpoint is on, the request just did not bring a token.
+        Assert.IsType<UnauthorizedResult>(response.Result);
+        Assert.False(controller.Response.Headers.ContainsKey("WWW-Authenticate"));
+    }
+
+    [Fact]
+    public async Task Rejects_a_token_the_scheme_refused()
+    {
+        var controller = CreateController(apiKey: null, registerPolicy: true);
+        controller.Request.Headers[TokenHeader] = FakeTokenHandler.RefusedToken;
+
+        var response = await controller.SyncSource("sample", CancellationToken.None);
+
+        Assert.IsType<UnauthorizedResult>(response.Result);
+    }
+
+    [Fact]
+    public async Task Forbids_a_valid_token_the_policy_does_not_accept()
+    {
+        // Such as a frontend's token, trusted to read the Delivery API but not to start a sync.
+        var controller = CreateController(apiKey: null, registerPolicy: true);
+        controller.Request.Headers[TokenHeader] = "Vercel";
+
+        var response = await controller.SyncSource("sample", CancellationToken.None);
+
+        var problem = Assert.IsType<ObjectResult>(response.Result);
+        Assert.Equal(StatusCodes.Status403Forbidden, problem.StatusCode);
+    }
+
+    [Fact]
+    public async Task Ignores_tokens_unless_the_policy_is_registered()
+    {
+        var controller = CreateController();
+        controller.Request.Headers[TokenHeader] = "GitHubActions";
+
+        var response = await controller.SyncSource("sample", CancellationToken.None);
+
+        Assert.IsType<UnauthorizedResult>(response.Result);
+    }
+
+    [Fact]
+    public async Task Still_accepts_the_key_when_the_policy_is_registered_too()
+    {
+        var source = Source(enabled: true);
+        var controller = CreateController(registerPolicy: true, source: source);
+        controller.Request.Headers.Authorization = $"Bearer {ApiKey}";
+
+        var response = await controller.SyncSource(source.Alias, CancellationToken.None);
+
+        Assert.IsType<OkObjectResult>(response.Result);
     }
 
     [Fact]
@@ -96,8 +175,34 @@ public sealed class DeploymentSyncControllerTests
         Assert.DoesNotContain("PrivateApiKey", details.Detail, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Accepts_a_token_sent_beside_an_outdated_key()
+    {
+        // A pipeline moving to tokens may still send the old Authorization header for a while.
+        var source = Source(enabled: true);
+        var controller = CreateController(registerPolicy: true, source: source);
+        controller.Request.Headers.Authorization = "Bearer an-outdated-key";
+        controller.Request.Headers[TokenHeader] = "GitHubActions";
+
+        var response = await controller.SyncSource(source.Alias, CancellationToken.None);
+
+        Assert.IsType<OkObjectResult>(response.Result);
+    }
+
+    [Fact]
+    public async Task Asks_for_the_key_when_both_the_key_and_the_policy_are_accepted()
+    {
+        var controller = CreateController(registerPolicy: true);
+
+        var response = await controller.SyncSource("sample", CancellationToken.None);
+
+        Assert.IsType<UnauthorizedResult>(response.Result);
+        Assert.Equal("Bearer", controller.Response.Headers.WWWAuthenticate);
+    }
+
     private static DeploymentSyncController CreateController(
         string? apiKey = ApiKey,
+        bool registerPolicy = false,
         TranslationSourceDefinition? source = null,
         FakeStore? store = null)
     {
@@ -107,10 +212,27 @@ public sealed class DeploymentSyncControllerTests
             new NestedJsonParser(new MessageFormatValidator()),
             store,
             TimeProvider.System);
-        var authenticator = new DeploymentSyncApiKeyAuthenticator(Options.Create(new DeploymentSyncOptions { ApiKey = apiKey }));
+        // A token scheme and the policies a site would register, run through ASP.NET's own
+        // authentication and authorization services as on a site.
+        // AddMvcCore for the ProblemDetailsFactory that Problem() reads from the request's services.
+        var services = new ServiceCollection().AddLogging();
+        services.AddMvcCore();
+        services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, FakeTokenHandler>(TokenScheme, null);
+        services.AddAuthorization(authorization =>
+        {
+            // As a site registers it in Program.cs.
+            if (registerPolicy)
+                authorization.AddPolicy(TranslationPolicies.DeploymentSync, rule => rule.AddAuthenticationSchemes(TokenScheme).RequireClaim("issuer", "GitHubActions"));
+        });
+        var requestServices = services.BuildServiceProvider();
+        var httpContext = new DefaultHttpContext { RequestServices = requestServices };
+        var authenticator = new DeploymentSyncAuthenticator(
+            Options.Create(new DeploymentSyncOptions { ApiKey = apiKey }),
+            requestServices.GetRequiredService<IOptions<AuthorizationOptions>>());
+
         return new DeploymentSyncController(store, engine, authenticator, NullLogger<DeploymentSyncController>.Instance)
         {
-            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
+            ControllerContext = new ControllerContext { HttpContext = httpContext },
         };
     }
 
@@ -121,6 +243,30 @@ public sealed class DeploymentSyncControllerTests
         enabled,
         new HttpTranslationTransportOptions("https://translations.example/{locale}.json"),
         new TranslationParserOptions(["en"], "website", NamespaceMode.Fixed));
+
+    /// <summary>
+    /// Stands in for a token scheme such as API OIDC's: the header holds the issuer the token came
+    /// from, and <see cref="RefusedToken"/> is one the scheme refuses.
+    /// </summary>
+    private sealed class FakeTokenHandler(
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory loggerFactory,
+        UrlEncoder encoder) : AuthenticationHandler<AuthenticationSchemeOptions>(options, loggerFactory, encoder)
+    {
+        public const string RefusedToken = "refused";
+
+        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        {
+            string? issuer = Request.Headers[TokenHeader];
+            if (string.IsNullOrEmpty(issuer))
+                return Task.FromResult(AuthenticateResult.NoResult());
+            if (issuer == RefusedToken)
+                return Task.FromResult(AuthenticateResult.Fail("The token is not valid."));
+
+            var identity = new ClaimsIdentity([new Claim("issuer", issuer)], Scheme.Name);
+            return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(identity), Scheme.Name)));
+        }
+    }
 
     private sealed class FakeTransport : ITranslationSourceTransport
     {

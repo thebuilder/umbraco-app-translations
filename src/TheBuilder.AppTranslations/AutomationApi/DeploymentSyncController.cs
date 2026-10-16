@@ -20,29 +20,38 @@ namespace TheBuilder.AppTranslations.AutomationApi;
 public sealed class DeploymentSyncController(
     ITranslationSourceRepository sources,
     ITranslationSyncEngine syncEngine,
-    IDeploymentSyncApiKeyAuthenticator authenticator,
+    IDeploymentSyncAuthenticator authenticator,
     ILogger<DeploymentSyncController> logger) : ControllerBase
 {
     [HttpPost("sources/{alias}/sync")]
     [ProducesResponseType(typeof(TranslationSyncResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status502BadGateway)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     public async Task<ActionResult<TranslationSyncResult>> SyncSource(string alias, CancellationToken cancellationToken)
     {
-        switch (authenticator.Authenticate(Request.Headers.Authorization))
+        switch (await authenticator.AuthenticateAsync(HttpContext))
         {
             case DeploymentSyncAuthenticationResult.Disabled:
                 return Problem(
                     statusCode: StatusCodes.Status503ServiceUnavailable,
                     title: "Deployment synchronization is not configured",
-                    detail: $"Configure {DeploymentSyncOptions.ApiKeyConfigurationName} with a secret.");
-            case DeploymentSyncAuthenticationResult.Unauthorized:
+                    detail: $"Configure {DeploymentSyncOptions.ApiKeyConfigurationName} with a secret, or register the {TranslationPolicies.DeploymentSync} authorization policy.");
+            case DeploymentSyncAuthenticationResult.AskForKey:
                 Response.Headers.WWWAuthenticate = "Bearer";
                 return Unauthorized();
+            case DeploymentSyncAuthenticationResult.Unauthorized:
+                return Unauthorized();
+            case DeploymentSyncAuthenticationResult.Forbidden:
+                // Not Forbid(): that hands the response to the default scheme, which may be a login redirect.
+                return Problem(
+                    statusCode: StatusCodes.Status403Forbidden,
+                    title: "This caller cannot start a sync",
+                    detail: $"The request was authenticated, but does not satisfy the {TranslationPolicies.DeploymentSync} authorization policy.");
             case DeploymentSyncAuthenticationResult.Authorized:
                 break;
             default:

@@ -1,8 +1,11 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using TheBuilder.AppTranslations.Authorization;
 using TheBuilder.AppTranslations.Composition;
 using TheBuilder.AppTranslations.DeliveryApi;
 using Umbraco.Cms.Core.Cache;
@@ -50,6 +53,18 @@ public sealed class TranslationsComposerTests
             provider.GetRequiredService<IDeliveryResponseCache>());
     }
 
+    [Fact]
+    public void Checks_the_deployment_sync_policy_a_site_registers()
+    {
+        // The composer registers the validator and ValidateOnStart, which runs it as the site starts.
+        var services = Compose();
+        services.AddAuthorization(options => options.AddPolicy(TranslationPolicies.DeploymentSync, rule => rule.RequireAuthenticatedUser()));
+        using var provider = services.BuildServiceProvider();
+
+        var exception = Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IOptions<AuthorizationOptions>>().Value);
+        Assert.Contains(TranslationPolicies.DeploymentSync, exception.Message, StringComparison.Ordinal);
+    }
+
     private static ServiceCollection Compose()
     {
         var services = new ServiceCollection();
@@ -62,6 +77,7 @@ public sealed class TranslationsComposerTests
         // need a database. Nothing here is called while a controller is created, so stand-ins that
         // refuse every call are enough.
         services.AddLogging();
+        services.AddAuthentication();
         services.AddSingleton<IConfiguration>(configuration);
         services.AddSingleton(AppCaches.NoCache);
         services.AddSingleton(StandIn.For<IScopeProvider>());

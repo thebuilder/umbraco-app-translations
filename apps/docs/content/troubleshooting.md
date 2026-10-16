@@ -43,10 +43,18 @@ The site has no Umbraco.AI, or one older than 17.5. Install an Umbraco.AI provid
 
 **Test source** reads the files with the current settings without saving anything, so you can try a fix first.
 
-## Deployment sync returns `409` or `503`
+## Deployment sync returns `403`, `409` or `503`
 
+- `403`: the token is valid, but the deployment sync policy doesn't let it in. If the policy checks the issuer's `Name`, it must match exactly, including case.
 - `409`: the source is turned off, or another sync of it is running.
-- `503`: no deployment key is configured, so the endpoint is off. See [Syncing from a deployment](/syncing#syncing-from-a-deployment).
+- `503`: no deployment key is configured and no deployment sync policy is registered, so the endpoint is off. See [Syncing from a deployment](/syncing#syncing-from-a-deployment).
+
+## The site won't start because of the deployment sync policy
+
+The error says which of these it is:
+
+- **The policy names no authentication scheme, or a cookie scheme.** Name the scheme that reads the caller's token. See [Writing your own policy](/syncing#writing-your-own-policy).
+- **Nothing registers the policy's scheme.** Install the package that provides it.
 
 ## Nobody can see the App Translations section
 
