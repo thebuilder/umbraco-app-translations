@@ -24,7 +24,6 @@ public sealed class DeploymentSyncControllerTests
     private const string ApiKey = "test-deployment-sync-key-32-characters";
     private const string TokenHeader = "X-Test-Token";
     private const string TokenScheme = "TestToken";
-    private const string DeployPolicy = "Deploy";
 
     [Fact]
     public async Task Rejects_requests_when_deployment_sync_is_not_configured()
@@ -53,7 +52,7 @@ public sealed class DeploymentSyncControllerTests
     public async Task Accepts_a_request_that_satisfies_the_policy_without_a_key()
     {
         var source = Source(enabled: true);
-        var controller = CreateController(apiKey: null, policy: DeployPolicy, source: source);
+        var controller = CreateController(apiKey: null, registerPolicy: true, source: source);
         controller.Request.Headers[TokenHeader] = "GitHubActions";
 
         var response = await controller.SyncSource(source.Alias, CancellationToken.None);
@@ -64,7 +63,7 @@ public sealed class DeploymentSyncControllerTests
     [Fact]
     public async Task Asks_for_a_token_rather_than_a_key_when_only_the_policy_is_accepted()
     {
-        var controller = CreateController(apiKey: null, policy: DeployPolicy);
+        var controller = CreateController(apiKey: null, registerPolicy: true);
 
         var response = await controller.SyncSource("sample", CancellationToken.None);
 
@@ -76,7 +75,7 @@ public sealed class DeploymentSyncControllerTests
     [Fact]
     public async Task Rejects_a_token_the_scheme_refused()
     {
-        var controller = CreateController(apiKey: null, policy: DeployPolicy);
+        var controller = CreateController(apiKey: null, registerPolicy: true);
         controller.Request.Headers[TokenHeader] = FakeTokenHandler.RefusedToken;
 
         var response = await controller.SyncSource("sample", CancellationToken.None);
@@ -88,7 +87,7 @@ public sealed class DeploymentSyncControllerTests
     public async Task Forbids_a_valid_token_the_policy_does_not_accept()
     {
         // Such as a frontend's token, trusted to read the Delivery API but not to start a sync.
-        var controller = CreateController(apiKey: null, policy: DeployPolicy);
+        var controller = CreateController(apiKey: null, registerPolicy: true);
         controller.Request.Headers[TokenHeader] = "Vercel";
 
         var response = await controller.SyncSource("sample", CancellationToken.None);
@@ -98,7 +97,7 @@ public sealed class DeploymentSyncControllerTests
     }
 
     [Fact]
-    public async Task Ignores_tokens_unless_a_policy_is_configured()
+    public async Task Ignores_tokens_unless_the_policy_is_registered()
     {
         var controller = CreateController();
         controller.Request.Headers[TokenHeader] = "GitHubActions";
@@ -109,10 +108,10 @@ public sealed class DeploymentSyncControllerTests
     }
 
     [Fact]
-    public async Task Still_accepts_the_key_when_a_policy_is_configured_too()
+    public async Task Still_accepts_the_key_when_the_policy_is_registered_too()
     {
         var source = Source(enabled: true);
-        var controller = CreateController(policy: DeployPolicy, source: source);
+        var controller = CreateController(registerPolicy: true, source: source);
         controller.Request.Headers.Authorization = $"Bearer {ApiKey}";
 
         var response = await controller.SyncSource(source.Alias, CancellationToken.None);
@@ -177,7 +176,7 @@ public sealed class DeploymentSyncControllerTests
 
     private static DeploymentSyncController CreateController(
         string? apiKey = ApiKey,
-        string? policy = null,
+        bool registerPolicy = false,
         TranslationSourceDefinition? source = null,
         FakeStore? store = null)
     {
@@ -188,7 +187,7 @@ public sealed class DeploymentSyncControllerTests
             store,
             TimeProvider.System);
         var authenticator = new DeploymentSyncAuthenticator(
-            Options.Create(new DeploymentSyncOptions { ApiKey = apiKey, AuthorizationPolicy = policy }));
+            Options.Create(new DeploymentSyncOptions { ApiKey = apiKey }));
 
         // A token scheme and the policies a site would register, run through ASP.NET's own
         // authentication and authorization services as on a site.
@@ -197,7 +196,11 @@ public sealed class DeploymentSyncControllerTests
         services.AddMvcCore();
         services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, FakeTokenHandler>(TokenScheme, null);
         services.AddAuthorization(authorization =>
-            authorization.AddPolicy(DeployPolicy, rule => rule.AddAuthenticationSchemes(TokenScheme).RequireClaim("issuer", "GitHubActions")));
+        {
+            // As a site registers it in Program.cs.
+            if (registerPolicy)
+                authorization.AddPolicy(TranslationPolicies.DeploymentSync, rule => rule.AddAuthenticationSchemes(TokenScheme).RequireClaim("issuer", "GitHubActions"));
+        });
         var httpContext = new DefaultHttpContext { RequestServices = services.BuildServiceProvider() };
 
         return new DeploymentSyncController(store, engine, authenticator, NullLogger<DeploymentSyncController>.Instance)

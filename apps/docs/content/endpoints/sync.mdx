@@ -8,7 +8,7 @@ seo:
   image: /og/endpoints/sync.png
 ---
 
-Syncs one source and waits for it to finish. The endpoint is off until you configure a [secret](/syncing#with-a-secret) or an [authorization policy](/syncing#with-an-oidc-token). Send the secret below, or what your policy checks, such as an OIDC token.
+Syncs one source and waits for it to finish. The endpoint is off until you configure a [secret](/syncing#with-a-secret) or register the [deployment sync policy](/syncing#with-an-oidc-token). Send the secret below, or what your policy checks, such as an OIDC token.
 
 <ParamField path="alias" type="string" required placeholder="website">
   The source identifier, from the source's **Advanced** settings.
@@ -19,7 +19,7 @@ Syncs one source and waits for it to finish. The endpoint is off until you confi
 </ParamField>
 
 <ParamField header="X-Oidc-Token" type="string" placeholder="eyJhbGciOiJSUzI1NiIs...">
-  An OIDC token, when `DeploymentSync:AuthorizationPolicy` names a policy from [API OIDC](https://api-oidc.thebuilder.dk/). It reads this header unless you configured another.
+  An OIDC token, when the deployment sync policy uses [API OIDC](https://api-oidc.thebuilder.dk/)'s scheme. API OIDC reads this header unless you configured another.
 </ParamField>
 
 ## Response
@@ -76,4 +76,4 @@ Syncs one source and waits for it to finish. The endpoint is off until you confi
 | `404` | No source has that identifier. |
 | `409` | The source is turned off, or already syncing. |
 | `502` | Umbraco could not fetch or read the translation files. |
-| `503` | Neither a key nor a policy is configured, so the endpoint is off. |
+| `503` | No key is configured and no deployment sync policy is registered, so the endpoint is off. |

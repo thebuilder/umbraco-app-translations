@@ -39,7 +39,8 @@ public sealed class TranslationsComposer : IComposer
         builder.Services.AddOptions<TranslationSourceSecurityOptions>()
             .Bind(builder.Config.GetSection(TranslationSourceSecurityOptions.SectionName));
         builder.Services.AddAuthorization(ConfigurePolicies);
-        builder.Services.AddSingleton<IValidateOptions<DeploymentSyncOptions>, DeploymentSyncPolicyValidator>();
+        builder.Services.AddSingleton<IValidateOptions<AuthorizationOptions>, DeploymentSyncPolicyValidator>();
+        builder.Services.AddOptions<AuthorizationOptions>().ValidateOnStart();
         builder.Services.AddSingleton<IDeploymentSyncAuthenticator, DeploymentSyncAuthenticator>();
         builder.Services.AddSingleton<IDeliveryApiKeyAuthenticator, DeliveryApiKeyAuthenticator>();
         // One instance under both names: the controller reads it through the interface, and the cache

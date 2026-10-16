@@ -40,7 +40,7 @@ public sealed class DeploymentSyncController(
                 return Problem(
                     statusCode: StatusCodes.Status503ServiceUnavailable,
                     title: "Deployment synchronization is not configured",
-                    detail: $"Configure {DeploymentSyncOptions.ApiKeyConfigurationName} with a secret, or {DeploymentSyncOptions.AuthorizationPolicyConfigurationName} with an authorization policy.");
+                    detail: $"Configure {DeploymentSyncOptions.ApiKeyConfigurationName} with a secret, or register the {TranslationPolicies.DeploymentSync} authorization policy.");
             case DeploymentSyncAuthenticationResult.Unauthorized:
                 if (authenticator.AcceptsApiKey)
                     Response.Headers.WWWAuthenticate = "Bearer";
@@ -50,7 +50,7 @@ public sealed class DeploymentSyncController(
                 return Problem(
                     statusCode: StatusCodes.Status403Forbidden,
                     title: "This caller cannot start a sync",
-                    detail: $"The request was authenticated, but does not satisfy {DeploymentSyncOptions.AuthorizationPolicyConfigurationName}.");
+                    detail: $"The request was authenticated, but does not satisfy the {TranslationPolicies.DeploymentSync} authorization policy.");
             case DeploymentSyncAuthenticationResult.Authorized:
                 break;
             default:

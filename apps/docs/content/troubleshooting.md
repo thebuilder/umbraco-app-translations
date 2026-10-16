@@ -45,15 +45,14 @@ The site has no Umbraco.AI, or one older than 17.5. Install an Umbraco.AI provid
 
 ## Deployment sync returns `403`, `409` or `503`
 
-- `403`: the token is valid, but `DeploymentSync:AuthorizationPolicy` turns it down. With a policy that requires an issuer's `Name`, the name must match exactly, including case.
+- `403`: the token is valid, but the deployment sync policy doesn't let it in. If the policy checks the issuer's `Name`, it must match exactly, including case.
 - `409`: the source is turned off, or another sync of it is running.
-- `503`: neither a deployment key nor an authorization policy is configured, so the endpoint is off. See [Syncing from a deployment](/syncing#syncing-from-a-deployment).
+- `503`: no deployment key is configured and no deployment sync policy is registered, so the endpoint is off. See [Syncing from a deployment](/syncing#syncing-from-a-deployment).
 
-## The site won't start because of `DeploymentSync:AuthorizationPolicy`
+## The site won't start because of the deployment sync policy
 
 The error says which of these it is:
 
-- **The policy isn't registered.** Check the name. `TheBuilder.Oidc` needs [API OIDC](https://api-oidc.thebuilder.dk/) installed.
 - **The policy names no authentication scheme.** See [Writing your own policy](/syncing#writing-your-own-policy).
 - **Nothing registers the policy's scheme.** Install the package that provides it.
 

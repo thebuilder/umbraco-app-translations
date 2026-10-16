@@ -10,13 +10,13 @@ namespace TheBuilder.AppTranslations.Authorization;
 
 /// <summary>
 /// Checks who may call the deployment sync endpoint: a bearer token matching
-/// <see cref="DeploymentSyncOptions.ApiKey"/>, or a request that satisfies
-/// <see cref="DeploymentSyncOptions.AuthorizationPolicy"/>.
+/// <see cref="DeploymentSyncOptions.ApiKey"/>, or a request that satisfies the
+/// <see cref="TranslationPolicies.DeploymentSync"/> policy when the site registers one.
 /// </summary>
 /// <remarks>
 /// Public only because the public <see cref="AutomationApi.DeploymentSyncController"/> takes it in
 /// its constructor, and ASP.NET only calls public constructors. Its members are internal, so it is
-/// not an extension point: configure <see cref="DeploymentSyncOptions"/> instead.
+/// not an extension point: configure the key, or register the policy, instead.
 /// </remarks>
 public interface IDeploymentSyncAuthenticator
 {
@@ -36,12 +36,9 @@ internal sealed class DeploymentSyncAuthenticator(IOptions<DeploymentSyncOptions
         if (AcceptsApiKey && ApiKey.Matches(settings.ApiKey!, BearerToken(context.Request.Headers.Authorization)))
             return DeploymentSyncAuthenticationResult.Authorized;
 
-        if (string.IsNullOrWhiteSpace(settings.AuthorizationPolicy))
+        var policy = await context.RequestServices.GetRequiredService<IAuthorizationPolicyProvider>().GetPolicyAsync(TranslationPolicies.DeploymentSync);
+        if (policy is null)
             return AcceptsApiKey ? DeploymentSyncAuthenticationResult.Unauthorized : DeploymentSyncAuthenticationResult.Disabled;
-
-        // DeploymentSyncPolicyValidator checked at startup that the policy exists and names its schemes.
-        var policy = await context.RequestServices.GetRequiredService<IAuthorizationPolicyProvider>().GetPolicyAsync(settings.AuthorizationPolicy)
-            ?? throw new InvalidOperationException($"The authorization policy '{settings.AuthorizationPolicy}' is not registered.");
 
         // What the authorization middleware does for [Authorize], which the endpoint cannot carry:
         // it is anonymous so that the key check above can run.

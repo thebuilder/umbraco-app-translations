@@ -22,7 +22,7 @@ A sync that reads exactly what Umbraco already has changes nothing, and is not a
 
 ## Syncing from a deployment
 
-A deployment can sync a source by its identifier, without a backoffice login. The endpoint is off until you give your pipeline a way in: a secret, or an authorization policy, such as one that checks the OIDC token its platform already issues. You can configure both and move pipelines over one at a time.
+A deployment can sync a source by its identifier, without a backoffice login. The endpoint is off until you give your pipeline a way in: a secret, or the OIDC token its platform already issues. You can set up both and move pipelines over one at a time.
 
 Have the pipeline call the endpoint once the new translation files are live. Replace `website` with the source identifier from the source's **Advanced** settings. The request waits for the sync to finish and returns how many messages it added, changed and removed.
 
@@ -53,7 +53,7 @@ Use HTTPS, and keep the secret in the secret stores on both sides.
 
 GitHub Actions, GitLab CI and the big cloud platforms can give a job a short-lived token that proves which repository or workload it came from. Send that token instead of a secret, and there is nothing to store or rotate.
 
-App Translations doesn't check the token itself. You name an ASP.NET Core authorization policy, and any request that passes the policy can start a sync. [API OIDC](https://api-oidc.thebuilder.dk/), a separate package, provides such a policy for OIDC tokens. To set it up for GitHub Actions:
+App Translations doesn't check the token itself. Instead, you register an ASP.NET Core authorization policy under the name `TranslationPolicies.DeploymentSync`, and any request that passes the policy can start a sync. [API OIDC](https://api-oidc.thebuilder.dk/), a separate package, checks the tokens. To set it up for GitHub Actions:
 
 1. Install API OIDC and trust your repository's tokens, as its [Issuers](https://api-oidc.thebuilder.dk/issuers) page describes:
 
@@ -67,15 +67,18 @@ App Translations doesn't check the token itself. You name an ASP.NET Core author
    }
    ```
 
-2. Let a sync through for any token API OIDC accepts, by naming its `TheBuilder.Oidc` policy:
+2. Register the policy in `Program.cs`. This one lets in a token that API OIDC accepted from its `GitHubActions` issuer:
 
-   ```json appsettings.json
-   {
-     "AppTranslations": {
-       "DeploymentSync": { "AuthorizationPolicy": "TheBuilder.Oidc" }
-     }
-   }
+   ```csharp Program.cs
+   using TheBuilder.ApiOidc.Authentication;
+   using TheBuilder.AppTranslations.Authorization;
+
+   builder.Services.AddAuthorization(options => options.AddPolicy(TranslationPolicies.DeploymentSync, policy => policy
+       .AddAuthenticationSchemes(OidcAuthenticationDefaults.AuthenticationScheme)
+       .RequireClaim(OidcAuthenticationDefaults.IssuerNameClaimType, "GitHubActions")));
    ```
+
+   `GitHubActions` is the issuer's `Name` in API OIDC, which is the preset's name unless you set another. Checking it matters when API OIDC also trusts your frontends: their tokens are valid too, and get a `403` here.
 
 3. In the workflow, get a token and send it in the `X-Oidc-Token` header:
 
@@ -102,35 +105,9 @@ App Translations doesn't check the token itself. You name an ASP.NET Core author
 
    The token is made for GitHub's default audience, which is what the `GitHubActions` preset expects. If you gave the issuer your own `Audience`, add it to the token request: `"$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://cms.example.com"`.
 
-#### When API OIDC trusts your frontends too
-
-`TheBuilder.Oidc` accepts a token from every issuer API OIDC trusts. So if API OIDC also lets your frontends read the Delivery API, those frontends can start a sync too. To let only the pipeline in, register a policy that also checks which issuer the token came from:
-
-```csharp Program.cs
-using TheBuilder.ApiOidc.Authentication;
-
-builder.Services.AddAuthorization(options => options.AddPolicy("DeploymentSync", policy => policy
-    .AddAuthenticationSchemes(OidcAuthenticationDefaults.AuthenticationScheme)
-    .RequireClaim(OidcAuthenticationDefaults.IssuerNameClaimType, "GitHubActions")));
-```
-
-Then name it in step 2, in place of `TheBuilder.Oidc`:
-
-```json appsettings.json
-{
-  "AppTranslations": {
-    "DeploymentSync": { "AuthorizationPolicy": "DeploymentSync" }
-  }
-}
-```
-
-A frontend's token now gets a `403`.
-
 #### Writing your own policy
 
-Any policy works, as long as it names the authentication scheme that reads the token, the way `AddAuthenticationSchemes` does above. Without one, ASP.NET Core checks the policy against whoever is signed in to the browser. A web page an editor opens could then start a sync. So the site won't start with a policy like that, or with a policy name that isn't registered.
-
-Don't use API OIDC's `TheBuilder.Oidc.DeliveryApiAccess` policy here. While the Delivery API is public, it lets everyone in.
+The policy can check anything ASP.NET Core can, as long as it names the authentication scheme that reads the token, the way `AddAuthenticationSchemes` does above. Without one, ASP.NET Core checks the policy against whoever is signed in to the browser, and a web page an editor opens could start a sync. The site won't start with a policy like that.
 
 ## Telling your application something changed
 
