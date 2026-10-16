@@ -149,8 +149,10 @@
 *REMOVED*static TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse.operator ==(TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? left, TheBuilder.AppTranslations.ManagementApi.MessageConflictResponse? right) -> bool
 TheBuilder.AppTranslations.Assistant.ITranslationAssistant
 TheBuilder.AppTranslations.Authorization.IDeliveryApiKeyAuthenticator
-TheBuilder.AppTranslations.Authorization.IDeploymentSyncApiKeyAuthenticator
-TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController.DeploymentSyncController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! sources, TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine! syncEngine, TheBuilder.AppTranslations.Authorization.IDeploymentSyncApiKeyAuthenticator! authenticator, Microsoft.Extensions.Logging.ILogger<TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController!>! logger) -> void
+TheBuilder.AppTranslations.Authorization.IDeploymentSyncAuthenticator
+TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController.DeploymentSyncController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! sources, TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine! syncEngine, TheBuilder.AppTranslations.Authorization.IDeploymentSyncAuthenticator! authenticator, Microsoft.Extensions.Logging.ILogger<TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController!>! logger) -> void
+TheBuilder.AppTranslations.Configuration.DeploymentSyncOptions.AuthorizationPolicy.get -> string?
+TheBuilder.AppTranslations.Configuration.DeploymentSyncOptions.AuthorizationPolicy.set -> void
 TheBuilder.AppTranslations.Configuration.IDictionaryPresence
 TheBuilder.AppTranslations.Configuration.ITranslationSectionSettingsStore
 TheBuilder.AppTranslations.DeliveryApi.IDeliveryResponseCache
@@ -159,3 +161,4 @@ TheBuilder.AppTranslations.ManagementApi.AssistantController.AssistantController
 TheBuilder.AppTranslations.ManagementApi.MessagesController.MessagesController(TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository! store, TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository! editor, TheBuilder.AppTranslations.Core.Validation.IMessageFormatValidator! validator, TheBuilder.AppTranslations.Localization.ITranslationLocaleCatalog! locales, TheBuilder.AppTranslations.Authorization.IDeliveryApiKeyAuthenticator! deliveryAccess) -> void
 TheBuilder.AppTranslations.ManagementApi.SourcesController.SourcesController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! store, TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine! syncEngine) -> void
 TheBuilder.AppTranslations.ManagementApi.TranslationSectionController.TranslationSectionController(TheBuilder.AppTranslations.Configuration.ITranslationSectionSettingsStore! settings, TheBuilder.AppTranslations.Configuration.IDictionaryPresence! dictionary) -> void
+const TheBuilder.AppTranslations.Configuration.DeploymentSyncOptions.AuthorizationPolicyConfigurationName = "TheBuilder:AppTranslations:DeploymentSync:AuthorizationPolicy" -> string!

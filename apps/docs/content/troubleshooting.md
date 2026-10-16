@@ -43,10 +43,19 @@ The site has no Umbraco.AI, or one older than 17.5. Install an Umbraco.AI provid
 
 **Test source** reads the files with the current settings without saving anything, so you can try a fix first.
 
-## Deployment sync returns `409` or `503`
+## Deployment sync returns `403`, `409` or `503`
 
+- `403`: the token is valid, but `DeploymentSync:AuthorizationPolicy` turns it down. With a policy that requires an issuer's `Name`, the name must match exactly, including case.
 - `409`: the source is turned off, or another sync of it is running.
-- `503`: no deployment key is configured, so the endpoint is off. See [Syncing from a deployment](/syncing#syncing-from-a-deployment).
+- `503`: neither a deployment key nor an authorization policy is configured, so the endpoint is off. See [Syncing from a deployment](/syncing#syncing-from-a-deployment).
+
+## The site stops at startup over `DeploymentSync:AuthorizationPolicy`
+
+The policy it names cannot work, and the error says why:
+
+- **It is not registered.** Check the spelling. For `TheBuilder.Oidc`, install [API OIDC](https://api-oidc.thebuilder.dk/).
+- **It names no authentication scheme.** Add the scheme that reads the token, as in [With an OIDC token](/syncing#with-an-oidc-token).
+- **Nothing registers its scheme.** The package that provides the scheme is missing.
 
 ## Nobody can see the App Translations section
 

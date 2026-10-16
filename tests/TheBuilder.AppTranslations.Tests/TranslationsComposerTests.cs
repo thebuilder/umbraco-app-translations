@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using TheBuilder.AppTranslations.Composition;
+using TheBuilder.AppTranslations.Configuration;
 using TheBuilder.AppTranslations.DeliveryApi;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Composing;
@@ -50,11 +52,25 @@ public sealed class TranslationsComposerTests
             provider.GetRequiredService<IDeliveryResponseCache>());
     }
 
-    private static ServiceCollection Compose()
+    [Fact]
+    public void Checks_the_deployment_sync_policy_when_the_options_are_built()
+    {
+        // The composer registers the validator; ValidateOnStart then runs it as the site starts.
+        var services = Compose(new Dictionary<string, string?>
+        {
+            [DeploymentSyncOptions.AuthorizationPolicyConfigurationName] = "NotRegistered",
+        });
+        using var provider = services.BuildServiceProvider();
+
+        var exception = Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IOptions<DeploymentSyncOptions>>().Value);
+        Assert.Contains("NotRegistered", exception.Message, StringComparison.Ordinal);
+    }
+
+    private static ServiceCollection Compose(IDictionary<string, string?>? settings = null)
     {
         var services = new ServiceCollection();
         var typeLoader = new TypeLoader(new NoTypes(), NullLogger<TypeLoader>.Instance);
-        var configuration = new ConfigurationBuilder().Build();
+        var configuration = new ConfigurationBuilder().AddInMemoryCollection(settings ?? new Dictionary<string, string?>()).Build();
         var builder = new UmbracoBuilder(services, configuration, typeLoader);
         new TranslationsComposer().Compose(builder);
 
@@ -62,6 +78,7 @@ public sealed class TranslationsComposerTests
         // need a database. Nothing here is called while a controller is created, so stand-ins that
         // refuse every call are enough.
         services.AddLogging();
+        services.AddAuthentication();
         services.AddSingleton<IConfiguration>(configuration);
         services.AddSingleton(AppCaches.NoCache);
         services.AddSingleton(StandIn.For<IScopeProvider>());

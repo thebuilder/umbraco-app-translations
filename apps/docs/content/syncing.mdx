@@ -22,13 +22,21 @@ A sync that reads exactly what Umbraco already has changes nothing, and is not a
 
 ## Syncing from a deployment
 
-A deployment can sync a source by its identifier, without a backoffice login. The endpoint is off until you configure a secret. Use a long random value; anyone who has it can start a sync.
+A deployment can sync a source by its identifier, without a backoffice login. The endpoint is off until you give your pipeline a way in: a secret, or an authorization policy, such as one that checks the OIDC token its platform already issues. You can configure both and move pipelines over one at a time.
+
+Have the pipeline call the endpoint once the new translation files are live. Replace `website` with the source identifier from the source's **Advanced** settings. The request waits for the sync to finish and returns how many messages it added, changed and removed.
+
+The [API reference](/endpoints/sync) lists what it returns, and every status code.
+
+### With a secret
+
+Configure a long random value. Anyone who has it can start a sync.
 
 ```sh
 TheBuilder__AppTranslations__DeploymentSync__ApiKey=replace-with-a-long-random-value
 ```
 
-Give your deployment pipeline the same secret, and have it call the endpoint once the new translation files are live.
+Give your deployment pipeline the same secret, and send it as a bearer token.
 
 ```sh
 curl --fail-with-body \
@@ -37,13 +45,67 @@ curl --fail-with-body \
   "$UMBRACO_URL/umbraco/app-translations/api/v1/sources/website/sync"
 ```
 
-Replace `website` with the source identifier from the source's **Advanced** settings. The request waits for the sync to finish and returns how many messages it added, changed and removed.
-
-The [API reference](/endpoints/sync) lists what it returns, and every status code.
-
 :::caution
 Use HTTPS, and keep the secret in the secret stores on both sides.
 :::
+
+### With an OIDC token
+
+GitHub Actions, GitLab CI and the big cloud platforms give each job a short-lived token, signed by the platform, that says which repository or workload it came from. With one of those there is no secret to store or rotate.
+
+App Translations does not check these tokens itself. Instead, `DeploymentSync:AuthorizationPolicy` names an ASP.NET Core authorization policy, and a request that satisfies it can start a sync. For the tokens, we suggest [API OIDC](https://api-oidc.thebuilder.dk/), a separate package that checks them in Umbraco. Install it and trust your pipeline's issuer, as its [Issuers](https://api-oidc.thebuilder.dk/issuers) page describes. Then name its `TheBuilder.Oidc` policy:
+
+```json appsettings.json
+{
+  "ApiOidc": {
+    "Issuers": [
+      { "Preset": "GitHubActions", "Owner": "acme", "Repositories": ["acme/site"] }
+    ]
+  },
+  "TheBuilder": {
+    "AppTranslations": {
+      "DeploymentSync": { "AuthorizationPolicy": "TheBuilder.Oidc" }
+    }
+  }
+}
+```
+
+That policy accepts a token from any issuer API OIDC trusts. If API OIDC also lets your frontends read the Delivery API, their tokens could start a sync too. To accept only your pipeline, register a policy of your own in `Program.cs` that requires the issuer's `Name`, and name that one instead:
+
+```csharp Program.cs
+using TheBuilder.ApiOidc.Authentication;
+
+builder.Services.AddAuthorization(options => options.AddPolicy("DeploymentSync", policy => policy
+    .AddAuthenticationSchemes(OidcAuthenticationDefaults.AuthenticationScheme)
+    .RequireClaim(OidcAuthenticationDefaults.IssuerNameClaimType, "GitHubActions")));
+```
+
+A valid token that the policy turns down gets a `403`. Don't name `TheBuilder.Oidc.DeliveryApiAccess`: while the Delivery API is public, it lets everyone in. A policy has to name the authentication schemes it reads, as both policies above do. Without them it would be checked against whoever is signed in by a cookie. The site does not start with such a policy, or with a policy name nothing registers, and the error says which.
+
+The job asks its platform for a token and sends it in the `X-Oidc-Token` header, or the header you set as API OIDC's `HeaderName`. On GitHub Actions:
+
+```yaml .github/workflows/deploy.yml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    env:
+      UMBRACO_URL: ${{ vars.UMBRACO_URL }}
+    steps:
+      # Deploy the new translation files first.
+      - name: Sync translations
+        run: |
+          token=$(curl --silent --fail \
+            --header "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq --raw-output .value)
+          curl --fail-with-body \
+            --request POST \
+            --header "X-Oidc-Token: $token" \
+            "$UMBRACO_URL/umbraco/app-translations/api/v1/sources/website/sync"
+```
+
+The token is made for GitHub's default audience, which is also the preset's. If you set your own `Audience` on the issuer, add it to the token request: `"$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://cms.example.com"`.
 
 ## Telling your application something changed
 
