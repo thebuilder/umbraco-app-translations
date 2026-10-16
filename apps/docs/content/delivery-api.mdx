@@ -167,10 +167,10 @@ Umbraco never converts text between ICU and i18next syntax, so keep each namespa
 
 Umbraco keeps each response in memory until the translations change: a sync that changed something, a saved or reverted message, or a deleted source. The change clears it on every server, so the next request reads the new text from the database. A response is also rebuilt after an hour, in case the database changed some other way, such as a restored backup.
 
-Clients and CDNs may keep a response for 60 seconds by default, so an edit can take up to a minute to reach a client that caches. Set the lifetime with `TheBuilder:AppTranslations:Delivery:MaxAgeSeconds`:
+Clients and CDNs may keep a response for 60 seconds by default, so an edit can take up to a minute to reach a client that caches. Set the lifetime with `AppTranslations:Delivery:MaxAgeSeconds`:
 
 ```sh
-TheBuilder__AppTranslations__Delivery__MaxAgeSeconds=0
+AppTranslations__Delivery__MaxAgeSeconds=0
 ```
 
 With `0`, clients keep the response but check it on every request, and see an edit as soon as it is saved. Every response carries an ETag, so a client that sends `If-None-Match` gets `304 Not Modified` until something changes. Once Umbraco has built a response it answers those checks from memory; the first request after a change, and requests for a locale or namespace with no messages, still read the database. Umbraco keeps up to 100 responses for several namespaces at once. Past that, the one it has kept longest makes room, and is read from the database again the next time someone asks for it.
@@ -182,7 +182,7 @@ To drop a cached dictionary in your own application the moment it changes, subsc
 The endpoints are public, which suits most sites: the text ends up in the application's bundle anyway. To keep them to your own applications, set a key:
 
 ```sh
-TheBuilder__AppTranslations__Delivery__ApiKey=replace-with-a-long-random-value
+AppTranslations__Delivery__ApiKey=replace-with-a-long-random-value
 ```
 
 A request then needs the key in an `Api-Key` header, as Umbraco's own Delivery API expects, or as a bearer token, and gets `401` without it. A response to a keyed request is marked private, so a CDN does not hand it to anyone else. Keep the key on the server side of your application, never in code that runs in the browser.

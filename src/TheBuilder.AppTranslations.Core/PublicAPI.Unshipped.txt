@@ -100,6 +100,7 @@
 *REMOVED*const TheBuilder.AppTranslations.Core.Persistence.MessageQueryValidation.MaximumPage = 10000 -> int
 *REMOVED*const TheBuilder.AppTranslations.Core.Sources.LocaleEndpointTemplate.LanguageToken = "{language}" -> string!
 *REMOVED*const TheBuilder.AppTranslations.Core.Sources.LocaleEndpointTemplate.LocaleToken = "{locale}" -> string!
+*REMOVED*const TheBuilder.AppTranslations.Core.Sources.TranslationSourceSecurityOptions.SectionName = "TheBuilder:AppTranslations:SourceSecurity" -> string!
 *REMOVED*const TheBuilder.AppTranslations.Core.Sources.TranslationSourceValidator.MaximumResponseBytes = 50000000 -> int
 *REMOVED*const TheBuilder.AppTranslations.Core.Sources.TranslationSourceValidator.MaximumTimeoutSeconds = 120 -> int
 *REMOVED*const TheBuilder.AppTranslations.Core.Sources.TranslationSourceValidator.MinimumResponseBytes = 1000000 -> int
@@ -159,3 +160,4 @@
 TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine
 TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine.SynchronizeAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult!>!
 TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine.TestAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult!>!
+const TheBuilder.AppTranslations.Core.Sources.TranslationSourceSecurityOptions.SectionName = "AppTranslations:SourceSecurity" -> string!

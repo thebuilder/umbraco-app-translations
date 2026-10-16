@@ -25,7 +25,7 @@ A sync that reads exactly what Umbraco already has changes nothing, and is not a
 A deployment can sync a source by its identifier, without a backoffice login. The endpoint is off until you configure a secret. Use a long random value; anyone who has it can start a sync.
 
 ```sh
-TheBuilder__AppTranslations__DeploymentSync__ApiKey=replace-with-a-long-random-value
+AppTranslations__DeploymentSync__ApiKey=replace-with-a-long-random-value
 ```
 
 Give your deployment pipeline the same secret, and have it call the endpoint once the new translation files are live.
