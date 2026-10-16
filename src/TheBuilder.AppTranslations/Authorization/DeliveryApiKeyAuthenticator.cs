@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
 using TheBuilder.AppTranslations.Configuration;
 
@@ -38,10 +37,7 @@ internal sealed class DeliveryApiKeyAuthenticator(IOptions<DeliveryOptions> opti
 
         var suppliedKey = !string.IsNullOrEmpty(apiKeyHeader)
             ? apiKeyHeader
-            : AuthenticationHeaderValue.TryParse(authorizationHeader, out var authorization) &&
-              authorization.Scheme.Equals("Bearer", StringComparison.OrdinalIgnoreCase)
-                ? authorization.Parameter
-                : null;
+            : ApiKey.FromBearerHeader(authorizationHeader);
         return ApiKey.Matches(configuredKey, suppliedKey)
             ? DeliveryAuthenticationResult.Authorized
             : DeliveryAuthenticationResult.Unauthorized;

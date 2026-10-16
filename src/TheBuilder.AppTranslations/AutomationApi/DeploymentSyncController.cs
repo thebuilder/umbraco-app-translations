@@ -41,9 +41,10 @@ public sealed class DeploymentSyncController(
                     statusCode: StatusCodes.Status503ServiceUnavailable,
                     title: "Deployment synchronization is not configured",
                     detail: $"Configure {DeploymentSyncOptions.ApiKeyConfigurationName} with a secret, or register the {TranslationPolicies.DeploymentSync} authorization policy.");
+            case DeploymentSyncAuthenticationResult.AskForKey:
+                Response.Headers.WWWAuthenticate = "Bearer";
+                return Unauthorized();
             case DeploymentSyncAuthenticationResult.Unauthorized:
-                if (authenticator.AcceptsApiKey)
-                    Response.Headers.WWWAuthenticate = "Bearer";
                 return Unauthorized();
             case DeploymentSyncAuthenticationResult.Forbidden:
                 // Not Forbid(): that hands the response to the default scheme, which may be a login redirect.

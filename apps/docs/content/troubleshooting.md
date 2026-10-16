@@ -53,7 +53,7 @@ The site has no Umbraco.AI, or one older than 17.5. Install an Umbraco.AI provid
 
 The error says which of these it is:
 
-- **The policy names no authentication scheme.** See [Writing your own policy](/syncing#writing-your-own-policy).
+- **The policy names no authentication scheme, or a cookie scheme.** Name the scheme that reads the caller's token. See [Writing your own policy](/syncing#writing-your-own-policy).
 - **Nothing registers the policy's scheme.** Install the package that provides it.
 
 ## Nobody can see the App Translations section

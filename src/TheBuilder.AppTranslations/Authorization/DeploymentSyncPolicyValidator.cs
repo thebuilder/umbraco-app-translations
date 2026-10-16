@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
@@ -6,7 +7,8 @@ namespace TheBuilder.AppTranslations.Authorization;
 
 /// <summary>
 /// Stops the site at startup when the <see cref="TranslationPolicies.DeploymentSync"/> policy it
-/// registered cannot work, rather than letting the first deployment find out.
+/// registered cannot work, or would let a browser start a sync, rather than letting the first
+/// deployment find out.
 /// </summary>
 internal sealed class DeploymentSyncPolicyValidator(IAuthenticationSchemeProvider schemes) : IValidateOptions<AuthorizationOptions>
 {
@@ -23,14 +25,22 @@ internal sealed class DeploymentSyncPolicyValidator(IAuthenticationSchemeProvide
         if (policy.AuthenticationSchemes.Count == 0)
             return ValidateOptionsResult.Fail($"The {Policy} authorization policy must name the authentication schemes it reads.");
 
-        // Options validation is synchronous. The built-in provider answers from what was registered
-        // at startup, so this completes without waiting.
-        var missing = policy.AuthenticationSchemes
-            .Where(scheme => schemes.GetSchemeAsync(scheme).GetAwaiter().GetResult() is null)
-            .ToList();
-        return missing.Count == 0
-            ? ValidateOptionsResult.Success
-            : ValidateOptionsResult.Fail(
-                $"The {Policy} authorization policy reads the authentication scheme '{string.Join("', '", missing)}', and nothing registers it. Is the package that provides it installed?");
+        foreach (var schemeName in policy.AuthenticationSchemes)
+        {
+            // Options validation is synchronous. The built-in provider answers from what was
+            // registered at startup, so this completes without waiting.
+            var scheme = schemes.GetSchemeAsync(schemeName).GetAwaiter().GetResult();
+            if (scheme is null)
+                return ValidateOptionsResult.Fail(
+                    $"The {Policy} authorization policy reads the authentication scheme '{schemeName}', and nothing registers it. Is the package that provides it installed?");
+
+            // A browser sends its cookies with a cross-site form too, so a cookie scheme named
+            // outright is as unsafe as none.
+            if (scheme.HandlerType.IsAssignableTo(typeof(CookieAuthenticationHandler)))
+                return ValidateOptionsResult.Fail(
+                    $"The {Policy} authorization policy reads the cookie scheme '{schemeName}'. A browser sends cookies on its own, so use a scheme that reads a token the caller sends.");
+        }
+
+        return ValidateOptionsResult.Success;
     }
 }

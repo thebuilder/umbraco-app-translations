@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -174,6 +175,31 @@ public sealed class DeploymentSyncControllerTests
         Assert.DoesNotContain("PrivateApiKey", details.Detail, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Accepts_a_token_sent_beside_an_outdated_key()
+    {
+        // A pipeline moving to tokens may still send the old Authorization header for a while.
+        var source = Source(enabled: true);
+        var controller = CreateController(registerPolicy: true, source: source);
+        controller.Request.Headers.Authorization = "Bearer an-outdated-key";
+        controller.Request.Headers[TokenHeader] = "GitHubActions";
+
+        var response = await controller.SyncSource(source.Alias, CancellationToken.None);
+
+        Assert.IsType<OkObjectResult>(response.Result);
+    }
+
+    [Fact]
+    public async Task Asks_for_the_key_when_both_the_key_and_the_policy_are_accepted()
+    {
+        var controller = CreateController(registerPolicy: true);
+
+        var response = await controller.SyncSource("sample", CancellationToken.None);
+
+        Assert.IsType<UnauthorizedResult>(response.Result);
+        Assert.Equal("Bearer", controller.Response.Headers.WWWAuthenticate);
+    }
+
     private static DeploymentSyncController CreateController(
         string? apiKey = ApiKey,
         bool registerPolicy = false,
@@ -186,9 +212,6 @@ public sealed class DeploymentSyncControllerTests
             new NestedJsonParser(new MessageFormatValidator()),
             store,
             TimeProvider.System);
-        var authenticator = new DeploymentSyncAuthenticator(
-            Options.Create(new DeploymentSyncOptions { ApiKey = apiKey }));
-
         // A token scheme and the policies a site would register, run through ASP.NET's own
         // authentication and authorization services as on a site.
         // AddMvcCore for the ProblemDetailsFactory that Problem() reads from the request's services.
@@ -201,7 +224,11 @@ public sealed class DeploymentSyncControllerTests
             if (registerPolicy)
                 authorization.AddPolicy(TranslationPolicies.DeploymentSync, rule => rule.AddAuthenticationSchemes(TokenScheme).RequireClaim("issuer", "GitHubActions"));
         });
-        var httpContext = new DefaultHttpContext { RequestServices = services.BuildServiceProvider() };
+        var requestServices = services.BuildServiceProvider();
+        var httpContext = new DefaultHttpContext { RequestServices = requestServices };
+        var authenticator = new DeploymentSyncAuthenticator(
+            Options.Create(new DeploymentSyncOptions { ApiKey = apiKey }),
+            requestServices.GetRequiredService<IOptions<AuthorizationOptions>>());
 
         return new DeploymentSyncController(store, engine, authenticator, NullLogger<DeploymentSyncController>.Instance)
         {

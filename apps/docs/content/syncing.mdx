@@ -106,7 +106,10 @@ App Translations doesn't check the token itself. Instead, you register an ASP.NE
 
 #### Writing your own policy
 
-The policy can check anything ASP.NET Core can, as long as it names the authentication scheme that reads the token. `RequireOidcToken` does that for you; with `AddAuthenticationSchemes` you name it yourself. Without one, ASP.NET Core checks the policy against whoever is signed in to the browser, and a web page an editor opens could start a sync. The site won't start with a policy like that.
+The policy can check anything ASP.NET Core can. Two rules keep it safe:
+
+- **It must read a token the caller sends.** Name the authentication scheme that reads it: `RequireOidcToken` does that for you, and with `AddAuthenticationSchemes` you name it yourself. A policy with no scheme, or with a cookie scheme, would let in whoever is signed in to the browser, so a web page an editor opens could start a sync. The site won't start with a policy like that.
+- **It alone decides who gets in.** If it lets anonymous requests through, anyone can start a sync. For example, don't build it from API OIDC's `TheBuilder.Oidc.DeliveryApiAccess` policy: while the Delivery API is public, that lets everyone in.
 
 ## Telling your application something changed
 

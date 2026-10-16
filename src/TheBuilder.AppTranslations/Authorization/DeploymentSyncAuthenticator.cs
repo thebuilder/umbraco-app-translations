@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Http;
@@ -20,49 +19,52 @@ namespace TheBuilder.AppTranslations.Authorization;
 /// </remarks>
 public interface IDeploymentSyncAuthenticator
 {
-    /// <summary>Whether a key is configured, so a refused request is told to send one.</summary>
-    internal bool AcceptsApiKey { get; }
-
     internal Task<DeploymentSyncAuthenticationResult> AuthenticateAsync(HttpContext context);
 }
 
-internal sealed class DeploymentSyncAuthenticator(IOptions<DeploymentSyncOptions> options) : IDeploymentSyncAuthenticator
+internal sealed class DeploymentSyncAuthenticator(
+    IOptions<DeploymentSyncOptions> options,
+    IOptions<AuthorizationOptions> authorization) : IDeploymentSyncAuthenticator
 {
-    public bool AcceptsApiKey => !string.IsNullOrWhiteSpace(options.Value.ApiKey);
-
     public async Task<DeploymentSyncAuthenticationResult> AuthenticateAsync(HttpContext context)
     {
-        var settings = options.Value;
-        if (AcceptsApiKey && ApiKey.Matches(settings.ApiKey!, BearerToken(context.Request.Headers.Authorization)))
+        var apiKey = options.Value.ApiKey;
+        var acceptsApiKey = !string.IsNullOrWhiteSpace(apiKey);
+        if (acceptsApiKey && ApiKey.Matches(apiKey!, ApiKey.FromBearerHeader(context.Request.Headers.Authorization)))
             return DeploymentSyncAuthenticationResult.Authorized;
 
-        var policy = await context.RequestServices.GetRequiredService<IAuthorizationPolicyProvider>().GetPolicyAsync(TranslationPolicies.DeploymentSync);
+        // From the options DeploymentSyncPolicyValidator checked at startup, not from
+        // IAuthorizationPolicyProvider, which a site can replace with one that answers differently.
+        var policy = authorization.Value.GetPolicy(TranslationPolicies.DeploymentSync);
         if (policy is null)
-            return AcceptsApiKey ? DeploymentSyncAuthenticationResult.Unauthorized : DeploymentSyncAuthenticationResult.Disabled;
+            return acceptsApiKey ? DeploymentSyncAuthenticationResult.AskForKey : DeploymentSyncAuthenticationResult.Disabled;
 
         // What the authorization middleware does for [Authorize], which the endpoint cannot carry:
         // it is anonymous so that the key check above can run.
         var evaluator = context.RequestServices.GetRequiredService<IPolicyEvaluator>();
         var authentication = await evaluator.AuthenticateAsync(policy, context);
-        var authorization = await evaluator.AuthorizeAsync(policy, authentication, context, resource: null);
-        if (authorization.Succeeded)
+        var result = await evaluator.AuthorizeAsync(policy, authentication, context, resource: null);
+        if (result.Succeeded)
             return DeploymentSyncAuthenticationResult.Authorized;
-        return authorization.Forbidden
-            ? DeploymentSyncAuthenticationResult.Forbidden
-            : DeploymentSyncAuthenticationResult.Unauthorized;
+        if (result.Forbidden)
+            return DeploymentSyncAuthenticationResult.Forbidden;
+        return acceptsApiKey ? DeploymentSyncAuthenticationResult.AskForKey : DeploymentSyncAuthenticationResult.Unauthorized;
     }
-
-    private static string? BearerToken(string? authorizationHeader) =>
-        AuthenticationHeaderValue.TryParse(authorizationHeader, out var authorization) &&
-        authorization.Scheme.Equals("Bearer", StringComparison.OrdinalIgnoreCase)
-            ? authorization.Parameter
-            : null;
 }
 
 internal enum DeploymentSyncAuthenticationResult
 {
+    /// <summary>No key is configured and no policy is registered.</summary>
     Disabled,
+
+    /// <summary>Refused, and only the policy could have let the request in.</summary>
     Unauthorized,
+
+    /// <summary>Refused, and a key would have been accepted, so the response asks for one.</summary>
+    AskForKey,
+
+    /// <summary>Authenticated, but the policy turned the caller down.</summary>
     Forbidden,
+
     Authorized,
 }

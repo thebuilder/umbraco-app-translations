@@ -13,6 +13,7 @@ namespace TheBuilder.AppTranslations.Tests;
 public sealed class DeploymentSyncPolicyValidatorTests
 {
     private const string TokenScheme = "TestToken";
+    private const string CookieScheme = "TestCookie";
 
     [Fact]
     public void Accepts_a_site_that_registers_no_policy()
@@ -46,10 +47,22 @@ public sealed class DeploymentSyncPolicyValidatorTests
         Assert.Contains("'TheBuilder.Oidc'", result.FailureMessage, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Refuses_a_policy_that_reads_a_cookie()
+    {
+        // A browser sends its cookies with a cross-site form, so naming the scheme outright is no safer.
+        var result = Validate(rule => rule.AddAuthenticationSchemes(CookieScheme).RequireAuthenticatedUser());
+
+        Assert.True(result.Failed);
+        Assert.Contains($"cookie scheme '{CookieScheme}'", result.FailureMessage, StringComparison.Ordinal);
+    }
+
     private static ValidateOptionsResult Validate(Action<AuthorizationPolicyBuilder>? policy)
     {
         var services = new ServiceCollection().AddLogging();
-        services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, NoTokenHandler>(TokenScheme, null);
+        services.AddAuthentication()
+            .AddScheme<AuthenticationSchemeOptions, NoTokenHandler>(TokenScheme, null)
+            .AddCookie(CookieScheme);
         using var provider = services.BuildServiceProvider();
 
         var options = new AuthorizationOptions();
