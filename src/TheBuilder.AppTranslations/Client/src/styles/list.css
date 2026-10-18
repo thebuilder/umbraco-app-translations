@@ -153,10 +153,6 @@
   border-radius: 4px;
   background: var(--line);
 }
-.skeleton--meta {
-  block-size: 6px;
-  opacity: 0.6;
-}
 
 /* Whatever the list has instead of rows. Centred in the card, because there is nothing above it
    for the eye to start from. */
@@ -187,12 +183,14 @@
   gap: 0;
   padding: 0;
 }
+/* A row of the grid with nothing in it yet: the same template, gap, height and rule as .grid__row,
+   so each outline row is exactly where the real row lands. */
 .skeleton-row {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  block-size: 41px;
+  display: grid;
+  grid-template-columns: var(--columns);
+  align-items: center;
+  column-gap: 20px;
+  min-block-size: 41px;
   padding: 0 16px;
   border-bottom: 1px solid var(--line);
 }

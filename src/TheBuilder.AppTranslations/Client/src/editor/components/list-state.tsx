@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Button } from "../../bridge/uui/index.js";
 import type { ListState as State } from "../state/list-state.js";
 
@@ -81,21 +82,37 @@ export const ListState = ({
  * Rows in outline, rather than a spinner or the word "Loading".
  *
  * The list arrives in the same shape every time, so drawing that shape while it loads means the
- * content appears in place instead of replacing something of a different size.
+ * content appears in place instead of replacing something of a different size. That holds only if
+ * the outline is the grid's shape to the pixel: the header band the real rows sit under, and one
+ * line a row in the grid's own columns. Without the band, every outline row sat a header's height
+ * above the row that replaced it, and two bars a row drew a second line no row has.
  */
 const SKELETON_ROWS = Array.from({ length: 8 }, (_, row) => ({
   id: `skeleton-${row}`,
   // Uneven widths, so the outline reads as text rather than as a bar chart.
-  value: `${55 + ((row * 13) % 30)}%`,
-  meta: `${30 + ((row * 7) % 20)}%`,
+  key: `${45 + ((row * 7) % 35)}%`,
+  value: `${35 + ((row * 13) % 45)}%`,
 }));
 
+/**
+ * The key, the language being edited and the status, as `keyColumns` sizes them. Written out here
+ * because the columns are built from the language being shown, which is not known until the list
+ * has loaded; the comparison column is left out, since it is there only when one is chosen.
+ */
+const SKELETON_COLUMNS = "minmax(9rem, 0.85fr) minmax(0, 1.3fr) 7.5rem";
+
 const Skeleton = () => (
-  <div aria-label="Loading translations" className="state state--loading" role="status">
+  <div
+    aria-label="Loading translations"
+    className="state state--loading"
+    role="status"
+    style={{ "--columns": SKELETON_COLUMNS } as CSSProperties}
+  >
+    <span className="grid__row grid__row--head" />
     {SKELETON_ROWS.map((row) => (
       <span className="skeleton-row" key={row.id}>
+        <span className="skeleton" style={{ inlineSize: row.key }} />
         <span className="skeleton" style={{ inlineSize: row.value }} />
-        <span className="skeleton skeleton--meta" style={{ inlineSize: row.meta }} />
       </span>
     ))}
   </div>
