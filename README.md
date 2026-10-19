@@ -207,6 +207,17 @@ split it.
 Umbraco reads a source when someone presses **Sync now** in **Settings > App translations**, which also
 keeps the history of every sync. To sync as part of a deployment, use the endpoint below.
 
+### Syncing on a schedule
+
+Set `AppTranslations:ScheduledSync:Interval` and Umbraco syncs each enabled source once its last sync,
+from anywhere, is that old. `1.00:00:00` is once a day, and the interval must be at least five
+minutes. A failed sync counts too, so a source that is down is tried again at the next interval. In a
+load-balanced setup, only the Single or SchedulingPublisher server runs the schedule.
+
+```sh
+AppTranslations__ScheduledSync__Interval=1.00:00:00
+```
+
 ### Syncing from a deployment
 
 A deployment can sync a source by its identifier, without a backoffice login. The endpoint is off
@@ -301,6 +312,7 @@ load-balanced setup, Umbraco sends webhooks only from the Single or SchedulingPu
 | Setting                                                       | Default | Purpose                                                                                              |
 | ------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------- |
 | `AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`.                                              |
+| `AppTranslations:ScheduledSync:Interval`                      | none    | Syncs each enabled source once its last sync is this old, such as `1.00:00:00`. At least 5 minutes.  |
 | `AppTranslations:DeploymentSync:ApiKey`                       | none    | Turns on deployment-triggered sync with a secret. A long random value, without spaces.               |
 | `AppTranslations:Delivery:ApiKey`                             | none    | Requires a key for the delivery endpoints, which are public without one.                             |
 | `AppTranslations:Delivery:MaxAgeSeconds`                      | `60`    | How long clients and CDNs may keep a delivery response. `0` makes them check every time.             |

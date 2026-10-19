@@ -268,6 +268,7 @@ export type SourceResponse = {
     syncInProgress: boolean;
     syncLeaseExpiresAt?: string | null;
     lastSync?: TranslationSyncResult | null;
+    nextScheduledSync?: string | null;
 };
 
 export type TranslationOutputFormat = 'icu' | 'i18next';
@@ -369,6 +370,7 @@ export type SourceResponseWritable = {
     syncInProgress: boolean;
     syncLeaseExpiresAt?: string | null;
     lastSync?: TranslationSyncResult | null;
+    nextScheduledSync?: string | null;
 };
 
 export type AssistantGetStatusData = {

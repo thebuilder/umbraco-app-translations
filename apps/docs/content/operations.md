@@ -21,6 +21,7 @@ The AI assistant settings and the Translation section setting are in Umbraco's k
 ## Several servers
 
 - **Syncing.** A source syncs on one server at a time. Each sync holds a lease on its source, and a second sync that starts meanwhile gets `409`. A lease left by a server that stopped expires on its own.
+- **Scheduled syncs.** Only the Single or SchedulingPublisher server runs the [schedule](/syncing#syncing-on-a-schedule).
 - **Webhooks.** Umbraco sends them only from the Single or SchedulingPublisher server.
 - **Delivery.** Every server keeps its own copy of each response, built from the shared database, with the same ETag for the same text. A change clears the copies on every server, through Umbraco's distributed cache.
 

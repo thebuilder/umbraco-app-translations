@@ -42,6 +42,12 @@ public sealed record SourceResponse(
     string? LastSuccessfulRevision, DateTimeOffset? LastSuccessfulSync,
     bool SyncInProgress, DateTimeOffset? SyncLeaseExpiresAt, TranslationSyncResult? LastSync)
 {
+    /// <summary>
+    /// When the schedule syncs this source next, or null when the site has no schedule or the source is
+    /// turned off. A source that is due has the current time.
+    /// </summary>
+    public DateTimeOffset? NextScheduledSync { get; init; }
+
     public static SourceResponse From(TranslationSourceDefinition source, TranslationSourceStatus? status = null) => new(
         source.Id, source.Alias, source.DisplayName, source.Enabled, source.Transport, source.Parser,
         source.LastSuccessfulRevision, source.LastSuccessfulSync,

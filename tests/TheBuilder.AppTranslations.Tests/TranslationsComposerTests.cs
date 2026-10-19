@@ -7,13 +7,16 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using TheBuilder.AppTranslations.Authorization;
 using TheBuilder.AppTranslations.Composition;
+using TheBuilder.AppTranslations.Configuration;
 using TheBuilder.AppTranslations.DeliveryApi;
+using TheBuilder.AppTranslations.Synchronization;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Infrastructure.BackgroundJobs;
 using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace TheBuilder.AppTranslations.Tests;
@@ -65,11 +68,29 @@ public sealed class TranslationsComposerTests
         Assert.Contains(TranslationPolicies.DeploymentSync, exception.Message, StringComparison.Ordinal);
     }
 
-    private static ServiceCollection Compose()
+    [Fact]
+    public void Schedules_a_sync_at_the_configured_interval()
+    {
+        using var provider = Compose(new() { [ScheduledSyncOptions.IntervalConfigurationName] = "1.00:00:00" }).BuildServiceProvider();
+
+        Assert.Equal(TimeSpan.FromDays(1), provider.GetRequiredService<IOptions<ScheduledSyncOptions>>().Value.Interval);
+        Assert.Contains(provider.GetServices<IRecurringBackgroundJob>(), job => job is ScheduledSyncJob);
+    }
+
+    [Fact]
+    public void Refuses_a_schedule_shorter_than_the_check()
+    {
+        using var provider = Compose(new() { [ScheduledSyncOptions.IntervalConfigurationName] = "00:01:00" }).BuildServiceProvider();
+
+        var exception = Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IOptions<ScheduledSyncOptions>>().Value);
+        Assert.Contains(ScheduledSyncOptions.IntervalConfigurationName, exception.Message, StringComparison.Ordinal);
+    }
+
+    private static ServiceCollection Compose(Dictionary<string, string?>? settings = null)
     {
         var services = new ServiceCollection();
         var typeLoader = new TypeLoader(new NoTypes(), NullLogger<TypeLoader>.Instance);
-        var configuration = new ConfigurationBuilder().Build();
+        var configuration = new ConfigurationBuilder().AddInMemoryCollection(settings ?? []).Build();
         var builder = new UmbracoBuilder(services, configuration, typeLoader);
         new TranslationsComposer().Compose(builder);
 

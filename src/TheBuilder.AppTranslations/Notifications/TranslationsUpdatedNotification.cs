@@ -27,7 +27,7 @@ public sealed record TranslationsUpdatedNotification(
     /// <summary>
     /// What to announce after a synchronization, or null when there is nothing to announce.
     ///
-    /// A source is polled on a schedule and most runs find the application's messages exactly as
+    /// A source can sync on a schedule, and most runs find the application's messages exactly as
     /// they were left. Announcing those would train every subscriber to re-fetch an unchanged
     /// dictionary on a timer, which is the cost of a webhook without any of the value.
     /// </summary>
