@@ -17,7 +17,11 @@ import type {
 import type { UmbLanguageDetailModel } from "@umbraco-cms/backoffice/language";
 import { UmbTextStyles } from "@umbraco-cms/backoffice/style";
 import type { HttpHeaderOptions } from "../api/generated/models.js";
-import { messageFormatOptions } from "./app/format-options.js";
+import {
+  messageFormatOptions,
+  parseSyncInterval,
+  syncIntervalOptions,
+} from "./app/format-options.js";
 import {
   type HeaderValueSource,
   headerValueSource,
@@ -164,6 +168,9 @@ class TranslationsSourceEditorElement extends UmbElementMixin(LitElement) {
               <div class="field-control">
                 <uui-toggle label="Enable this translation source" ?checked=${this.value.enabled} @change=${(event: Event) => this.#patch({ enabled: (event.target as UUIToggleElement).checked })}>Enabled</uui-toggle>
                 <span class="help">You can still edit and test a disabled source. It just will not sync.</span>
+                <uui-label class="schedule-label" for="sync-interval">Sync automatically</uui-label>
+                <uui-select id="sync-interval" label="Sync automatically" .options=${syncIntervalOptions(this.value.syncIntervalMinutes)} @change=${(event: Event) => this.#patch({ syncIntervalMinutes: parseSyncInterval(String((event.target as UUISelectElement).value)) })}></uui-select>
+                <span class="help">Counted from the last sync, whoever started it. A deployment that syncs as it ships is quicker. This catches files that change some other way.</span>
               </div>
             </uui-form-layout-item>
           </div>
@@ -391,6 +398,7 @@ class TranslationsSourceEditorElement extends UmbElementMixin(LitElement) {
     fieldset.form-fields { border: 0; margin: 0; min-inline-size: 0; padding: 0; }
     fieldset.form-fields[disabled] { cursor: wait; }
     .intro { color: var(--uui-color-text-alt); margin: 0 0 var(--uui-size-space-5); }
+    .schedule-label { display: block; margin-block-start: var(--uui-size-space-4); }
     .primary-grid, .two-column, .advanced-grid { display: grid; gap: var(--uui-size-space-5); grid-template-columns: repeat(2, minmax(0, 1fr)); }
     uui-form-layout-item { margin-bottom: var(--uui-size-space-5); }
     uui-input, uui-select { inline-size: 100%; }

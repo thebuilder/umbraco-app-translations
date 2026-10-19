@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using TheBuilder.AppTranslations.Authorization;
 using TheBuilder.AppTranslations.Composition;
-using TheBuilder.AppTranslations.Configuration;
 using TheBuilder.AppTranslations.DeliveryApi;
 using TheBuilder.AppTranslations.Synchronization;
 using Umbraco.Cms.Core.Cache;
@@ -69,28 +68,18 @@ public sealed class TranslationsComposerTests
     }
 
     [Fact]
-    public void Schedules_a_sync_at_the_configured_interval()
+    public void Registers_the_scheduled_sync_job()
     {
-        using var provider = Compose(new() { [ScheduledSyncOptions.IntervalConfigurationName] = "1.00:00:00" }).BuildServiceProvider();
+        using var provider = Compose().BuildServiceProvider();
 
-        Assert.Equal(TimeSpan.FromDays(1), provider.GetRequiredService<IOptions<ScheduledSyncOptions>>().Value.Interval);
         Assert.Contains(provider.GetServices<IRecurringBackgroundJob>(), job => job is ScheduledSyncJob);
     }
 
-    [Fact]
-    public void Refuses_a_schedule_shorter_than_the_check()
-    {
-        using var provider = Compose(new() { [ScheduledSyncOptions.IntervalConfigurationName] = "00:01:00" }).BuildServiceProvider();
-
-        var exception = Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IOptions<ScheduledSyncOptions>>().Value);
-        Assert.Contains(ScheduledSyncOptions.IntervalConfigurationName, exception.Message, StringComparison.Ordinal);
-    }
-
-    private static ServiceCollection Compose(Dictionary<string, string?>? settings = null)
+    private static ServiceCollection Compose()
     {
         var services = new ServiceCollection();
         var typeLoader = new TypeLoader(new NoTypes(), NullLogger<TypeLoader>.Instance);
-        var configuration = new ConfigurationBuilder().AddInMemoryCollection(settings ?? []).Build();
+        var configuration = new ConfigurationBuilder().Build();
         var builder = new UmbracoBuilder(services, configuration, typeLoader);
         new TranslationsComposer().Compose(builder);
 

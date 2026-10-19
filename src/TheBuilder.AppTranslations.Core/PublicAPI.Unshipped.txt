@@ -157,6 +157,8 @@
 *REMOVED*static TheBuilder.AppTranslations.Core.Validation.MessageOverrideValidation.ArgumentsMatch(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! expected, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! actual) -> bool
 *REMOVED*static TheBuilder.AppTranslations.Core.Validation.MessageOverrideValidation.Describe(string! value, TheBuilder.AppTranslations.Core.Messages.TranslationMessage! message, TheBuilder.AppTranslations.Core.Validation.IMessageFormatValidator! validator) -> string?
 *REMOVED*static readonly TheBuilder.AppTranslations.Core.Persistence.MessageQueryValidation.AllowedPageSizes -> System.Collections.Generic.IReadOnlyList<int>!
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.SyncIntervalMinutes.get -> int?
+TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition.SyncIntervalMinutes.init -> void
 TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine
 TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine.SynchronizeAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSyncResult!>!
 TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine.TestAsync(TheBuilder.AppTranslations.Core.Sources.TranslationSourceDefinition! source, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<TheBuilder.AppTranslations.Core.Synchronization.TranslationSourceTestResult!>!

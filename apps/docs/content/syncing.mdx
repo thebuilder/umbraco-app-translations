@@ -11,25 +11,7 @@ Umbraco reads a source when someone presses **Sync now** in **Settings > App tra
 
 ## Syncing on a schedule
 
-To pick up new messages without anyone pressing a button, give Umbraco an interval. It then syncs each enabled source once its last sync is that old, whether that sync was started from the backoffice, a deployment or the schedule.
-
-<CodeGroup>
-
-```json appsettings.json
-{
-  "AppTranslations": {
-    "ScheduledSync": { "Interval": "1.00:00:00" }
-  }
-}
-```
-
-```sh Environment variables
-AppTranslations__ScheduledSync__Interval=1.00:00:00
-```
-
-</CodeGroup>
-
-The interval is written as days.hours:minutes:seconds, so `1.00:00:00` is once a day and `06:00:00` is every six hours. It must be at least five minutes. Each source in **Settings > App translations** then shows when it syncs next.
+To pick up new messages without anyone pressing a button, choose how often under **Sync automatically** in the source's settings: every hour, every 6 or 12 hours, every day or every week. Umbraco then syncs the source once its last sync is that old, whether that sync was started from the backoffice, a deployment or the schedule. The source shows when it syncs next.
 
 - A failed sync counts too, so a source that is down is tried again at the next interval rather than every few minutes. **History** says why it failed.
 - A sync that finds nothing new changes nothing and is not announced, so a short interval costs your application nothing.

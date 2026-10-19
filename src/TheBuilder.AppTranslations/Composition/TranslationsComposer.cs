@@ -37,10 +37,6 @@ public sealed class TranslationsComposer : IComposer
             .Validate(options => ApiKey.IsUsable(options.ApiKey), $"{DeliveryOptions.ApiKeyConfigurationName} must not contain whitespace.")
             .Validate(options => options.MaxAgeSeconds >= 0, $"{DeliveryOptions.MaxAgeSecondsConfigurationName} must be 0 or more.")
             .ValidateOnStart();
-        builder.Services.AddOptions<ScheduledSyncOptions>()
-            .Bind(builder.Config.GetSection(ScheduledSyncOptions.SectionName))
-            .Validate(options => options.Interval is null || options.Interval >= ScheduledSyncOptions.MinimumInterval, $"{ScheduledSyncOptions.IntervalConfigurationName} must be at least 5 minutes.")
-            .ValidateOnStart();
         builder.Services.AddRecurringBackgroundJob<ScheduledSyncJob>();
         builder.Services.AddOptions<TranslationSourceSecurityOptions>()
             .Bind(builder.Config.GetSection(TranslationSourceSecurityOptions.SectionName));

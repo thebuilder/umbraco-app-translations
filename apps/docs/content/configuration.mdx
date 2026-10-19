@@ -10,7 +10,6 @@ App Translations reads its settings from the `AppTranslations` section of your s
 | Setting | Default | Purpose |
 | --- | --- | --- |
 | `SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`. |
-| `ScheduledSync:Interval` | none | Turns on [scheduled sync](/syncing#syncing-on-a-schedule): how long after a source's last sync it syncs again, such as `1.00:00:00` for once a day. At least five minutes. |
 | `DeploymentSync:ApiKey` | none | Turns on [deployment-triggered sync](/syncing#with-a-secret) with a secret. A long random value, without spaces. To use an OIDC token instead, [register a policy](/syncing#with-an-oidc-token) in code. |
 | `Delivery:ApiKey` | none | Requires a key for the [delivery endpoints](/delivery-api#access), which are public without one. A long random value, without spaces. |
 | `Delivery:MaxAgeSeconds` | `60` | How long clients and CDNs may keep a [delivery response](/delivery-api#caching). `0` makes them check every time. |
@@ -41,6 +40,6 @@ A key that contains whitespace stops the site at startup, because it could never
 
 A source header can name a setting to read its value from, which keeps secrets out of the database. See [Sources that need authentication](/sources#sources-that-need-authentication).
 
-Everything else is set in the backoffice, in **Settings > App translations**: sources, the AI assistant, and whether Umbraco's Translation section is hidden while the Dictionary is empty.
+Everything else is set in the backoffice, in **Settings > App translations**: sources and their sync schedules, the AI assistant, and whether Umbraco's Translation section is hidden while the Dictionary is empty.
 
 One Umbraco setting matters too. Umbraco sends the [App translations updated webhook](/syncing#telling-your-application-something-changed) only while `Umbraco:CMS:Webhook:Enabled` is on, which it is by default.

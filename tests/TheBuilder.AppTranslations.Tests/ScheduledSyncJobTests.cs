@@ -1,7 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
-using TheBuilder.AppTranslations.Configuration;
 using TheBuilder.AppTranslations.Core.Messages;
 using TheBuilder.AppTranslations.Core.Persistence;
 using TheBuilder.AppTranslations.Core.Sources;
@@ -16,10 +14,10 @@ public sealed class ScheduledSyncJobTests
     private static readonly TimeSpan Daily = TimeSpan.FromDays(1);
 
     [Fact]
-    public async Task Does_nothing_without_an_interval()
+    public async Task Leaves_sources_without_a_schedule_alone()
     {
-        var source = Source();
-        var (job, engine) = Create(interval: null, [source]);
+        var source = Source() with { SyncIntervalMinutes = null };
+        var (job, engine) = Create([source]);
 
         await job.RunJobAsync();
 
@@ -30,7 +28,7 @@ public sealed class ScheduledSyncJobTests
     public async Task Syncs_a_source_that_has_never_synced()
     {
         var source = Source();
-        var (job, engine) = Create(Daily, [source]);
+        var (job, engine) = Create([source]);
 
         await job.RunJobAsync();
 
@@ -43,7 +41,6 @@ public sealed class ScheduledSyncJobTests
         var due = Source("due");
         var recent = Source("recent");
         var (job, engine) = Create(
-            Daily,
             [due, recent],
             [Status(due, startedAt: Now - Daily), Status(recent, startedAt: Now - TimeSpan.FromHours(23))]);
 
@@ -56,7 +53,7 @@ public sealed class ScheduledSyncJobTests
     public async Task Counts_a_failed_sync_so_a_broken_source_is_not_retried_every_check()
     {
         var source = Source();
-        var (job, engine) = Create(Daily, [source], [Status(source, startedAt: Now - TimeSpan.FromMinutes(10), TranslationSyncStatus.Failed)]);
+        var (job, engine) = Create([source], [Status(source, startedAt: Now - TimeSpan.FromMinutes(10), TranslationSyncStatus.Failed)]);
 
         await job.RunJobAsync();
 
@@ -68,7 +65,7 @@ public sealed class ScheduledSyncJobTests
     {
         var disabled = Source("disabled", enabled: false);
         var busy = Source("busy");
-        var (job, engine) = Create(Daily, [disabled, busy], [Status(busy, startedAt: Now - Daily * 2) with { SyncInProgress = true }]);
+        var (job, engine) = Create([disabled, busy], [Status(busy, startedAt: Now - Daily * 2) with { SyncInProgress = true }]);
 
         await job.RunJobAsync();
 
@@ -80,7 +77,7 @@ public sealed class ScheduledSyncJobTests
     {
         var broken = Source("broken");
         var working = Source("working");
-        var (job, engine) = Create(Daily, [broken, working]);
+        var (job, engine) = Create([broken, working]);
         engine.Failing.Add("broken");
 
         await job.RunJobAsync();
@@ -93,16 +90,15 @@ public sealed class ScheduledSyncJobTests
     {
         var source = Source();
 
-        Assert.Null(ScheduledSyncJob.NextSync(source, null, null, Now));
-        Assert.Null(ScheduledSyncJob.NextSync(source with { Enabled = false }, null, Daily, Now));
-        Assert.Equal(Now, ScheduledSyncJob.NextSync(source, null, Daily, Now));
-        Assert.Equal(Now, ScheduledSyncJob.NextSync(source, Status(source, Now - Daily * 3), Daily, Now));
-        Assert.Equal(Now + TimeSpan.FromHours(1), ScheduledSyncJob.NextSync(source, Status(source, Now - TimeSpan.FromHours(23)), Daily, Now));
-        Assert.Equal(Now + TimeSpan.FromHours(2), ScheduledSyncJob.NextSync(source with { LastSuccessfulSync = Now - TimeSpan.FromHours(22) }, null, Daily, Now));
+        Assert.Null(ScheduledSyncJob.NextSync(source with { SyncIntervalMinutes = null }, null, Now));
+        Assert.Null(ScheduledSyncJob.NextSync(source with { Enabled = false }, null, Now));
+        Assert.Equal(Now, ScheduledSyncJob.NextSync(source, null, Now));
+        Assert.Equal(Now, ScheduledSyncJob.NextSync(source, Status(source, Now - Daily * 3), Now));
+        Assert.Equal(Now + TimeSpan.FromHours(1), ScheduledSyncJob.NextSync(source, Status(source, Now - TimeSpan.FromHours(23)), Now));
+        Assert.Equal(Now + TimeSpan.FromHours(2), ScheduledSyncJob.NextSync(source with { LastSuccessfulSync = Now - TimeSpan.FromHours(22) }, null, Now));
     }
 
     private static (ScheduledSyncJob Job, FakeEngine Engine) Create(
-        TimeSpan? interval,
         IReadOnlyList<TranslationSourceDefinition> sources,
         IReadOnlyList<TranslationSourceStatus>? statuses = null)
     {
@@ -111,15 +107,17 @@ public sealed class ScheduledSyncJobTests
             .AddSingleton<ITranslationSourceRepository>(new FakeSources(sources, statuses ?? []))
             .AddSingleton<ITranslationSyncEngine>(engine)
             .BuildServiceProvider();
-        var options = new FixedOptions(new ScheduledSyncOptions { Interval = interval });
-        var job = new ScheduledSyncJob(options, services.GetRequiredService<IServiceScopeFactory>(), new FixedTime(), NullLogger<ScheduledSyncJob>.Instance);
+        var job = new ScheduledSyncJob(services.GetRequiredService<IServiceScopeFactory>(), new FixedTime(), NullLogger<ScheduledSyncJob>.Instance);
         return (job, engine);
     }
 
     private static TranslationSourceDefinition Source(string alias = "website", bool enabled = true) => new(
         Guid.NewGuid(), alias, alias, enabled,
         new HttpTranslationTransportOptions("https://example.com/{locale}.json"),
-        new TranslationParserOptions(["en"], alias, NamespaceMode.Fixed, MessageFormat.Icu));
+        new TranslationParserOptions(["en"], alias, NamespaceMode.Fixed, MessageFormat.Icu))
+    {
+        SyncIntervalMinutes = (int)Daily.TotalMinutes,
+    };
 
     private static TranslationSourceStatus Status(
         TranslationSourceDefinition source,
@@ -130,13 +128,6 @@ public sealed class ScheduledSyncJobTests
     private sealed class FixedTime : TimeProvider
     {
         public override DateTimeOffset GetUtcNow() => Now;
-    }
-
-    private sealed class FixedOptions(ScheduledSyncOptions value) : IOptionsMonitor<ScheduledSyncOptions>
-    {
-        public ScheduledSyncOptions CurrentValue => value;
-        public ScheduledSyncOptions Get(string? name) => value;
-        public IDisposable? OnChange(Action<ScheduledSyncOptions, string?> listener) => null;
     }
 
     private sealed class FakeEngine : ITranslationSyncEngine

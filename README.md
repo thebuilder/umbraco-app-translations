@@ -64,8 +64,10 @@ Umbraco's language codes carry a region, such as `en-US`, but many applications 
 language alone, such as `en`. Use `{language}` when yours do. Umbraco still stores each message
 under the full code, so `en-US` and `en-GB` stay separate.
 
-A source has three more settings.
+A source has four more settings.
 
+- **Sync automatically.** Sync the source on a schedule, every hour up to every week. Off by
+  default.
 - **Message syntax.** ICU messages, as next-intl and FormatJS use them, i18next JSON v4, or plain
   text. The editor checks every change against the syntax, so an edit cannot break a placeholder or
   a plural.
@@ -209,14 +211,10 @@ keeps the history of every sync. To sync as part of a deployment, use the endpoi
 
 ### Syncing on a schedule
 
-Set `AppTranslations:ScheduledSync:Interval` and Umbraco syncs each enabled source once its last sync,
-from anywhere, is that old. `1.00:00:00` is once a day, and the interval must be at least five
-minutes. A failed sync counts too, so a source that is down is tried again at the next interval. In a
-load-balanced setup, only the Single or SchedulingPublisher server runs the schedule.
-
-```sh
-AppTranslations__ScheduledSync__Interval=1.00:00:00
-```
+Choose **Sync automatically** in a source's settings and Umbraco syncs it every hour, every 6 or 12
+hours, every day or every week, counted from its last sync from anywhere. A failed sync counts too,
+so a source that is down is tried again at the next interval. In a load-balanced setup, only the
+Single or SchedulingPublisher server runs the schedule.
 
 ### Syncing from a deployment
 
@@ -312,7 +310,6 @@ load-balanced setup, Umbraco sends webhooks only from the Single or SchedulingPu
 | Setting                                                       | Default | Purpose                                                                                              |
 | ------------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------- |
 | `AppTranslations:SourceSecurity:AllowPrivateNetworkEndpoints` | `false` | Let sources read from private networks and `localhost`.                                              |
-| `AppTranslations:ScheduledSync:Interval`                      | none    | Syncs each enabled source once its last sync is this old, such as `1.00:00:00`. At least 5 minutes.  |
 | `AppTranslations:DeploymentSync:ApiKey`                       | none    | Turns on deployment-triggered sync with a secret. A long random value, without spaces.               |
 | `AppTranslations:Delivery:ApiKey`                             | none    | Requires a key for the delivery endpoints, which are public without one.                             |
 | `AppTranslations:Delivery:MaxAgeSeconds`                      | `60`    | How long clients and CDNs may keep a delivery response. `0` makes them check every time.             |

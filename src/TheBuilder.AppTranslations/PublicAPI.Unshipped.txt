@@ -158,17 +158,17 @@ TheBuilder.AppTranslations.Authorization.IDeploymentSyncAuthenticator
 TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController.DeploymentSyncController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! sources, TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine! syncEngine, TheBuilder.AppTranslations.Authorization.IDeploymentSyncAuthenticator! authenticator, Microsoft.Extensions.Logging.ILogger<TheBuilder.AppTranslations.AutomationApi.DeploymentSyncController!>! logger) -> void
 TheBuilder.AppTranslations.Configuration.IDictionaryPresence
 TheBuilder.AppTranslations.Configuration.ITranslationSectionSettingsStore
-TheBuilder.AppTranslations.Configuration.ScheduledSyncOptions
-TheBuilder.AppTranslations.Configuration.ScheduledSyncOptions.Interval.get -> System.TimeSpan?
-TheBuilder.AppTranslations.Configuration.ScheduledSyncOptions.Interval.set -> void
-TheBuilder.AppTranslations.Configuration.ScheduledSyncOptions.ScheduledSyncOptions() -> void
 TheBuilder.AppTranslations.DeliveryApi.IDeliveryResponseCache
 TheBuilder.AppTranslations.DeliveryApi.TranslationOutputController.TranslationOutputController(TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository! store, TheBuilder.AppTranslations.Core.Output.ITranslationOutputSerializer! serializer, TheBuilder.AppTranslations.Authorization.IDeliveryApiKeyAuthenticator! authenticator, TheBuilder.AppTranslations.DeliveryApi.IDeliveryResponseCache! cache, Microsoft.Extensions.Options.IOptions<TheBuilder.AppTranslations.Configuration.DeliveryOptions!>! options) -> void
 TheBuilder.AppTranslations.ManagementApi.AssistantController.AssistantController(TheBuilder.AppTranslations.Assistant.ITranslationAssistant! assistant, TheBuilder.AppTranslations.Core.Assistant.IAssistantChat! chat) -> void
 TheBuilder.AppTranslations.ManagementApi.MessagesController.MessagesController(TheBuilder.AppTranslations.Core.Persistence.ITranslationMessageRepository! store, TheBuilder.AppTranslations.Core.Persistence.ITranslationEditorRepository! editor, TheBuilder.AppTranslations.Core.Validation.IMessageFormatValidator! validator, TheBuilder.AppTranslations.Localization.ITranslationLocaleCatalog! locales, TheBuilder.AppTranslations.Authorization.IDeliveryApiKeyAuthenticator! deliveryAccess) -> void
+TheBuilder.AppTranslations.ManagementApi.SourceRequest.SyncIntervalMinutes.get -> int?
+TheBuilder.AppTranslations.ManagementApi.SourceRequest.SyncIntervalMinutes.init -> void
 TheBuilder.AppTranslations.ManagementApi.SourceResponse.NextScheduledSync.get -> System.DateTimeOffset?
 TheBuilder.AppTranslations.ManagementApi.SourceResponse.NextScheduledSync.init -> void
-TheBuilder.AppTranslations.ManagementApi.SourcesController.SourcesController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! store, TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine! syncEngine, Microsoft.Extensions.Options.IOptionsMonitor<TheBuilder.AppTranslations.Configuration.ScheduledSyncOptions!>! scheduledSync, System.TimeProvider! timeProvider) -> void
+TheBuilder.AppTranslations.ManagementApi.SourceResponse.SyncIntervalMinutes.get -> int?
+TheBuilder.AppTranslations.ManagementApi.SourceResponse.SyncIntervalMinutes.init -> void
+TheBuilder.AppTranslations.ManagementApi.SourcesController.SourcesController(TheBuilder.AppTranslations.Core.Persistence.ITranslationSourceRepository! store, TheBuilder.AppTranslations.Core.Synchronization.ITranslationSyncEngine! syncEngine, System.TimeProvider! timeProvider) -> void
 TheBuilder.AppTranslations.ManagementApi.TranslationSectionController.TranslationSectionController(TheBuilder.AppTranslations.Configuration.ITranslationSectionSettingsStore! settings, TheBuilder.AppTranslations.Configuration.IDictionaryPresence! dictionary) -> void
 const TheBuilder.AppTranslations.Authorization.TranslationPolicies.DeploymentSync = "TheBuilder.AppTranslations.DeploymentSync" -> string!
 const TheBuilder.AppTranslations.Configuration.DeliveryOptions.ApiKeyConfigurationName = "AppTranslations:Delivery:ApiKey" -> string!
@@ -176,5 +176,3 @@ const TheBuilder.AppTranslations.Configuration.DeliveryOptions.MaxAgeSecondsConf
 const TheBuilder.AppTranslations.Configuration.DeliveryOptions.SectionName = "AppTranslations:Delivery" -> string!
 const TheBuilder.AppTranslations.Configuration.DeploymentSyncOptions.ApiKeyConfigurationName = "AppTranslations:DeploymentSync:ApiKey" -> string!
 const TheBuilder.AppTranslations.Configuration.DeploymentSyncOptions.SectionName = "AppTranslations:DeploymentSync" -> string!
-const TheBuilder.AppTranslations.Configuration.ScheduledSyncOptions.IntervalConfigurationName = "AppTranslations:ScheduledSync:Interval" -> string!
-const TheBuilder.AppTranslations.Configuration.ScheduledSyncOptions.SectionName = "AppTranslations:ScheduledSync" -> string!

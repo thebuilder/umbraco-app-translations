@@ -2,9 +2,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using TheBuilder.AppTranslations.Authorization;
-using TheBuilder.AppTranslations.Configuration;
 using TheBuilder.AppTranslations.Core.Persistence;
 using TheBuilder.AppTranslations.Core.Sources;
 using TheBuilder.AppTranslations.Core.Synchronization;
@@ -17,7 +15,6 @@ namespace TheBuilder.AppTranslations.ManagementApi;
 public sealed class SourcesController(
     ITranslationSourceRepository store,
     ITranslationSyncEngine syncEngine,
-    IOptionsMonitor<ScheduledSyncOptions> scheduledSync,
     TimeProvider timeProvider) : TranslationsApiControllerBase
 {
     [HttpGet("sources")]
@@ -163,6 +160,6 @@ public sealed class SourcesController(
     private SourceResponse Respond(TranslationSourceDefinition source, TranslationSourceStatus? status = null) =>
         SourceResponse.From(source, status) with
         {
-            NextScheduledSync = ScheduledSyncJob.NextSync(source, status, scheduledSync.CurrentValue.Interval, timeProvider.GetUtcNow()),
+            NextScheduledSync = ScheduledSyncJob.NextSync(source, status, timeProvider.GetUtcNow()),
         };
 }

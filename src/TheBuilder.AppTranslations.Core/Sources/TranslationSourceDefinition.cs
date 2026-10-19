@@ -11,7 +11,14 @@ public sealed record TranslationSourceDefinition(
     HttpTranslationTransportOptions Transport,
     TranslationParserOptions Parser,
     string? LastSuccessfulRevision = null,
-    DateTimeOffset? LastSuccessfulSync = null);
+    DateTimeOffset? LastSuccessfulSync = null)
+{
+    /// <summary>
+    /// How many minutes after its last sync the source syncs again on its own, or null when it syncs
+    /// only when someone or something asks it to.
+    /// </summary>
+    public int? SyncIntervalMinutes { get; init; }
+}
 
 public sealed record HttpTranslationTransportOptions(
     string EndpointTemplate,

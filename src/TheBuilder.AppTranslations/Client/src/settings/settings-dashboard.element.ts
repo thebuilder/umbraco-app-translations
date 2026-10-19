@@ -20,7 +20,7 @@ import type {
   SourceTestResult,
   SyncResult,
 } from "../api/generated/models.js";
-import { messageFormatLabel } from "./app/format-options.js";
+import { messageFormatLabel, syncIntervalLabel } from "./app/format-options.js";
 import {
   createEmptySource,
   hasLocaleToken,
@@ -516,10 +516,11 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
     }
     if (source.nextScheduledSync) {
       const next = new Date(source.nextScheduledSync);
+      const schedule = `Syncs ${syncIntervalLabel(source.syncIntervalMinutes).toLowerCase()}`;
       parts.push(
         next.getTime() <= Date.now()
-          ? "Scheduled sync due now"
-          : `Next scheduled sync ${next.toLocaleString()}`
+          ? `${schedule}, due now`
+          : `${schedule}, next ${next.toLocaleString()}`
       );
     }
     return parts.length > 0 ? html`<p class="last-sync">${parts.join(" · ")}</p>` : "";
