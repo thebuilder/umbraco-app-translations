@@ -38,6 +38,27 @@ Have the pipeline call the endpoint once the new translation files are live. Rep
 
 The [API reference](/endpoints/sync) lists what it returns, and every status code.
 
+```mermaid
+---
+config:
+  sequence:
+    mirrorActors: false
+---
+sequenceDiagram
+    participant P as Pipeline
+    participant F as Translation files
+    participant U as Umbraco
+    participant A as Your application
+    P->>F: Deploy the new files
+    P->>U: POST .../sources/website/sync<br/>with a secret or an OIDC token
+    U->>F: Read every language
+    Note over U: Apply the difference,<br/>keeping custom text
+    U-->>P: Added, changed and removed counts
+    opt Something changed
+        U->>A: App translations updated webhook
+    end
+```
+
 ### With a secret
 
 Configure a long random value. Anyone who has it can start a sync.
