@@ -33,12 +33,18 @@ export const deliveryFormatLabel = (format: TranslationOutputFormat): string => 
   }
 };
 
-/** The schedules the source editor offers, in minutes. */
-const SYNC_INTERVALS = [60, 360, 720, 1440, 10_080] as const;
-
 const MINUTES_PER_HOUR = 60;
-const MINUTES_PER_DAY = 1440;
-const MINUTES_PER_WEEK = 10_080;
+const MINUTES_PER_DAY = 24 * MINUTES_PER_HOUR;
+const MINUTES_PER_WEEK = 7 * MINUTES_PER_DAY;
+
+/** The schedules the source editor offers, in minutes. */
+const SYNC_INTERVALS = [
+  MINUTES_PER_HOUR,
+  6 * MINUTES_PER_HOUR,
+  12 * MINUTES_PER_HOUR,
+  MINUTES_PER_DAY,
+  MINUTES_PER_WEEK,
+] as const;
 
 export const syncIntervalLabel = (minutes: number | null | undefined): string => {
   if (!minutes) {

@@ -86,6 +86,21 @@ public sealed class ScheduledSyncJobTests
     }
 
     [Fact]
+    public async Task Does_not_retry_a_sync_that_timed_out_before_it_was_recorded()
+    {
+        // A timeout cancels the sync before the engine writes it to the history, so the history
+        // still says the source is due.
+        var source = Source();
+        var (job, engine) = Create([source]);
+        engine.TimingOut.Add(source.Alias);
+
+        await job.RunJobAsync();
+        await job.RunJobAsync();
+
+        Assert.Equal([source.Alias], engine.Synced);
+    }
+
+    [Fact]
     public void The_next_sync_is_the_interval_after_the_last_one_or_now_when_due()
     {
         var source = Source();
@@ -134,12 +149,15 @@ public sealed class ScheduledSyncJobTests
     {
         public List<string> Synced { get; } = [];
         public HashSet<string> Failing { get; } = [];
+        public HashSet<string> TimingOut { get; } = [];
 
         public Task<TranslationSyncResult> SynchronizeAsync(TranslationSourceDefinition source, CancellationToken cancellationToken)
         {
             Synced.Add(source.Alias);
             if (Failing.Contains(source.Alias))
                 throw new TranslationSourceFormatException("No messages.");
+            if (TimingOut.Contains(source.Alias))
+                throw new TaskCanceledException("The request timed out.");
             return Task.FromResult(new TranslationSyncResult(Guid.NewGuid(), source.Id, "r", Now, Now, TranslationSyncStatus.Succeeded, 0, 0, 0, 0));
         }
 

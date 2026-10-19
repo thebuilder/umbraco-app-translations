@@ -512,7 +512,12 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
         `Last synced ${new Date(source.lastSuccessfulSync).toLocaleString()} · revision ${source.lastSuccessfulRevision?.slice(0, 10)}`
       );
     } else if (source.enabled) {
-      parts.push("Not synced yet. Press Sync now to read its messages.");
+      // A schedule will get to it within minutes, and a press meanwhile only races it.
+      parts.push(
+        source.nextScheduledSync
+          ? "Not synced yet"
+          : "Not synced yet. Press Sync now to read its messages."
+      );
     }
     if (source.nextScheduledSync) {
       const next = new Date(source.nextScheduledSync);

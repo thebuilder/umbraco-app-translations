@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TheBuilder.AppTranslations.Core.Persistence;
@@ -23,6 +24,12 @@ internal sealed class ScheduledSyncJob(
     TimeProvider timeProvider,
     ILogger<ScheduledSyncJob> logger) : IRecurringBackgroundJob
 {
+    /// <summary>
+    /// When this job last started each source. A sync that times out is cancelled before the engine
+    /// records it, so without this a source that hangs would be tried again at every check.
+    /// </summary>
+    private readonly ConcurrentDictionary<Guid, DateTimeOffset> _attempts = new();
+
     public TimeSpan Period => TimeSpan.FromMinutes(TranslationSourceValidator.MinimumSyncIntervalMinutes);
 
     // The period never changes. A changed schedule is read on the next check instead.
@@ -33,14 +40,24 @@ internal sealed class ScheduledSyncJob(
         using var scope = scopeFactory.CreateScope();
         var sources = scope.ServiceProvider.GetRequiredService<ITranslationSourceRepository>();
         var syncEngine = scope.ServiceProvider.GetRequiredService<ITranslationSyncEngine>();
+        // Most sites schedule nothing, and the statuses read the sync history, so look at that only
+        // when some source has a schedule.
+        var scheduled = (await sources.GetSourcesAsync(CancellationToken.None))
+            .Where(source => source is { Enabled: true, SyncIntervalMinutes: not null })
+            .ToArray();
+        if (scheduled.Length == 0)
+            return;
         var statuses = (await sources.GetSourceStatusesAsync(CancellationToken.None)).ToDictionary(status => status.SourceId);
         var now = timeProvider.GetUtcNow();
 
-        foreach (var source in await sources.GetSourcesAsync(CancellationToken.None))
+        foreach (var source in scheduled)
         {
             var status = statuses.GetValueOrDefault(source.Id);
             if (status?.SyncInProgress == true || NextSync(source, status, now) is not { } next || next > now)
                 continue;
+            if (_attempts.TryGetValue(source.Id, out var attempted) && attempted.AddMinutes(source.SyncIntervalMinutes!.Value) > now)
+                continue;
+            _attempts[source.Id] = now;
 
             try
             {
