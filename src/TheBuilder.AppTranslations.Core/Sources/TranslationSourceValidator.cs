@@ -8,6 +8,8 @@ internal static class TranslationSourceValidator
     public const int MaximumTimeoutSeconds = 120;
     public const int MinimumResponseBytes = 1_000_000;
     public const int MaximumResponseBytes = 50_000_000;
+    /// <summary>The scheduled sync job checks this often, so a shorter interval could not be kept.</summary>
+    public const int MinimumSyncIntervalMinutes = 5;
 
     public static string? Validate(TranslationSourceDefinition source)
     {
@@ -22,6 +24,7 @@ internal static class TranslationSourceValidator
             return "Endpoint must be an absolute HTTP or HTTPS URL.";
         if (source.Transport.TimeoutSeconds is < MinimumTimeoutSeconds or > MaximumTimeoutSeconds) return $"Request timeout must be between {MinimumTimeoutSeconds} and {MaximumTimeoutSeconds} seconds.";
         if (source.Transport.MaximumResponseBytes is < MinimumResponseBytes or > MaximumResponseBytes) return "Largest accepted response must be between 1 and 50 MB.";
+        if (source.SyncIntervalMinutes < MinimumSyncIntervalMinutes) return $"Scheduled sync must be at least {MinimumSyncIntervalMinutes} minutes apart.";
         var headers = source.Transport.Headers;
         if (headers.Count > MaximumHeaderCount) return $"No more than {MaximumHeaderCount} request headers are allowed.";
         var headerNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

@@ -156,4 +156,5 @@ export const sourceRequest = (source: Source): SourceDraft => ({
   namespaceMode: source.parser.namespaceMode,
   messageFormat: source.parser.messageFormat,
   sourceFormat: source.parser.sourceFormat,
+  syncIntervalMinutes: source.syncIntervalMinutes ?? null,
 });

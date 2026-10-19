@@ -40,6 +40,6 @@ A key that contains whitespace stops the site at startup, because it could never
 
 A source header can name a setting to read its value from, which keeps secrets out of the database. See [Sources that need authentication](/sources#sources-that-need-authentication).
 
-Everything else is set in the backoffice, in **Settings > App translations**: sources, the AI assistant, and whether Umbraco's Translation section is hidden while the Dictionary is empty.
+Everything else is set in the backoffice, in **Settings > App translations**: sources and their sync schedules, the AI assistant, and whether Umbraco's Translation section is hidden while the Dictionary is empty.
 
 One Umbraco setting matters too. Umbraco sends the [App translations updated webhook](/syncing#telling-your-application-something-changed) only while `Umbraco:CMS:Webhook:Enabled` is on, which it is by default.

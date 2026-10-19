@@ -8,12 +8,14 @@ using Microsoft.Extensions.Options;
 using TheBuilder.AppTranslations.Authorization;
 using TheBuilder.AppTranslations.Composition;
 using TheBuilder.AppTranslations.DeliveryApi;
+using TheBuilder.AppTranslations.Synchronization;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Infrastructure.BackgroundJobs;
 using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace TheBuilder.AppTranslations.Tests;
@@ -63,6 +65,14 @@ public sealed class TranslationsComposerTests
 
         var exception = Assert.Throws<OptionsValidationException>(() => provider.GetRequiredService<IOptions<AuthorizationOptions>>().Value);
         Assert.Contains(TranslationPolicies.DeploymentSync, exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Registers_the_scheduled_sync_job()
+    {
+        using var provider = Compose().BuildServiceProvider();
+
+        Assert.Contains(provider.GetServices<IRecurringBackgroundJob>(), job => job is ScheduledSyncJob);
     }
 
     private static ServiceCollection Compose()

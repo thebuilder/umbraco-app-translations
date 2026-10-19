@@ -20,6 +20,7 @@ internal sealed class SourceRow
     [Column(nameof(UpdatedAt))] public DateTime UpdatedAt { get; set; }
     [Column(nameof(SyncLeaseId)), NullSetting(NullSetting = NullSettings.Null)] public Guid? SyncLeaseId { get; set; }
     [Column(nameof(SyncLeaseExpiresAt)), NullSetting(NullSetting = NullSettings.Null)] public DateTime? SyncLeaseExpiresAt { get; set; }
+    [Column(nameof(SyncIntervalMinutes)), NullSetting(NullSetting = NullSettings.Null)] public int? SyncIntervalMinutes { get; set; }
 }
 
 [TableName(Constants.Tables.Messages), PrimaryKey(nameof(Id), AutoIncrement = false), ExplicitColumns]

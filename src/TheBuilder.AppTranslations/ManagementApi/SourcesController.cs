@@ -6,19 +6,23 @@ using TheBuilder.AppTranslations.Authorization;
 using TheBuilder.AppTranslations.Core.Persistence;
 using TheBuilder.AppTranslations.Core.Sources;
 using TheBuilder.AppTranslations.Core.Synchronization;
+using TheBuilder.AppTranslations.Synchronization;
 
 namespace TheBuilder.AppTranslations.ManagementApi;
 
 [ApiVersion("1.0")]
 [ApiExplorerSettings(GroupName = Constants.PackageName)]
-public sealed class SourcesController(ITranslationSourceRepository store, ITranslationSyncEngine syncEngine) : TranslationsApiControllerBase
+public sealed class SourcesController(
+    ITranslationSourceRepository store,
+    ITranslationSyncEngine syncEngine,
+    TimeProvider timeProvider) : TranslationsApiControllerBase
 {
     [HttpGet("sources")]
     public async Task<IReadOnlyList<SourceResponse>> ListSources(CancellationToken cancellationToken)
     {
         var sources = await store.GetSourcesAsync(cancellationToken);
         var statuses = (await store.GetSourceStatusesAsync(cancellationToken)).ToDictionary(status => status.SourceId);
-        return sources.Select(source => SourceResponse.From(source, statuses.GetValueOrDefault(source.Id))).ToArray();
+        return sources.Select(source => Respond(source, statuses.GetValueOrDefault(source.Id))).ToArray();
     }
 
     [HttpGet("sources/{id:guid}")]
@@ -29,7 +33,7 @@ public sealed class SourcesController(ITranslationSourceRepository store, ITrans
         var source = await store.GetSourceAsync(id, cancellationToken);
         if (source is null) return NotFound();
         var status = (await store.GetSourceStatusesAsync(cancellationToken)).FirstOrDefault(item => item.SourceId == id);
-        return SourceResponse.From(source, status);
+        return Respond(source, status);
     }
 
     [HttpPost("sources")]
@@ -42,7 +46,7 @@ public sealed class SourcesController(ITranslationSourceRepository store, ITrans
         var error = TranslationSourceValidator.Validate(source);
         if (error is not null) return BadRequest(error);
         await store.SaveSourceAsync(source, cancellationToken);
-        return CreatedAtAction(nameof(GetSource), new { id = source.Id }, SourceResponse.From(source));
+        return CreatedAtAction(nameof(GetSource), new { id = source.Id }, Respond(source));
     }
 
     [HttpPut("sources/{id:guid}")]
@@ -65,7 +69,7 @@ public sealed class SourcesController(ITranslationSourceRepository store, ITrans
         try
         {
             await store.SaveSourceAsync(updated, cancellationToken);
-            return SourceResponse.From(updated);
+            return Respond(updated);
         }
         catch (TranslationSynchronizationInProgressException exception)
         {
@@ -152,4 +156,10 @@ public sealed class SourcesController(ITranslationSourceRepository store, ITrans
     [HttpGet("sources/{id:guid}/syncs")]
     public async Task<IReadOnlyList<TranslationSyncResult>> ListSourceSyncs(Guid id, CancellationToken cancellationToken) =>
         await store.GetSyncHistoryAsync(id, cancellationToken);
+
+    private SourceResponse Respond(TranslationSourceDefinition source, TranslationSourceStatus? status = null) =>
+        SourceResponse.From(source, status) with
+        {
+            NextScheduledSync = ScheduledSyncJob.NextSync(source, status, timeProvider.GetUtcNow()),
+        };
 }

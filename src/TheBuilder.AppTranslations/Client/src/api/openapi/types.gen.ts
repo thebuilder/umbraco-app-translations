@@ -254,6 +254,7 @@ export type SourceRequest = {
     messageFormat: MessageFormat;
     headers?: Array<HttpTranslationHeaderOptions> | null;
     sourceFormat: SourceFormat;
+    syncIntervalMinutes?: number | null;
 };
 
 export type SourceResponse = {
@@ -268,6 +269,8 @@ export type SourceResponse = {
     syncInProgress: boolean;
     syncLeaseExpiresAt?: string | null;
     lastSync?: TranslationSyncResult | null;
+    syncIntervalMinutes?: number | null;
+    nextScheduledSync?: string | null;
 };
 
 export type TranslationOutputFormat = 'icu' | 'i18next';
@@ -355,6 +358,7 @@ export type SourceRequestWritable = {
     messageFormat: MessageFormat;
     headers?: Array<HttpTranslationHeaderOptionsWritable> | null;
     sourceFormat: SourceFormat;
+    syncIntervalMinutes?: number | null;
 };
 
 export type SourceResponseWritable = {
@@ -369,6 +373,8 @@ export type SourceResponseWritable = {
     syncInProgress: boolean;
     syncLeaseExpiresAt?: string | null;
     lastSync?: TranslationSyncResult | null;
+    syncIntervalMinutes?: number | null;
+    nextScheduledSync?: string | null;
 };
 
 export type AssistantGetStatusData = {

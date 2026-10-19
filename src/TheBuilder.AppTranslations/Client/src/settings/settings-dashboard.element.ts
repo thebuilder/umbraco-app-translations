@@ -20,7 +20,7 @@ import type {
   SourceTestResult,
   SyncResult,
 } from "../api/generated/models.js";
-import { messageFormatLabel } from "./app/format-options.js";
+import { messageFormatLabel, syncIntervalLabel } from "./app/format-options.js";
 import {
   createEmptySource,
   hasLocaleToken,
@@ -33,6 +33,9 @@ import { assistantDraft } from "./assistant-settings.element.js";
 import "./output-api.element.js";
 import "./source-editor.element.js";
 import "./translation-section-settings.element.js";
+
+/** Where the documentation explains Sync now, deployment syncs and the schedule. */
+const SYNCING_DOCS = "https://app-translations.thebuilder.dk/syncing";
 
 /** The characters an alias may use, so it can sit in a URL path without escaping. */
 const SOURCE_ALIAS = /^[a-z0-9._~-]+$/;
@@ -470,7 +473,7 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
             <uui-button type="button" look="secondary" label=${`${historyOpen ? "Hide" : "Show"} sync history for ${source.displayName}`} ?disabled=${Boolean(this._running)} @click=${() => this.#toggleHistory(source.id)}>${historyOpen ? "Hide history" : "History"}</uui-button>
           </div>
         </div>
-        ${source.lastSuccessfulSync ? html`<p class="last-sync">Last synced ${new Date(source.lastSuccessfulSync).toLocaleString()} · revision ${source.lastSuccessfulRevision?.slice(0, 10)}</p>` : ""}
+        ${this.#renderSyncState(source)}
         <div class="source-apis">
           <strong>Messages endpoint</strong>
           <uui-select
@@ -496,6 +499,36 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
         ${historyOpen ? this.#renderHistory(source.id, history) : ""}
       </article>
     `;
+  }
+
+  /**
+   * Whether the source has synced, and when it syncs next. A source nobody has synced has no messages,
+   * and nothing else on the page says so, so it says what to do about it instead of saying nothing.
+   */
+  #renderSyncState(source: Source) {
+    const parts: string[] = [];
+    if (source.lastSuccessfulSync) {
+      parts.push(
+        `Last synced ${new Date(source.lastSuccessfulSync).toLocaleString()} · revision ${source.lastSuccessfulRevision?.slice(0, 10)}`
+      );
+    } else if (source.enabled) {
+      // A schedule will get to it within minutes, and a press meanwhile only races it.
+      parts.push(
+        source.nextScheduledSync
+          ? "Not synced yet"
+          : "Not synced yet. Press Sync now to read its messages."
+      );
+    }
+    if (source.nextScheduledSync) {
+      const next = new Date(source.nextScheduledSync);
+      const schedule = `Syncs ${syncIntervalLabel(source.syncIntervalMinutes).toLowerCase()}`;
+      parts.push(
+        next.getTime() <= Date.now()
+          ? `${schedule}, due now`
+          : `${schedule}, next ${next.toLocaleString()}`
+      );
+    }
+    return parts.length > 0 ? html`<p class="last-sync">${parts.join(" · ")}</p>` : "";
   }
 
   #renderHistory(sourceId: string, history?: SyncResult[]) {
@@ -561,6 +594,16 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
     }
     return html`
           <uui-box class="sources-box" headline="Sources" headline-variant="h2">
+            <uui-button
+              slot="header-actions"
+              look="secondary"
+              compact
+              label="How syncing works, in the App Translations documentation"
+              href=${SYNCING_DOCS}
+              target="_blank"
+              rel="noopener noreferrer">
+              How syncing works<uui-icon name="icon-out" aria-hidden="true"></uui-icon>
+            </uui-button>
             <div class="sources-content">
               ${
                 this._sources.length === 0
@@ -614,7 +657,7 @@ class TranslationsSettingsDashboardElement extends UmbElementMixin(LitElement) {
     .last-sync { font-size: var(--uui-type-small-size); margin-block-start: var(--uui-size-space-3); }
     .source-apis { align-items: center; border-block-start: 1px solid var(--uui-color-divider); display: flex; flex-wrap: wrap; gap: var(--uui-size-space-2) var(--uui-size-space-4); margin-block-start: var(--uui-size-space-4); padding-block-start: var(--uui-size-space-4); }
     .source-api-locale { inline-size: 10rem; }
-    .source-apis uui-button uui-icon { margin-inline-start: var(--uui-size-space-1); }
+    .source-apis uui-button uui-icon, .sources-box uui-button[slot="header-actions"] uui-icon { margin-inline-start: var(--uui-size-space-1); }
     .source-apis small { color: var(--uui-color-text-alt); flex-basis: 100%; }
     .table-frame { margin-block-start: var(--uui-size-space-4); overflow-x: auto; }
     .empty-state { align-items: center; display: flex; flex-direction: column; padding: var(--uui-size-layout-1); text-align: center; }

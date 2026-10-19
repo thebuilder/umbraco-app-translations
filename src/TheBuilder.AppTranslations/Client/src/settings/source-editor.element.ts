@@ -17,7 +17,11 @@ import type {
 import type { UmbLanguageDetailModel } from "@umbraco-cms/backoffice/language";
 import { UmbTextStyles } from "@umbraco-cms/backoffice/style";
 import type { HttpHeaderOptions } from "../api/generated/models.js";
-import { messageFormatOptions } from "./app/format-options.js";
+import {
+  messageFormatOptions,
+  parseSyncInterval,
+  syncIntervalOptions,
+} from "./app/format-options.js";
 import {
   type HeaderValueSource,
   headerValueSource,
@@ -150,20 +154,28 @@ class TranslationsSourceEditorElement extends UmbElementMixin(LitElement) {
           <uui-box headline="Translation source" headline-variant="h2">
           <p class="intro">Connect a JSON message endpoint and choose which Umbraco languages it supplies.</p>
 
-          <div class="primary-grid">
-            <uui-form-layout-item>
-              <uui-label slot="label" for="display-name" required>Name</uui-label>
-              <div class="field-control">
-                <uui-input id="display-name" label="Source name" required maxlength="200" .value=${this.value.displayName} @input=${(event: Event) => this.#text("displayName", event)}></uui-input>
-                <span class="help">Shown to backoffice users.</span>
-              </div>
-            </uui-form-layout-item>
+          <uui-form-layout-item>
+            <uui-label slot="label" for="display-name" required>Name</uui-label>
+            <div class="field-control">
+              <uui-input id="display-name" label="Source name" required maxlength="200" .value=${this.value.displayName} @input=${(event: Event) => this.#text("displayName", event)}></uui-input>
+              <span class="help">Shown to backoffice users.</span>
+            </div>
+          </uui-form-layout-item>
 
+          <div class="primary-grid">
             <uui-form-layout-item class="enabled-field">
               <uui-label slot="label">Sync</uui-label>
               <div class="field-control">
                 <uui-toggle label="Enable this translation source" ?checked=${this.value.enabled} @change=${(event: Event) => this.#patch({ enabled: (event.target as UUIToggleElement).checked })}>Enabled</uui-toggle>
                 <span class="help">You can still edit and test a disabled source. It just will not sync.</span>
+              </div>
+            </uui-form-layout-item>
+
+            <uui-form-layout-item>
+              <uui-label slot="label" for="sync-interval">Sync automatically</uui-label>
+              <div class="field-control">
+                <uui-select id="sync-interval" label="Sync automatically" .options=${syncIntervalOptions(this.value.syncIntervalMinutes)} @change=${(event: Event) => this.#patch({ syncIntervalMinutes: parseSyncInterval(String((event.target as UUISelectElement).value)) })}></uui-select>
+                <span class="help">Counted from the last sync, whoever started it. A deployment that syncs as it ships is quicker. This catches files that change some other way.</span>
               </div>
             </uui-form-layout-item>
           </div>

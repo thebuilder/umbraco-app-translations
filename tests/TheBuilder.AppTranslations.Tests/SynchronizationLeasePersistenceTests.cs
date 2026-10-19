@@ -30,6 +30,26 @@ public sealed class SynchronizationLeasePersistenceTests
     }
 
     [Fact]
+    public void Configuration_update_saves_and_clears_the_sync_schedule()
+    {
+        using var connection = OpenConnection();
+        using var database = new Database(connection, DatabaseType.SQLite);
+        CreateConfigurationTable(database);
+        var sourceId = Guid.NewGuid();
+        database.Execute($"INSERT INTO {Constants.Tables.Sources} (Id, Alias, DisplayName) VALUES (@0, @1, @2)", sourceId, "source", "Source");
+        var now = new DateTime(2026, 10, 19, 12, 0, 0, DateTimeKind.Utc);
+        var row = Row(sourceId, "Source");
+
+        row.SyncIntervalMinutes = 1440;
+        Assert.True(TranslationSourceConfiguration.TryUpdate(database, row, now));
+        Assert.Equal(1440, database.ExecuteScalar<int?>($"SELECT SyncIntervalMinutes FROM {Constants.Tables.Sources} WHERE Id = @0", sourceId));
+
+        row.SyncIntervalMinutes = null;
+        Assert.True(TranslationSourceConfiguration.TryUpdate(database, row, now));
+        Assert.Null(database.ExecuteScalar<int?>($"SELECT SyncIntervalMinutes FROM {Constants.Tables.Sources} WHERE Id = @0", sourceId));
+    }
+
+    [Fact]
     public void A_stale_final_fence_rolls_back_prior_mutations()
     {
         var connectionString = $"Data Source=lease-fence-{Guid.NewGuid():N};Mode=Memory;Cache=Shared";
@@ -69,7 +89,7 @@ public sealed class SynchronizationLeasePersistenceTests
             Id TEXT PRIMARY KEY, Alias TEXT, DisplayName TEXT, TransportKind TEXT,
             TransportConfiguration TEXT, ParserKind TEXT, ParserConfiguration TEXT,
             Enabled INTEGER, UpdatedAt TEXT, LastSuccessfulRevision TEXT, LastSuccessfulSync TEXT,
-            SyncLeaseId TEXT, SyncLeaseExpiresAt TEXT)
+            SyncLeaseId TEXT, SyncLeaseExpiresAt TEXT, SyncIntervalMinutes INTEGER)
         """);
 
     private static SourceRow Row(Guid id, string displayName) => new()

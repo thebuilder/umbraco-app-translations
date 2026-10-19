@@ -374,9 +374,16 @@ internal sealed class UmbracoTranslationStore(
         var now = timeProvider.GetUtcNow();
         using var scope = scopeProvider.CreateScope(autoComplete: true);
         var sources = scope.Database.Fetch<SourceRow>($"SELECT * FROM {Constants.Tables.Sources}");
-        // Newest run per source. Sync history is small, so a single ordered fetch beats N queries.
+        // Newest run per source, picked by the database: a schedule adds a row every run, so the
+        // whole history is no longer small enough to fetch and group here. The table has no index on
+        // SourceId, so this groups it once rather than looking up each row's source again.
         var latest = scope.Database
-            .Fetch<SyncRow>($"SELECT * FROM {Constants.Tables.Syncs} ORDER BY StartedAt DESC")
+            .Fetch<SyncRow>($"""
+                SELECT s.* FROM {Constants.Tables.Syncs} s
+                INNER JOIN (
+                    SELECT SourceId, MAX(StartedAt) AS LatestStartedAt FROM {Constants.Tables.Syncs} GROUP BY SourceId
+                ) latest ON latest.SourceId = s.SourceId AND latest.LatestStartedAt = s.StartedAt
+                """)
             .GroupBy(row => row.SourceId)
             .ToDictionary(group => group.Key, group => TranslationRowMapper.ToDomain(group.First()));
 

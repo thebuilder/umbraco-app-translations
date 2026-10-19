@@ -64,8 +64,10 @@ Umbraco's language codes carry a region, such as `en-US`, but many applications 
 language alone, such as `en`. Use `{language}` when yours do. Umbraco still stores each message
 under the full code, so `en-US` and `en-GB` stay separate.
 
-A source has three more settings.
+A source has four more settings.
 
+- **Sync automatically.** Sync the source on a schedule, every hour up to every week. Off by
+  default.
 - **Message syntax.** ICU messages, as next-intl and FormatJS use them, i18next JSON v4, or plain
   text. The editor checks every change against the syntax, so an edit cannot break a placeholder or
   a plural.
@@ -206,6 +208,13 @@ split it.
 
 Umbraco reads a source when someone presses **Sync now** in **Settings > App translations**, which also
 keeps the history of every sync. To sync as part of a deployment, use the endpoint below.
+
+### Syncing on a schedule
+
+Choose **Sync automatically** in a source's settings and Umbraco syncs it every hour, every 6 or 12
+hours, every day or every week, counted from its last sync from anywhere. A failed sync counts too,
+so a source that is down is tried again at the next interval. In a load-balanced setup, only the
+Single or SchedulingPublisher server runs the schedule.
 
 ### Syncing from a deployment
 

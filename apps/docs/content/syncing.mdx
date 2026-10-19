@@ -7,7 +7,17 @@ seo:
 
 ## Syncing a source
 
-Umbraco reads a source when someone presses **Sync now** in **Settings > App translations**. **History** next to it lists every sync, with what it added, changed and removed, or why it failed. Sources are not polled on a schedule. To sync as part of a deployment, use the endpoint below.
+Umbraco reads a source when someone presses **Sync now** in **Settings > App translations**. **History** next to it lists every sync, with what it added, changed and removed, or why it failed. Umbraco can also sync [on a schedule](#syncing-on-a-schedule), and a deployment can sync through [the endpoint below](#syncing-from-a-deployment).
+
+## Syncing on a schedule
+
+To pick up new messages without anyone pressing a button, choose how often under **Sync automatically** in the source's settings: every hour, every 6 or 12 hours, every day or every week. Umbraco then syncs the source once its last sync is that old, whether that sync was started from the backoffice, a deployment or the schedule. The source shows when it syncs next.
+
+- A failed sync counts too, so a source that is down is tried again at the next interval rather than every few minutes. **History** says why it failed.
+- A sync that finds nothing new changes nothing and is not announced, so a short interval costs your application nothing.
+- In a load-balanced setup, only the Single or SchedulingPublisher server runs the schedule.
+
+A deployment that syncs as it ships new translation files is still the quickest way to get them in. The schedule catches the files that change some other way.
 
 ## What a sync changes
 

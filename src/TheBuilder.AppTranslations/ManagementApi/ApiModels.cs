@@ -21,6 +21,12 @@ public sealed record SourceRequest(
     IReadOnlyList<HttpTranslationHeaderOptions>? Headers = null,
     SourceFormat SourceFormat = SourceFormat.NestedJson)
 {
+    /// <summary>
+    /// How many minutes after its last sync the source syncs again on its own. Null, or left out,
+    /// is no schedule.
+    /// </summary>
+    public int? SyncIntervalMinutes { get; init; }
+
     public TranslationSourceDefinition ToDefinition(Guid id) => new(
         id, Alias.Trim(), DisplayName.Trim(), Enabled,
         new HttpTranslationTransportOptions(EndpointTemplate.Trim(), NullIfEmpty(SecretName), TimeoutSeconds, MaximumResponseBytes)
@@ -30,7 +36,10 @@ public sealed record SourceRequest(
             Headers = Headers?.Select(header => new HttpTranslationHeaderOptions(
                 header.Name.Trim(), NullIfEmpty(header.ValueConfigurationKey), NullIfEmpty(header.Value, trim: false))).ToArray() ?? [],
         },
-        new(Locales.Select(locale => locale.Trim()).Where(locale => locale.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToArray(), Namespace.Trim(), NamespaceMode, MessageFormat, SourceFormat));
+        new(Locales.Select(locale => locale.Trim()).Where(locale => locale.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToArray(), Namespace.Trim(), NamespaceMode, MessageFormat, SourceFormat))
+    {
+        SyncIntervalMinutes = SyncIntervalMinutes,
+    };
 
     private static string? NullIfEmpty(string? value, bool trim = true) =>
         string.IsNullOrWhiteSpace(value) ? null : trim ? value.Trim() : value;
@@ -42,10 +51,22 @@ public sealed record SourceResponse(
     string? LastSuccessfulRevision, DateTimeOffset? LastSuccessfulSync,
     bool SyncInProgress, DateTimeOffset? SyncLeaseExpiresAt, TranslationSyncResult? LastSync)
 {
+    /// <summary>How many minutes after its last sync the source syncs again on its own, or null.</summary>
+    public int? SyncIntervalMinutes { get; init; }
+
+    /// <summary>
+    /// When the schedule syncs this source next, or null when it has no schedule or is turned off. A
+    /// source that is due has the current time.
+    /// </summary>
+    public DateTimeOffset? NextScheduledSync { get; init; }
+
     public static SourceResponse From(TranslationSourceDefinition source, TranslationSourceStatus? status = null) => new(
         source.Id, source.Alias, source.DisplayName, source.Enabled, source.Transport, source.Parser,
         source.LastSuccessfulRevision, source.LastSuccessfulSync,
-        status?.SyncInProgress ?? false, status?.SyncLeaseExpiresAt, status?.LastSync);
+        status?.SyncInProgress ?? false, status?.SyncLeaseExpiresAt, status?.LastSync)
+    {
+        SyncIntervalMinutes = source.SyncIntervalMinutes,
+    };
 }
 
 public sealed record MessageListItem(

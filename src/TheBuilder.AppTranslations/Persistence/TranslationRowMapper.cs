@@ -29,6 +29,7 @@ internal static class TranslationRowMapper
         Enabled = source.Enabled,
         LastSuccessfulRevision = source.LastSuccessfulRevision,
         LastSuccessfulSync = source.LastSuccessfulSync?.UtcDateTime,
+        SyncIntervalMinutes = source.SyncIntervalMinutes,
         CreatedAt = createdAt,
         UpdatedAt = updatedAt,
     };
@@ -44,7 +45,10 @@ internal static class TranslationRowMapper
             Deserialize<HttpTranslationTransportOptions>(row.TransportConfiguration, "transport configuration"),
             Deserialize<TranslationParserOptions>(row.ParserConfiguration, "parser configuration"),
             row.LastSuccessfulRevision,
-            row.LastSuccessfulSync is null ? null : AsOffset(row.LastSuccessfulSync.Value));
+            row.LastSuccessfulSync is null ? null : AsOffset(row.LastSuccessfulSync.Value))
+        {
+            SyncIntervalMinutes = row.SyncIntervalMinutes,
+        };
     }
 
     private static void EnsureSupportedParserKind(string parserKind)

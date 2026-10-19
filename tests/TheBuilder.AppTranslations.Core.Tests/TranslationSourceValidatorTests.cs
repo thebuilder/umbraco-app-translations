@@ -34,6 +34,17 @@ public sealed class TranslationSourceValidatorTests
         });
 
     [Fact]
+    public void Refuses_a_sync_schedule_shorter_than_the_scheduler_checks()
+    {
+        Assert.Null(TranslationSourceValidator.Validate(Source() with { SyncIntervalMinutes = null }));
+        Assert.Null(TranslationSourceValidator.Validate(Source() with { SyncIntervalMinutes = 5 }));
+        Assert.Null(TranslationSourceValidator.Validate(Source() with { SyncIntervalMinutes = 1440 }));
+
+        Assert.NotNull(TranslationSourceValidator.Validate(Source() with { SyncIntervalMinutes = 4 }));
+        Assert.NotNull(TranslationSourceValidator.Validate(Source() with { SyncIntervalMinutes = 0 }));
+    }
+
+    [Fact]
     public void Defaults_to_taking_the_namespace_from_the_first_json_key()
     {
         var parser = new TranslationParserOptions(["en-US"], "");

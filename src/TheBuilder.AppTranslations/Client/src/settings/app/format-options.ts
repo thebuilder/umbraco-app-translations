@@ -32,3 +32,55 @@ export const deliveryFormatLabel = (format: TranslationOutputFormat): string => 
       return format;
   }
 };
+
+const MINUTES_PER_HOUR = 60;
+const MINUTES_PER_DAY = 24 * MINUTES_PER_HOUR;
+const MINUTES_PER_WEEK = 7 * MINUTES_PER_DAY;
+
+/** The schedules the source editor offers, in minutes. */
+const SYNC_INTERVALS = [
+  MINUTES_PER_HOUR,
+  6 * MINUTES_PER_HOUR,
+  12 * MINUTES_PER_HOUR,
+  MINUTES_PER_DAY,
+  MINUTES_PER_WEEK,
+] as const;
+
+export const syncIntervalLabel = (minutes: number | null | undefined): string => {
+  if (!minutes) {
+    return "Only when synced by hand or by a deployment";
+  }
+  if (minutes === MINUTES_PER_HOUR) {
+    return "Every hour";
+  }
+  if (minutes === MINUTES_PER_DAY) {
+    return "Every day";
+  }
+  if (minutes === MINUTES_PER_WEEK) {
+    return "Every week";
+  }
+  return minutes % MINUTES_PER_HOUR === 0
+    ? `Every ${minutes / MINUTES_PER_HOUR} hours`
+    : `Every ${minutes} minutes`;
+};
+
+/**
+ * The fixed choices, plus whatever the source already has. A schedule set through the API to
+ * something the list does not offer would otherwise show as the first option and be lost on save.
+ */
+export const syncIntervalOptions = (selected: number | null | undefined) => {
+  const values: (number | null)[] = [null, ...SYNC_INTERVALS];
+  if (selected && !values.includes(selected)) {
+    values.push(selected);
+  }
+  return values.map((value) => ({
+    name: syncIntervalLabel(value),
+    value: value === null ? "" : String(value),
+    selected: (value ?? null) === (selected ?? null),
+  }));
+};
+
+export const parseSyncInterval = (value: string): number | null => {
+  const minutes = Number(value);
+  return value !== "" && Number.isInteger(minutes) && minutes > 0 ? minutes : null;
+};
