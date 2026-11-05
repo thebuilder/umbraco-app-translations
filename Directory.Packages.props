@@ -31,9 +31,6 @@
     <!-- The sample and the tests only, which run SQLite: at or above the floor Umbraco 18 sets, and
          above the release with the known vulnerability (GHSA-2m69-gcr7-jv3q). -->
     <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.14" />
-    <!-- The sample site only: Umbraco brings 3.1.12, and 3.2.0 fixes its advisories
-         (GHSA-v76p-62qx-wwq2 and others). -->
-    <PackageVersion Include="SixLabors.ImageSharp" Version="3.2.0" />
     <!-- The sample site only, never the package. The package's Umbraco.AI adapter compiles
          against Umbraco.AI.Core without depending on it; see TheBuilder.AppTranslations.UmbracoAI. -->
     <PackageVersion Include="Umbraco.AI" Version="$(SampleUmbracoAIVersion)" />
