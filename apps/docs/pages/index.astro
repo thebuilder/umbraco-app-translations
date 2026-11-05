@@ -90,14 +90,12 @@ const features = [
 
     <section class="shell section" aria-labelledby="features-title">
       <div class="section-heading reveal">
-        <span class="rule" aria-hidden="true"></span>
         <h2 id="features-title">Built for applications that own their text</h2>
         <p>For next-intl, i18next and FormatJS applications whose messages live in code, and editors who need to change them.</p>
       </div>
       <div class="feature-grid">
         {features.map((feature, index) => (
           <article class="feature-card reveal" style={`--i: ${index + 1}`}>
-            <span aria-hidden="true">0{index + 1}</span>
             <h3>{feature.title}</h3>
             <p>{feature.body}</p>
           </article>
@@ -107,7 +105,6 @@ const features = [
 
     <section class="shell flow" aria-labelledby="flow-title">
       <div class="flow__copy reveal">
-        <span class="rule" aria-hidden="true"></span>
         <h2 id="flow-title">How it fits together</h2>
         <p>A source points Umbraco at your translation files. Sync reads them in, editors write custom text, and the delivery endpoints serve it.</p>
         <a class="text-link" href="/sources">Add your first source <span aria-hidden="true">→</span></a>
@@ -121,7 +118,6 @@ const features = [
 
     <section class="shell api" aria-labelledby="api-title">
       <div class="api__copy reveal">
-        <span class="rule" aria-hidden="true"></span>
         <h2 id="api-title">Merge it over your own messages</h2>
         <p>Fetch the custom text for a language and namespace and lay it over what your application bundles. Only what an editor changed comes back.</p>
         <a class="button button--secondary" href="/delivery-api">Read the API guide</a>
