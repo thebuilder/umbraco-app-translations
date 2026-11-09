@@ -652,7 +652,7 @@ THE SOFTWARE.
 ## use-sync-external-store
 
 License: MIT\
-Source: https://github.com/facebook/react
+Source: https://github.com/react/react
 
 ```text
 MIT License

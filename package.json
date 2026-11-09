@@ -17,6 +17,6 @@
     "audit-changes": "fallow audit --base main"
   },
   "devDependencies": {
-    "fallow": "^3.33.1"
+    "fallow": "^3.41.0"
   }
 }

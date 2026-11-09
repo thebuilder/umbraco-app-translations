@@ -9,7 +9,7 @@
     <!-- The sample site runs a fixed, patched release rather than the lowest the range allows. Set
          both to an 18 release to run it as an Umbraco 18 site. -->
     <SampleUmbracoVersion Condition="'$(SampleUmbracoVersion)' == ''">17.8.1</SampleUmbracoVersion>
-    <SampleUmbracoAIVersion Condition="'$(SampleUmbracoAIVersion)' == ''">17.5.2</SampleUmbracoAIVersion>
+    <SampleUmbracoAIVersion Condition="'$(SampleUmbracoAIVersion)' == ''">17.7.0</SampleUmbracoAIVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.Extensions.AI.Abstractions" Version="10.11.0" />
