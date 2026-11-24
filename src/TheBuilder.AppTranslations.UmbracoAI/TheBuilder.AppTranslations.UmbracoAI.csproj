@@ -11,18 +11,25 @@
     it, and the main assembly loads it from there, only once it has found a supported Umbraco.AI.
 
     It compiles against Umbraco.AI.Core's assembly, downloaded without joining the dependency graph,
-    and does not ship it. The members it calls are the same in Umbraco.AI 17.5 and 18.
+    and does not ship it. The members it calls are the same in Umbraco.AI 17.5, 18 and 19. Umbraco.AI 19
+    is .NET 11 only, so the .NET 11 build compiles against that one.
   -->
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     <!-- Ships inside the TheBuilder.AppTranslations package, never as a package of its own. -->
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../TheBuilder.AppTranslations.Core/TheBuilder.AppTranslations.Core.csproj" />
-    <PackageDownload Include="Umbraco.AI.Core" Version="[17.5.0]" />
+  </ItemGroup>
+  <PropertyGroup>
+    <UmbracoAICoreReferenceVersion Condition="'$(TargetFramework)' == 'net11.0'">19.0.0-rc.1</UmbracoAICoreReferenceVersion>
+    <UmbracoAICoreReferenceVersion Condition="'$(TargetFramework)' != 'net11.0'">17.5.0</UmbracoAICoreReferenceVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageDownload Include="Umbraco.AI.Core" Version="[$(UmbracoAICoreReferenceVersion)]" />
     <Reference Include="Umbraco.AI.Core">
-      <HintPath>$(NuGetPackageRoot)umbraco.ai.core/17.5.0/lib/net10.0/Umbraco.AI.Core.dll</HintPath>
+      <HintPath>$(NuGetPackageRoot)umbraco.ai.core/$(UmbracoAICoreReferenceVersion)/lib/$(TargetFramework)/Umbraco.AI.Core.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

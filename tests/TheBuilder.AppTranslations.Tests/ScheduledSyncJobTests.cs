@@ -19,7 +19,7 @@ public sealed class ScheduledSyncJobTests
         var source = Source() with { SyncIntervalMinutes = null };
         var (job, engine) = Create([source]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Empty(engine.Synced);
     }
@@ -30,7 +30,7 @@ public sealed class ScheduledSyncJobTests
         var source = Source();
         var (job, engine) = Create([source]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Equal([source.Alias], engine.Synced);
     }
@@ -44,7 +44,7 @@ public sealed class ScheduledSyncJobTests
             [due, recent],
             [Status(due, startedAt: Now - Daily), Status(recent, startedAt: Now - TimeSpan.FromHours(23))]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Equal(["due"], engine.Synced);
     }
@@ -55,7 +55,7 @@ public sealed class ScheduledSyncJobTests
         var source = Source();
         var (job, engine) = Create([source], [Status(source, startedAt: Now - TimeSpan.FromMinutes(10), TranslationSyncStatus.Failed)]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Empty(engine.Synced);
     }
@@ -67,7 +67,7 @@ public sealed class ScheduledSyncJobTests
         var busy = Source("busy");
         var (job, engine) = Create([disabled, busy], [Status(busy, startedAt: Now - Daily * 2) with { SyncInProgress = true }]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Empty(engine.Synced);
     }
@@ -80,7 +80,7 @@ public sealed class ScheduledSyncJobTests
         var (job, engine) = Create([broken, working]);
         engine.Failing.Add("broken");
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Equal(["broken", "working"], engine.Synced);
     }
@@ -94,10 +94,24 @@ public sealed class ScheduledSyncJobTests
         var (job, engine) = Create([source]);
         engine.TimingOut.Add(source.Alias);
 
-        await job.RunJobAsync();
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Equal([source.Alias], engine.Synced);
+    }
+
+    [Fact]
+    public async Task Stops_when_Umbraco_shuts_down_during_a_sync()
+    {
+        var first = Source("first");
+        var second = Source("second");
+        var (job, engine) = Create([first, second]);
+        using var shutdown = new CancellationTokenSource();
+        engine.ShutdownDuring[first.Alias] = shutdown;
+
+        await job.RunJobAsync(shutdown.Token);
+
+        Assert.Equal([first.Alias], engine.Synced);
     }
 
     [Fact]
@@ -150,10 +164,17 @@ public sealed class ScheduledSyncJobTests
         public List<string> Synced { get; } = [];
         public HashSet<string> Failing { get; } = [];
         public HashSet<string> TimingOut { get; } = [];
+        public Dictionary<string, CancellationTokenSource> ShutdownDuring { get; } = [];
 
         public Task<TranslationSyncResult> SynchronizeAsync(TranslationSourceDefinition source, CancellationToken cancellationToken)
         {
             Synced.Add(source.Alias);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (ShutdownDuring.TryGetValue(source.Alias, out var shutdown))
+            {
+                shutdown.Cancel();
+                cancellationToken.ThrowIfCancellationRequested();
+            }
             if (Failing.Contains(source.Alias))
                 throw new TranslationSourceFormatException("No messages.");
             if (TimingOut.Contains(source.Alias))

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using TheBuilder.AppTranslations.Core.Persistence;
 using TheBuilder.AppTranslations.Core.Sources;
 using TheBuilder.AppTranslations.Core.Synchronization;
+using Umbraco.Cms.Core.Sync;
 using Umbraco.Cms.Infrastructure.BackgroundJobs;
 
 namespace TheBuilder.AppTranslations.Synchronization;
@@ -32,22 +33,40 @@ internal sealed class ScheduledSyncJob(
 
     public TimeSpan Period => TimeSpan.FromMinutes(TranslationSourceValidator.MinimumSyncIntervalMinutes);
 
+    // Umbraco's own defaults. Umbraco 19 dropped the interface's default members, so every job states them.
+    public TimeSpan Delay => TimeSpan.FromMinutes(3);
+
+    public TimeSpan IgnoredDelay => TimeSpan.FromMinutes(1);
+
+    public ServerRole[] ServerRoles => [ServerRole.Single, ServerRole.SchedulingPublisher];
+
     // The period never changes. A changed schedule is read on the next check instead.
+#if NET11_0_OR_GREATER
+    public event EventHandler? PeriodChanged { add { } remove { } }
+
+    public event EventHandler? IgnoredDelayChanged { add { } remove { } }
+#else
     public event EventHandler PeriodChanged { add { } remove { } }
 
-    public async Task RunJobAsync()
+    public event EventHandler IgnoredDelayChanged { add { } remove { } }
+
+    // Umbraco 17 and 18 still declare the overload without a token, and Umbraco 19 removed it.
+    public Task RunJobAsync() => RunJobAsync(CancellationToken.None);
+#endif
+
+    public async Task RunJobAsync(CancellationToken cancellationToken)
     {
         using var scope = scopeFactory.CreateScope();
         var sources = scope.ServiceProvider.GetRequiredService<ITranslationSourceRepository>();
         var syncEngine = scope.ServiceProvider.GetRequiredService<ITranslationSyncEngine>();
         // Most sites schedule nothing, and the statuses read the sync history, so look at that only
         // when some source has a schedule.
-        var scheduled = (await sources.GetSourcesAsync(CancellationToken.None))
+        var scheduled = (await sources.GetSourcesAsync(cancellationToken))
             .Where(source => source is { Enabled: true, SyncIntervalMinutes: not null })
             .ToArray();
         if (scheduled.Length == 0)
             return;
-        var statuses = (await sources.GetSourceStatusesAsync(CancellationToken.None)).ToDictionary(status => status.SourceId);
+        var statuses = (await sources.GetSourceStatusesAsync(cancellationToken)).ToDictionary(status => status.SourceId);
         var now = timeProvider.GetUtcNow();
 
         foreach (var source in scheduled)
@@ -61,11 +80,16 @@ internal sealed class ScheduledSyncJob(
 
             try
             {
-                await syncEngine.SynchronizeAsync(source, CancellationToken.None);
+                await syncEngine.SynchronizeAsync(source, cancellationToken);
             }
             catch (TranslationSynchronizationInProgressException)
             {
                 // Someone else started one meanwhile, which is as good as this one.
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // Umbraco is shutting down. The sources left are due again at the next start.
+                return;
             }
             catch (Exception exception)
             {
