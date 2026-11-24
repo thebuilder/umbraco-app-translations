@@ -86,6 +86,11 @@ internal sealed class ScheduledSyncJob(
             {
                 // Someone else started one meanwhile, which is as good as this one.
             }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // Umbraco is shutting down. The sources left are due again at the next start.
+                return;
+            }
             catch (Exception exception)
             {
                 // The sync history already has the reason, where an editor will look for it.

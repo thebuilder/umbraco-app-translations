@@ -101,6 +101,20 @@ public sealed class ScheduledSyncJobTests
     }
 
     [Fact]
+    public async Task Stops_when_Umbraco_shuts_down_during_a_sync()
+    {
+        var first = Source("first");
+        var second = Source("second");
+        var (job, engine) = Create([first, second]);
+        using var shutdown = new CancellationTokenSource();
+        engine.ShutdownDuring[first.Alias] = shutdown;
+
+        await job.RunJobAsync(shutdown.Token);
+
+        Assert.Equal([first.Alias], engine.Synced);
+    }
+
+    [Fact]
     public void The_next_sync_is_the_interval_after_the_last_one_or_now_when_due()
     {
         var source = Source();
@@ -150,10 +164,17 @@ public sealed class ScheduledSyncJobTests
         public List<string> Synced { get; } = [];
         public HashSet<string> Failing { get; } = [];
         public HashSet<string> TimingOut { get; } = [];
+        public Dictionary<string, CancellationTokenSource> ShutdownDuring { get; } = [];
 
         public Task<TranslationSyncResult> SynchronizeAsync(TranslationSourceDefinition source, CancellationToken cancellationToken)
         {
             Synced.Add(source.Alias);
+            cancellationToken.ThrowIfCancellationRequested();
+            if (ShutdownDuring.TryGetValue(source.Alias, out var shutdown))
+            {
+                shutdown.Cancel();
+                cancellationToken.ThrowIfCancellationRequested();
+            }
             if (Failing.Contains(source.Alias))
                 throw new TranslationSourceFormatException("No messages.");
             if (TimingOut.Contains(source.Alias))
