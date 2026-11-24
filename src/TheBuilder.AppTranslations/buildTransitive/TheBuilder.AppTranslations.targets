@@ -2,9 +2,14 @@
   <!-- The Umbraco.AI adapter, copied to a folder of its own beside the site's assemblies rather than
        referenced. Umbraco loads the references of every assembly in that folder at startup, and the
        adapter's include Umbraco.AI, which the site may not have. The assistant loads it from here
-       once it has found a Umbraco.AI it supports. -->
+       once it has found a Umbraco.AI it supports. There is one per target framework, because each
+       Umbraco.AI release is built for the .NET version of its Umbraco major. -->
+  <PropertyGroup>
+    <_AppTranslationsAdapterFramework>net10.0</_AppTranslationsAdapterFramework>
+    <_AppTranslationsAdapterFramework Condition="'$(TargetFramework)' != '' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">net11.0</_AppTranslationsAdapterFramework>
+  </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)../adapters/net10.0/TheBuilder.AppTranslations.UmbracoAI.dll"
+    <None Include="$(MSBuildThisFileDirectory)../adapters/$(_AppTranslationsAdapterFramework)/TheBuilder.AppTranslations.UmbracoAI.dll"
           Link="TheBuilder.AppTranslations.UmbracoAI/TheBuilder.AppTranslations.UmbracoAI.dll"
           CopyToOutputDirectory="PreserveNewest"
           Visible="false"

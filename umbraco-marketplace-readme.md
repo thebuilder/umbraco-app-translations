@@ -16,7 +16,7 @@ Your application keeps its own translation files. Umbraco reads them, editors ch
 
 ## Install
 
-Needs Umbraco CMS 17.1 through 18.x on .NET 10, and translation files your Umbraco site can fetch over HTTP, one file per language.
+Needs Umbraco CMS 17.1 through 19.x (Umbraco 19 on .NET 11), and translation files your Umbraco site can fetch over HTTP, one file per language.
 
 ```sh
 dotnet add package TheBuilder.AppTranslations

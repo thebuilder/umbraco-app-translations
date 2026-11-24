@@ -28,7 +28,7 @@ A site can also translate into languages the application does not ship. Umbraco 
 written for such a language as the whole message, because the application has nothing to merge it
 over.
 
-The package supports Umbraco 17.1 and later, Umbraco 18 included, on .NET 10.
+The package supports Umbraco 17.1 through 19.x: Umbraco 17 and 18 on .NET 10, Umbraco 19 on .NET 11.
 
 ## Getting started
 

@@ -19,7 +19,7 @@ public sealed class ScheduledSyncJobTests
         var source = Source() with { SyncIntervalMinutes = null };
         var (job, engine) = Create([source]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Empty(engine.Synced);
     }
@@ -30,7 +30,7 @@ public sealed class ScheduledSyncJobTests
         var source = Source();
         var (job, engine) = Create([source]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Equal([source.Alias], engine.Synced);
     }
@@ -44,7 +44,7 @@ public sealed class ScheduledSyncJobTests
             [due, recent],
             [Status(due, startedAt: Now - Daily), Status(recent, startedAt: Now - TimeSpan.FromHours(23))]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Equal(["due"], engine.Synced);
     }
@@ -55,7 +55,7 @@ public sealed class ScheduledSyncJobTests
         var source = Source();
         var (job, engine) = Create([source], [Status(source, startedAt: Now - TimeSpan.FromMinutes(10), TranslationSyncStatus.Failed)]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Empty(engine.Synced);
     }
@@ -67,7 +67,7 @@ public sealed class ScheduledSyncJobTests
         var busy = Source("busy");
         var (job, engine) = Create([disabled, busy], [Status(busy, startedAt: Now - Daily * 2) with { SyncInProgress = true }]);
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Empty(engine.Synced);
     }
@@ -80,7 +80,7 @@ public sealed class ScheduledSyncJobTests
         var (job, engine) = Create([broken, working]);
         engine.Failing.Add("broken");
 
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Equal(["broken", "working"], engine.Synced);
     }
@@ -94,8 +94,8 @@ public sealed class ScheduledSyncJobTests
         var (job, engine) = Create([source]);
         engine.TimingOut.Add(source.Alias);
 
-        await job.RunJobAsync();
-        await job.RunJobAsync();
+        await job.RunJobAsync(CancellationToken.None);
+        await job.RunJobAsync(CancellationToken.None);
 
         Assert.Equal([source.Alias], engine.Synced);
     }
